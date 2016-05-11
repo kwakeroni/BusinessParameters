@@ -44,6 +44,17 @@ public class BasicPartialQuery {
                 }
             };
         }
+
+        static <ET extends EntryType>
+                PartialQuery<ET, ET>
+            identity(){
+            return new PartialQuery<ET, ET>() {
+                @Override
+                public <T> Query<ET, T> andThen(Query<ET, T> downQuery) {
+                    return downQuery;
+                }
+            };
+        }
     }
 
     public static <V, MissingEntryType extends EntryType>

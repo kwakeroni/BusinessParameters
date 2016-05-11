@@ -11,7 +11,10 @@
     <description>This module is the root of all Business Parameters related modules.</description>
 
     <modules>
-        <module>client</module>
+        <module>parameters-basic</module>
+        <module>parameters-client</module>
+        <module>parameters-deps</module>
+        <module>scratch</module>
     </modules>
 
     <properties>
@@ -19,11 +22,6 @@
         <project.encoding>UTF-8</project.encoding>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <pluginManagement>
@@ -33,8 +31,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <!--<version>${maven-compiler-plugin.version}</version>-->
                     <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                     </configuration>
                 </plugin>
                 <plugin>

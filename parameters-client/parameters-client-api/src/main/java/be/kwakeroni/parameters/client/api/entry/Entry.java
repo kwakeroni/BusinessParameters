@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.client.api;
+package be.kwakeroni.parameters.client.api.entry;
 
 import be.kwakeroni.parameters.client.model.Parameter;
 

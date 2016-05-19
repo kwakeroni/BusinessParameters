@@ -1,19 +1,20 @@
 package be.kwakeroni.parameters.client.api;
 
+import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.client.model.EntryType;
-import be.kwakeroni.parameters.client.model.Parameter;
-import be.kwakeroni.parameters.client.model.ParameterGroup;
 
 /**
  * Retrieves values of business parameters of a specific group.
  */
 public interface BusinessParameterGroup<ET extends EntryType> {
 
+    String getName();
+
     <T> T get(Query<ET, T> query);
 
-    default <T> T get(QueryBuilder<ET, T> query){
-        return get(query.build());
-    }
+//    default <T> T get(QueryBuilder<ET, T> query){
+//        return get(query.build());
+//    }
 
 //    ET retrieve();
 

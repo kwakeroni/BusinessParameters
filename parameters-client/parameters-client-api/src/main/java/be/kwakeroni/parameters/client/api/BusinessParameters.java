@@ -1,7 +1,7 @@
 package be.kwakeroni.parameters.client.api;
 
+import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.client.model.EntryType;
-import be.kwakeroni.parameters.client.model.Parameter;
 import be.kwakeroni.parameters.client.model.ParameterGroup;
 
 /**
@@ -42,6 +42,12 @@ public interface BusinessParameters {
 //            public Entry getEntry(EntryIdentifier<ET> identifier) {
 //                return BusinessParameters.this.getEntry(group, identifier);
 //            }
+
+
+            @Override
+            public String getName() {
+                return group.getName();
+            }
 
             @Override
             public <T> T get(Query<ET, T> query) {

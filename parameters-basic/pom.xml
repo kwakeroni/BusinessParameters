@@ -14,6 +14,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>parameters-basic-client-model</module>
+        <module>parameters-basic-client-connector</module>
+        <module>parameters-basic-wireformat-standard</module>
     </modules>
 
     <dependencyManagement>
@@ -28,6 +30,16 @@
             <dependency>
                 <groupId>be.kwakeroni.parameters.basic</groupId>
                 <artifactId>parameters-basic-client-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.basic</groupId>
+                <artifactId>parameters-basic-client-connector</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.basic</groupId>
+                <artifactId>parameters-basic-wireformat-standard</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

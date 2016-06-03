@@ -20,5 +20,9 @@
             <groupId>be.kwakeroni.parameters.client</groupId>
             <artifactId>parameters-client-model</artifactId>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>be.kwakeroni.parameters.client</groupId>-->
+            <!--<artifactId>parameters-client-connector</artifactId>-->
+        <!--</dependency>-->
     </dependencies>
 </project>

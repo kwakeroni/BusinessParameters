@@ -4,17 +4,18 @@ import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.client.model.EntryType;
 import be.kwakeroni.parameters.client.model.Parameter;
 import be.kwakeroni.parameters.client.model.ParameterGroup;
-import be.kwakeroni.parameters.client.model.basic.Ranged;
-import be.kwakeroni.parameters.client.model.basic.Simple;
-import be.kwakeroni.parameters.client.query.basic.BasicQueries;
-import be.kwakeroni.parameters.client.query.basic.RangedQuery;
-import be.kwakeroni.parameters.client.query.basic.ValueQuery;
+import be.kwakeroni.parameters.basic.client.model.Ranged;
+import be.kwakeroni.parameters.basic.client.model.Simple;
+import be.kwakeroni.parameters.basic.client.query.BasicQueries;
+import be.kwakeroni.parameters.basic.client.query.RangedQuery;
+import be.kwakeroni.parameters.basic.client.query.ValueQuery;
+import be.kwakeroni.parameters.test.Dag;
+import be.kwakeroni.parameters.test.Slot;
+import be.kwakeroni.parameters.test.TVProgram;
 import org.junit.Test;
 
-import java.time.DayOfWeek;
-
-import static be.kwakeroni.parameters.client.model.basic.BasicEntryTypes.*;
-import static be.kwakeroni.parameters.client.query.basic.BasicQueries.*;
+import static be.kwakeroni.parameters.basic.client.model.BasicEntryTypes.*;
+import static be.kwakeroni.parameters.basic.client.query.BasicQueries.*;
 
 public class SyntaxTest {
 

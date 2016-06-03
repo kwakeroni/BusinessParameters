@@ -14,6 +14,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-deps</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>be.kwakeroni.parameters.basic</groupId>
                 <artifactId>parameters-basic</artifactId>
                 <version>${project.version}</version>
@@ -21,8 +28,8 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>be.kwakeroni.parameters</groupId>
-                <artifactId>parameters-deps</artifactId>
+                <groupId>be.kwakeroni.parameters.backend</groupId>
+                <artifactId>parameters-backend-inmemory</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -43,14 +50,26 @@
             <artifactId>parameters-basic-client-model</artifactId>
         </dependency>
         <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-wireformat-standard</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.backend</groupId>
+            <artifactId>parameters-backend-inmemory-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.backend</groupId>
+            <artifactId>parameters-backend-inmemory-basic</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.9.5</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.mockito</groupId>-->
+            <!--<artifactId>mockito-core</artifactId>-->
+            <!--<version>1.9.5</version>-->
+        <!--</dependency>-->
     </dependencies>
 
 </project>

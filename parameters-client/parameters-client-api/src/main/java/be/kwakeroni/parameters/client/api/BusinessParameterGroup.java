@@ -12,8 +12,8 @@ public interface BusinessParameterGroup<ET extends EntryType> {
 
     <T> T get(Query<ET, T> query);
 
-//    default <T> T get(QueryBuilder<ET, T> query){
-//        return get(query.build());
+//    default <T> T get(QueryBuilder<ET, T> support){
+//        return get(support.build());
 //    }
 
 //    ET retrieve();

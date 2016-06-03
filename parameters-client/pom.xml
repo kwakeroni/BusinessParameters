@@ -18,6 +18,7 @@
     <modules>
         <module>parameters-client-api</module>
         <module>parameters-client-model</module>
+        <module>parameters-client-connector</module>
     </modules>
 
     <dependencyManagement>
@@ -30,6 +31,11 @@
             <dependency>
                 <groupId>be.kwakeroni.parameters.client</groupId>
                 <artifactId>parameters-client-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.client</groupId>
+                <artifactId>parameters-client-connector</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

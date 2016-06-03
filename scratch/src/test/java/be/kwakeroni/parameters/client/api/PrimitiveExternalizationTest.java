@@ -1,11 +1,14 @@
 package be.kwakeroni.parameters.client.api;
 
+import be.kwakeroni.parameters.basic.wireformat.standard.BasicStandardWireformat;
 import be.kwakeroni.parameters.client.api.externalize.ExternalizationContext;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.client.basic.external.BasicExternalizer;
-import be.kwakeroni.parameters.client.basic.external.StandardBasicExternalizer;
 import be.kwakeroni.parameters.client.model.EntryType;
 import be.kwakeroni.parameters.client.model.ParameterGroup;
+import be.kwakeroni.parameters.test.Dag;
+import be.kwakeroni.parameters.test.Slot;
+import be.kwakeroni.parameters.test.StandardObjectInputStream;
+import be.kwakeroni.parameters.test.TVProgram;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -22,12 +25,12 @@ public class PrimitiveExternalizationTest {
 
     private final AtomicReference<Object> externalized = new AtomicReference<>();
 
-    private final BasicExternalizer externalizer = new StandardBasicExternalizer();
+    private final BasicStandardWireformat basicWireFormat = new BasicStandardWireformat();
 
     private final ExternalizationContext context = new ExternalizationContext() {
         @Override
         public <Externalizer> Externalizer getExternalizer(Class<Externalizer> type) {
-            return type.cast(externalizer);
+            return type.cast(basicWireFormat);
         }
     };
 
@@ -83,10 +86,6 @@ public class PrimitiveExternalizationTest {
 
         try (AutoCloseable reset = () -> Thread.currentThread().setContextClassLoader(current)) {
             Thread.currentThread().setContextClassLoader(root);
-
-            System.out.println(current);
-            System.out.println(root);
-            System.out.println( sun.misc.VM.latestUserDefinedLoader());
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);

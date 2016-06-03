@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://maven.apache.org/POM/4.0.0         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>be.kwakeroni.parameters.backend</groupId>
+        <artifactId>parameters-backend</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>parameters-backend-inmemory</artifactId>
+    <packaging>pom</packaging>
+
+    <description>Provides an in-memory backend to Business Parameters for testing purposes.</description>
+
+    <modules>
+        <module>parameters-backend-inmemory-api</module>
+        <module>parameters-backend-inmemory-basic</module>
+        <module>parameters-backend-inmemory-service</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.backend</groupId>
+                <artifactId>parameters-backend-inmemory-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.backend</groupId>
+                <artifactId>parameters-backend-inmemory-basic</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.backend</groupId>
+                <artifactId>parameters-backend-inmemory-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

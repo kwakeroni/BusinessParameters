@@ -11,10 +11,12 @@
     <description>This module is the root of all Business Parameters related modules.</description>
 
     <modules>
+        <module>parameters-backend</module>
         <module>parameters-basic</module>
         <module>parameters-client</module>
         <module>parameters-deps</module>
         <module>scratch</module>
+        <module>../Scratch</module>
     </modules>
 
     <properties>

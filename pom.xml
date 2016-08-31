@@ -16,7 +16,6 @@
         <module>parameters-client</module>
         <module>parameters-deps</module>
         <module>scratch</module>
-        <module>../Scratch</module>
     </modules>
 
     <properties>

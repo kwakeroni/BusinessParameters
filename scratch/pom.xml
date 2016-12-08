@@ -54,6 +54,10 @@
             <artifactId>parameters-basic-wireformat-standard</artifactId>
         </dependency>
         <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-wireformat-raw</artifactId>
+        </dependency>
+        <dependency>
             <groupId>be.kwakeroni.parameters.backend</groupId>
             <artifactId>parameters-backend-inmemory-service</artifactId>
         </dependency>

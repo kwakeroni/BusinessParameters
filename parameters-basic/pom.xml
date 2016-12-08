@@ -16,6 +16,7 @@
         <module>parameters-basic-client-model</module>
         <module>parameters-basic-client-connector</module>
         <module>parameters-basic-wireformat-standard</module>
+        <module>parameters-basic-wireformat-raw</module>
     </modules>
 
     <dependencyManagement>
@@ -40,6 +41,11 @@
             <dependency>
                 <groupId>be.kwakeroni.parameters.basic</groupId>
                 <artifactId>parameters-basic-wireformat-standard</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.basic</groupId>
+                <artifactId>parameters-basic-wireformat-raw</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

@@ -3,6 +3,7 @@ package be.kwakeroni.parameters.test;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
 import be.kwakeroni.parameters.basic.client.connector.BasicExternalizer;
+import be.kwakeroni.parameters.basic.wireformat.raw.BasicRawWireFormat;
 import be.kwakeroni.parameters.basic.wireformat.standard.BasicStandardWireformat;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.query.Query;
@@ -27,6 +28,7 @@ public class Environment {
     }
 
     private final BasicStandardWireformat basicWireFormat = new BasicStandardWireformat();
+//    private final BasicRawWireFormat basicWireFormat = new BasicRawWireFormat();
     private final InMemoryBackend backend = new InMemoryBackend(map, basicWireFormat);
 
     public Environment(){

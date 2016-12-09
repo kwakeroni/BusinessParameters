@@ -1,7 +1,7 @@
-package be.kwakeroni.parameters.client.api;
+package be.kwakeroni.parameters.api.client;
 
-import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.client.model.EntryType;
+import be.kwakeroni.parameters.api.client.query.Query;
+import be.kwakeroni.parameters.api.client.model.EntryType;
 
 /**
  * Retrieves values of business parameters of a specific group.

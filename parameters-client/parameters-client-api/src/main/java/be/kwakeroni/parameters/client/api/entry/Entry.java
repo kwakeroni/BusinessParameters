@@ -1,6 +1,6 @@
 package be.kwakeroni.parameters.client.api.entry;
 
-import be.kwakeroni.parameters.client.model.Parameter;
+import be.kwakeroni.parameters.api.client.model.Parameter;
 
 public interface Entry {
 

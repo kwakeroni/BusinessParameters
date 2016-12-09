@@ -16,6 +16,8 @@
         <module>parameters-client</module>
         <module>parameters-deps</module>
         <module>scratch</module>
+        <module>parameters-api</module>
+        <module>parameters-connector</module>
     </modules>
 
     <properties>

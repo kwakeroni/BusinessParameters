@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.client.api.query;
 
-import be.kwakeroni.parameters.client.model.EntryType;
+import be.kwakeroni.parameters.api.client.model.EntryType;
+import be.kwakeroni.parameters.api.client.query.Query;
 
 /**
  * Represents part of a support to retrieve business parameters.

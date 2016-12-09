@@ -5,7 +5,7 @@ import be.kwakeroni.parameters.basic.client.model.Ranged;
 import be.kwakeroni.parameters.client.api.externalize.ExternalizationContext;
 import be.kwakeroni.parameters.client.api.query.PartialQuery;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.client.model.EntryType;
+import be.kwakeroni.parameters.api.client.model.EntryType;
 
 import java.util.Objects;
 import java.util.function.Function;

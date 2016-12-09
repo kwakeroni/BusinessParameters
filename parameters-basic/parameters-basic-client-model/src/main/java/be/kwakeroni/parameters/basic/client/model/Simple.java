@@ -3,8 +3,8 @@ package be.kwakeroni.parameters.basic.client.model;
 import be.kwakeroni.parameters.basic.client.query.BasicQueries;
 import be.kwakeroni.parameters.client.api.entry.Entry;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.client.model.EntryType;
-import be.kwakeroni.parameters.client.model.Parameter;
+import be.kwakeroni.parameters.api.client.model.EntryType;
+import be.kwakeroni.parameters.api.client.model.Parameter;
 
 /**
  * Created by kwakeroni on 6/05/2016.

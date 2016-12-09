@@ -4,7 +4,7 @@ import be.kwakeroni.parameters.basic.client.connector.BasicExternalizer;
 import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.client.api.externalize.ExternalizationContext;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.client.model.Parameter;
+import be.kwakeroni.parameters.api.client.model.Parameter;
 
 import java.util.Objects;
 

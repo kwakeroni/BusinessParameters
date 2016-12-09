@@ -4,7 +4,7 @@ import be.kwakeroni.parameters.basic.client.query.BasicQueries;
 import be.kwakeroni.parameters.client.api.BusinessParameterGroup;
 import be.kwakeroni.parameters.client.api.entry.EntryTypeBuilder;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.client.model.EntryType;
+import be.kwakeroni.parameters.api.client.model.EntryType;
 
 import java.util.function.Function;
 

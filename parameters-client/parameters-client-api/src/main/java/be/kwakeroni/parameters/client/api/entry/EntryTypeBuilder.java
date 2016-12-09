@@ -1,7 +1,7 @@
 package be.kwakeroni.parameters.client.api.entry;
 
 import be.kwakeroni.parameters.client.api.query.PartialQuery;
-import be.kwakeroni.parameters.client.model.EntryType;
+import be.kwakeroni.parameters.api.client.model.EntryType;
 
 /**
  * Represents entry types in the form of partial queries.

@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.client.model;
+package be.kwakeroni.parameters.api.client.model;
 
 /**
  * Represents a Business Parameter.

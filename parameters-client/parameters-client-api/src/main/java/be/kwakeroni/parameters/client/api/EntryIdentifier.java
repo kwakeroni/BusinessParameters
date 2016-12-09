@@ -1,6 +1,6 @@
 //package be.kwakeroni.parameters.client.api;
 //
-//import be.kwakeroni.parameters.client.model.EntryType;
+//import EntryType;
 //
 //public interface EntryIdentifier<ET extends EntryType> {
 //}

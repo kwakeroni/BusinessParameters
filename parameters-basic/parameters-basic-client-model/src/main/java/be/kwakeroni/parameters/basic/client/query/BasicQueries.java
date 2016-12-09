@@ -6,8 +6,8 @@ import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.client.api.entry.Entry;
 import be.kwakeroni.parameters.client.api.query.PartialQuery;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.client.model.EntryType;
-import be.kwakeroni.parameters.client.model.Parameter;
+import be.kwakeroni.parameters.api.client.model.EntryType;
+import be.kwakeroni.parameters.api.client.model.Parameter;
 
 import java.util.function.Function;
 

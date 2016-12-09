@@ -5,4 +5,4 @@
  * Any model relying on properties of specific parameter or group types is specified in specific extension modules.
  * </p>
  */
-package be.kwakeroni.parameters.client.model;
+package be.kwakeroni.parameters.api.client.model;

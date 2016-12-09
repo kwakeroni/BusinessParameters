@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.client.api.externalize;
+package be.kwakeroni.parameters.api.client.query;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck

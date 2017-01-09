@@ -1,9 +1,9 @@
 package be.kwakeroni.parameters.basic.wireformat.raw;
 
 import be.kwakeroni.parameters.api.backend.BackendGroup;
-import be.kwakeroni.parameters.api.backend.query.InternalizationContext;
-import be.kwakeroni.parameters.api.client.query.ExternalizationContext;
-import be.kwakeroni.parameters.basic.backend.query.BasicInternalizer;
+import be.kwakeroni.parameters.api.backend.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.api.client.query.ClientWireFormatterContext;
+import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
 import be.kwakeroni.parameters.basic.client.model.Entry;
 import be.kwakeroni.parameters.basic.client.query.*;
 import org.slf4j.Logger;
@@ -15,32 +15,32 @@ import java.util.Optional;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class BasicRawWireFormat implements BasicExternalizer, BasicInternalizer {
+public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBackendWireFormatter {
 
     Logger LOG = LoggerFactory.getLogger(BasicRawWireFormat.class);
 
     @Override
-    public Object externalizeEntryQuery(EntryQuery query, ExternalizationContext context) {
+    public Object externalizeEntryQuery(EntryQuery query, ClientWireFormatterContext context) {
         return query;
     }
 
     @Override
-    public Object externalizeValueQuery(ValueQuery<?> query, ExternalizationContext context) {
+    public Object externalizeValueQuery(ValueQuery<?> query, ClientWireFormatterContext context) {
         return query;
     }
 
     @Override
-    public Object externalizeMappedQuery(MappedQuery<?, ?, ?> query, ExternalizationContext context) {
+    public Object externalizeMappedQuery(MappedQuery<?, ?, ?> query, ClientWireFormatterContext context) {
         return query;
     }
 
     @Override
-    public Object externalizeRangedQuery(RangedQuery<?, ?, ?> query, ExternalizationContext context) {
+    public Object externalizeRangedQuery(RangedQuery<?, ?, ?> query, ClientWireFormatterContext context) {
         return query;
     }
 
     @Override
-    public <Q> Optional<Q> tryInternalize(BackendGroup<Q> group, Object query, InternalizationContext<Q> context) {
+    public <Q> Optional<Q> tryInternalize(BackendGroup<Q> group, Object query, BackendWireFormatterContext<Q> context) {
 
         if (query instanceof ValueQuery) {
             ValueQuery<?> valueQuery = (ValueQuery<?>) query;
@@ -60,7 +60,7 @@ public class BasicRawWireFormat implements BasicExternalizer, BasicInternalizer 
 
 
     @Override
-    public Entry internalizeEntry(Object result, EntryQuery query, ExternalizationContext context) {
+    public Entry internalizeEntry(Object result, EntryQuery query, ClientWireFormatterContext context) {
         return (Entry) result;
     }
 
@@ -70,7 +70,7 @@ public class BasicRawWireFormat implements BasicExternalizer, BasicInternalizer 
     }
 
     @Override
-    public <T> T internalizeValue(Object result, ValueQuery<T> query, ExternalizationContext context) {
+    public <T> T internalizeValue(Object result, ValueQuery<T> query, ClientWireFormatterContext context) {
         return (result == null)? null : query.getParameter().fromString((String) result);
     }
 

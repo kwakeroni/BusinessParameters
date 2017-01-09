@@ -15,11 +15,11 @@ public class DirectBusinessParametersConnector implements BusinessParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(DirectBusinessParametersConnector.class);
 
-    private final ExternalizerRegistry externalizers;
+    private final WireFormatterRegistry formatters;
     private final BackendRegistry backends;
 
-    public DirectBusinessParametersConnector(ExternalizerRegistry externalizers, BackendRegistry backends) {
-        this.externalizers = externalizers;
+    public DirectBusinessParametersConnector(WireFormatterRegistry formatters, BackendRegistry backends) {
+        this.formatters = formatters;
         this.backends = backends;
     }
 
@@ -35,7 +35,7 @@ public class DirectBusinessParametersConnector implements BusinessParameters {
     private Object externalize(Query<?, ?> query){
         LOG.debug("Externalizing query {}", query);
         System.out.println("Externalizing query {}" + query);
-        return query.externalize(this.externalizers);
+        return query.externalize(this.formatters);
     }
 
     private BusinessParametersBackend getBackend(ParameterGroup<?> group){
@@ -54,14 +54,7 @@ public class DirectBusinessParametersConnector implements BusinessParameters {
     private <T> T internalize(Object result, Query<?, T> query){
         LOG.debug("Internalizing result {}", query);
         System.out.println("Internalizing result {}" + query);
-        return query.internalizeResult(result, this.externalizers);
+        return query.internalizeResult(result, this.formatters);
     }
-
-
-    //    @Override
-//    public <ET extends EntryType, T> T get(ParameterGroup<ET> group, Query<ET, T> query) {
-//        Object external = query.externalize(Environment.this::getExternalizer);
-//        return (T) backend.get(group.getName(), external);
-//    }
 
 }

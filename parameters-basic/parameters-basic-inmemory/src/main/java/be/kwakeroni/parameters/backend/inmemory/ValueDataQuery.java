@@ -1,9 +1,9 @@
 package be.kwakeroni.parameters.backend.inmemory;
 
-import be.kwakeroni.parameters.api.backend.query.InternalizationContext;
+import be.kwakeroni.parameters.api.backend.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
-import be.kwakeroni.parameters.basic.backend.query.BasicInternalizer;
+import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -28,7 +28,7 @@ class ValueDataQuery implements DataQuery<String> {
     }
 
     @Override
-    public Object externalizeResult(String result, InternalizationContext<? super DataQuery<?>> context) {
-        return context.getInternalizer(BasicInternalizer.class).externalizeValueResult(result);
+    public Object externalizeResult(String result, BackendWireFormatterContext<? super DataQuery<?>> context) {
+        return context.getWireFormatter(BasicBackendWireFormatter.class).externalizeValueResult(result);
     }
 }

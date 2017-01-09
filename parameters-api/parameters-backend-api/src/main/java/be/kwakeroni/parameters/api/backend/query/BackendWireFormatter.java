@@ -7,8 +7,8 @@ import java.util.Optional;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public interface Internalizer {
+public interface BackendWireFormatter {
 
-    <Q> Optional<Q> tryInternalize(BackendGroup<Q> group, Object query, InternalizationContext<Q> context);
+    <Q> Optional<Q> tryInternalize(BackendGroup<Q> group, Object query, BackendWireFormatterContext<Q> context);
 
 }

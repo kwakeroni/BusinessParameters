@@ -2,9 +2,8 @@ package be.kwakeroni.parameters.backend.inmemory.factory;
 
 import be.kwakeroni.parameters.api.backend.BusinessParametersBackend;
 import be.kwakeroni.parameters.api.backend.factory.BusinessParametersBackendFactory;
-import be.kwakeroni.parameters.api.backend.factory.InternalizerFactory;
-import be.kwakeroni.parameters.api.backend.query.Internalizer;
-import be.kwakeroni.parameters.backend.inmemory.service.DefaultInternalizationContext;
+import be.kwakeroni.parameters.api.backend.factory.BackendWireFormatterFactory;
+import be.kwakeroni.parameters.backend.inmemory.service.DefaultBackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
 
 import java.util.ServiceLoader;
@@ -26,10 +25,10 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
     }
 
     private static InMemoryBackend createInstance(){
-        ServiceLoader<InternalizerFactory> internalizerFactories = ServiceLoader.load(InternalizerFactory.class);
+        ServiceLoader<BackendWireFormatterFactory> wireFormatterFactories = ServiceLoader.load(BackendWireFormatterFactory.class);
 
-        DefaultInternalizationContext context = new DefaultInternalizationContext();
-        internalizerFactories.forEach(factory -> factory.registerInstance(context::register));
+        DefaultBackendWireFormatterContext context = new DefaultBackendWireFormatterContext();
+        wireFormatterFactories.forEach(factory -> factory.registerInstance(context::register));
         return new InMemoryBackend(context);
     }
 }

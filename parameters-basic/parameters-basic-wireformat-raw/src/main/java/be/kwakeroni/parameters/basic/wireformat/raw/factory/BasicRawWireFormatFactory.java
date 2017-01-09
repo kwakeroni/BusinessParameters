@@ -1,28 +1,25 @@
 package be.kwakeroni.parameters.basic.wireformat.raw.factory;
 
-import be.kwakeroni.parameters.api.backend.factory.InternalizerFactory;
-import be.kwakeroni.parameters.api.client.factory.ExternalizerFactory;
-import be.kwakeroni.parameters.api.client.query.Externalizer;
-import be.kwakeroni.parameters.basic.backend.query.BasicInternalizer;
-import be.kwakeroni.parameters.basic.client.query.BasicExternalizer;
+import be.kwakeroni.parameters.api.backend.factory.BackendWireFormatterFactory;
+import be.kwakeroni.parameters.api.client.factory.ClientWireFormatterFactory;
+import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
+import be.kwakeroni.parameters.basic.client.query.BasicClientWireFormatter;
 import be.kwakeroni.parameters.basic.wireformat.raw.BasicRawWireFormat;
-
-import java.util.function.BiConsumer;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class BasicRawWireFormatFactory implements ExternalizerFactory, InternalizerFactory {
+public class BasicRawWireFormatFactory implements ClientWireFormatterFactory, BackendWireFormatterFactory {
 
     private static final BasicRawWireFormat WIRE_FORMAT = new BasicRawWireFormat();
 
     @Override
-    public void registerInstance(ExternalizerFactory.Registry registry) {
-        registry.register(BasicExternalizer.class, WIRE_FORMAT);
+    public void registerInstance(ClientWireFormatterFactory.Registry registry) {
+        registry.register(BasicClientWireFormatter.class, WIRE_FORMAT);
     }
 
     @Override
-    public void registerInstance(InternalizerFactory.Registry registry) {
-        registry.register(BasicInternalizer.class, WIRE_FORMAT);
+    public void registerInstance(BackendWireFormatterFactory.Registry registry) {
+        registry.register(BasicBackendWireFormatter.class, WIRE_FORMAT);
     }
 }

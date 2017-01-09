@@ -14,7 +14,7 @@ public class ServiceLoaderTest {
     @Test
     public void test(){
         testLoad("Backend", BusinessParametersBackend.class);
-        testLoad("Internalizer", QueryInternalizer.class);
+        testLoad("BackendWireFormatter", QueryInternalizer.class);
     }
 
     private <T> void testLoad(String name, Class<T> serviceType){

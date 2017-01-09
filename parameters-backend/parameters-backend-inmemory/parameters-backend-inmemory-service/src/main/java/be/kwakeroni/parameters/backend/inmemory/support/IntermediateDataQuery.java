@@ -1,6 +1,6 @@
 package be.kwakeroni.parameters.backend.inmemory.support;
 
-import be.kwakeroni.parameters.api.backend.query.InternalizationContext;
+import be.kwakeroni.parameters.api.backend.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 
@@ -27,7 +27,7 @@ public class IntermediateDataQuery<T> implements DataQuery<T> {
     }
 
     @Override
-    public Object externalizeResult(T result, InternalizationContext<? super DataQuery<?>> context) {
+    public Object externalizeResult(T result, BackendWireFormatterContext<? super DataQuery<?>> context) {
         return subQuery.externalizeResult(result, context);
     }
 

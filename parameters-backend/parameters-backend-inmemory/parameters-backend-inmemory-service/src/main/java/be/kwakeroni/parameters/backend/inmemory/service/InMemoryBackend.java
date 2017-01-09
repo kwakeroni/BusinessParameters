@@ -1,8 +1,7 @@
 package be.kwakeroni.parameters.backend.inmemory.service;
 
 import be.kwakeroni.parameters.api.backend.BusinessParametersBackend;
-import be.kwakeroni.parameters.api.backend.query.InternalizationContext;
-import be.kwakeroni.parameters.api.backend.query.Internalizer;
+import be.kwakeroni.parameters.api.backend.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import org.slf4j.Logger;
@@ -21,15 +20,15 @@ public class InMemoryBackend implements BusinessParametersBackend {
     Logger LOG = LoggerFactory.getLogger(InMemoryBackend.class);
 
     private final Map<String, GroupData> data;
-    private final InternalizationContext<DataQuery<?>> internalizationContext;
+    private final BackendWireFormatterContext<DataQuery<?>> wireFormatterContext;
 
-    public InMemoryBackend(InternalizationContext<DataQuery<?>> context) {
+    public InMemoryBackend(BackendWireFormatterContext<DataQuery<?>> context) {
         this(new HashMap<>(), context);
     }
 
-    private InMemoryBackend(Map<String, GroupData> data, InternalizationContext<DataQuery<?>> context) {
+    private InMemoryBackend(Map<String, GroupData> data, BackendWireFormatterContext<DataQuery<?>> context) {
         this.data = data;
-        this.internalizationContext = context;
+        this.wireFormatterContext = context;
     }
 
     public void setGroupData(String groupName, GroupData data){
@@ -46,7 +45,7 @@ public class InMemoryBackend implements BusinessParametersBackend {
     public Object get(String group, Object queryObject) {
         GroupData groupData = getGroupData(group);
         System.out.println("Internalizing query {}" + queryObject);
-        DataQuery<?> query = internalizationContext.internalize(groupData.getGroup(), queryObject);
+        DataQuery<?> query = wireFormatterContext.internalize(groupData.getGroup(), queryObject);
         Object result = getExternalResult(query, group, groupData);
         System.out.println("Returning result {}" + result + " for query {}" + query);
         return result;
@@ -57,7 +56,7 @@ public class InMemoryBackend implements BusinessParametersBackend {
         T result = query.apply(groupData.getEntries()).orElse(null);
         System.out.println("Query on {}" + group + " has result {}" + result);
         System.out.println("Externalizing result {}" + result);
-        Object external = query.externalizeResult(result, this.internalizationContext);
+        Object external = query.externalizeResult(result, this.wireFormatterContext);
         return external;
     }
 

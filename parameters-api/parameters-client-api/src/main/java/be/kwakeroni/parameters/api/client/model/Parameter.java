@@ -7,4 +7,8 @@ public interface Parameter<T> {
 
     public String getName();
 
+    public T fromString(String value);
+
+    public String toString(T value);
+
 }

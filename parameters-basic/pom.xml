@@ -12,44 +12,59 @@
     <groupId>be.kwakeroni.parameters.basic</groupId>
     <artifactId>parameters-basic</artifactId>
     <packaging>pom</packaging>
-    <modules>
-        <module>parameters-basic-client-model</module>
-        <module>parameters-basic-client-connector</module>
-        <module>parameters-basic-wireformat-standard</module>
-        <module>parameters-basic-wireformat-raw</module>
-    </modules>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>be.kwakeroni.parameters.client</groupId>
-                <artifactId>parameters-client</artifactId>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-client-api</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>be.kwakeroni.parameters.basic</groupId>
-                <artifactId>parameters-basic-client-model</artifactId>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-backend-api</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-basic-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>be.kwakeroni.parameters.basic</groupId>
-                <artifactId>parameters-basic-client-connector</artifactId>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-basic-backend</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <!--<dependency>-->
+                <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
+                <!--<artifactId>parameters-basic-client-connector</artifactId>-->
+                <!--<version>${project.version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
+                <!--<artifactId>parameters-basic-wireformat-standard</artifactId>-->
+                <!--<version>${project.version}</version>-->
+            <!--</dependency>-->
             <dependency>
-                <groupId>be.kwakeroni.parameters.basic</groupId>
-                <artifactId>parameters-basic-wireformat-standard</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>be.kwakeroni.parameters.basic</groupId>
+                <groupId>be.kwakeroni.parameters</groupId>
                 <artifactId>parameters-basic-wireformat-raw</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <modules>
+        <module>parameters-basic-client</module>
+        <!--<module>parameters-basic-client-model</module>-->
+        <!--<module>parameters-basic-client-connector</module>-->
+        <!--<module>parameters-basic-wireformat-standard</module>-->
+        <module>parameters-basic-wireformat-raw</module>
+        <module>parameters-basic-backend</module>
+        <module>parameters-basic-inmemory</module>
+    </modules>
 
 
 </project>

@@ -5,6 +5,6 @@ package be.kwakeroni.parameters.api.client.query;
  */
 public interface ExternalizationContext {
 
-    <Externalizer> Externalizer getExternalizer(Class<Externalizer> type);
+    <Ext extends Externalizer> Ext getExternalizer(Class<Ext> type);
 
 }

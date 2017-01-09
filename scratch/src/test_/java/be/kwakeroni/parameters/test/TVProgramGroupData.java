@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.test;
+package be.kwakeroni.scratch.tv;
 
 import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
@@ -28,9 +28,9 @@ public class TVProgramGroupData implements GroupData {
 
         // Mapped<Dag, Ranged<Slot, Simple>>
 
-        entrySet = new InMemoryMappedEntrySet("dag", String::equals,
-                new InMemoryRangedEntrySet<>("slot", InMemoryRange.ofType(Slot.TYPE),
-                        new InMemorySimpleEntrySet()));
+//        entrySet = new InMemoryMappedEntrySet("dag", String::equals,
+//                new InMemoryRangedEntrySet<>("slot", InMemoryRange.ofType(Slot.TYPE),
+//                        new InMemorySimpleEntrySet()));
 
         this.entries = new HashSet<>();
     }

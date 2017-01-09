@@ -9,4 +9,6 @@ public interface Query<ET extends EntryType, Result> {
 
     Object externalize(ExternalizationContext context);
 
+    Result internalize(Object result, ExternalizationContext context);
+
 }

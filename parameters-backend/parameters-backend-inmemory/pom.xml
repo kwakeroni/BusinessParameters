@@ -15,13 +15,20 @@
     <description>Provides an in-memory backend to Business Parameters for testing purposes.</description>
 
     <modules>
-        <module>parameters-backend-inmemory-api</module>
-        <module>parameters-backend-inmemory-basic</module>
+        <!--<module>parameters-backend-inmemory-api</module>-->
+        <!--<module>parameters-backend-inmemory-basic</module>-->
         <module>parameters-backend-inmemory-service</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-deps</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>be.kwakeroni.parameters.backend</groupId>
                 <artifactId>parameters-backend-inmemory-api</artifactId>

@@ -18,6 +18,7 @@
         <module>scratch</module>
         <module>parameters-api</module>
         <module>parameters-connector</module>
+        <module>parameters-experimental</module>
     </modules>
 
     <properties>

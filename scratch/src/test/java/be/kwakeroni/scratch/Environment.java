@@ -1,6 +1,12 @@
 package be.kwakeroni.scratch;
 
 import be.kwakeroni.parameters.api.client.BusinessParameters;
+import be.kwakeroni.parameters.api.client.factory.BusinessParametersFactory;
+import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendServiceFactory;
+import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
+import be.kwakeroni.scratch.tv.Dag;
+import be.kwakeroni.scratch.tv.SimpleTVGroup;
+import be.kwakeroni.scratch.tv.Slot;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -12,11 +18,21 @@ public class Environment {
 
 
     public static void main(String[] args){
-        new Environment().init();
+        new Environment();
     }
 
-    public void init(){
-        BusinessParameters parameters = load(BusinessParameters.class);
+    InMemoryBackend backend;
+    BusinessParameters parameters;
+
+    public Environment(){
+        this.backend = InMemoryBackendServiceFactory.getSingletonInstance();
+        initData();
+        BusinessParametersFactory factory = load(BusinessParametersFactory.class);
+        this.parameters = factory.getInstance();
+    }
+
+    public BusinessParameters getBusinessParameters(){
+        return this.parameters;
     }
 
     private <S> S load(Class<S> serviceType){
@@ -32,4 +48,7 @@ public class Environment {
         return service;
     }
 
+    private void initData(){
+        this.backend.addGroupData(SimpleTVGroup.instance().getName(), SimpleTVGroup.getData(Dag.MAANDAG, Slot.atHour(20)));
+    }
 }

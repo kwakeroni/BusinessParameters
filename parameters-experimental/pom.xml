@@ -12,5 +12,49 @@
     <groupId>be.kwakeroni.parameters</groupId>
     <artifactId>parameters-experimental</artifactId>
 
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-deps</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-api</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>be.kwakeroni.parameters</groupId>-->
+                <!--<artifactId>parameters-connector</artifactId>-->
+                <!--<version>${project.version}</version>-->
+                <!--<type>pom</type>-->
+                <!--<scope>import</scope>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
+                <!--<artifactId>parameters-basic</artifactId>-->
+                <!--<version>${project.version}</version>-->
+                <!--<type>pom</type>-->
+                <!--<scope>import</scope>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>be.kwakeroni.parameters.backend</groupId>-->
+                <!--<artifactId>parameters-backend-inmemory</artifactId>-->
+                <!--<version>${project.version}</version>-->
+                <!--<type>pom</type>-->
+                <!--<scope>import</scope>-->
+            <!--</dependency>-->
+        </dependencies>
+    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>be.kwakeroni.parameters</groupId>
+            <artifactId>parameters-client-api</artifactId>
+        </dependency>
+    </dependencies>
 </project>

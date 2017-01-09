@@ -2,13 +2,14 @@ package be.kwakeroni.parameters.basic.wireformat.raw;
 
 import be.kwakeroni.parameters.api.backend.BackendGroup;
 import be.kwakeroni.parameters.api.backend.query.InternalizationContext;
-import be.kwakeroni.parameters.api.client.model.Entry;
 import be.kwakeroni.parameters.api.client.query.ExternalizationContext;
 import be.kwakeroni.parameters.basic.backend.query.BasicInternalizer;
+import be.kwakeroni.parameters.basic.client.model.Entry;
 import be.kwakeroni.parameters.basic.client.query.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,16 +40,6 @@ public class BasicRawWireFormat implements BasicExternalizer, BasicInternalizer 
     }
 
     @Override
-    public Entry internalizeEntry(Object result, EntryQuery query, ExternalizationContext context) {
-        return (Entry) result;
-    }
-
-    @Override
-    public <T> T internalizeValue(Object result, ValueQuery<T> query, ExternalizationContext context) {
-        return query.getParameter().fromString((String) result);
-    }
-
-    @Override
     public <Q> Optional<Q> tryInternalize(BackendGroup<Q> group, Object query, InternalizationContext<Q> context) {
 
         if (query instanceof ValueQuery) {
@@ -67,4 +58,24 @@ public class BasicRawWireFormat implements BasicExternalizer, BasicInternalizer 
         return Optional.empty();
     }
 
+
+    @Override
+    public Entry internalizeEntry(Object result, EntryQuery query, ExternalizationContext context) {
+        return (Entry) result;
+    }
+
+    @Override
+    public Object externalizeEntryResult(Map<String, String> entry) {
+        return new DefaultEntry(entry);
+    }
+
+    @Override
+    public <T> T internalizeValue(Object result, ValueQuery<T> query, ExternalizationContext context) {
+        return (result == null)? null : query.getParameter().fromString((String) result);
+    }
+
+    @Override
+    public Object externalizeValueResult(String value) {
+        return (value == null)? null : value;
+    }
 }

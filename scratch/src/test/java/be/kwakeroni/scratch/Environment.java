@@ -49,6 +49,6 @@ public class Environment {
     }
 
     private void initData(){
-        this.backend.addGroupData(SimpleTVGroup.instance().getName(), SimpleTVGroup.getData(Dag.MAANDAG, Slot.atHour(20)));
+        this.backend.setGroupData(SimpleTVGroup.instance().getName(), SimpleTVGroup.getData(Dag.MAANDAG, Slot.atHour(20)));
     }
 }

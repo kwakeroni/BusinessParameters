@@ -29,7 +29,7 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
         ServiceLoader<InternalizerFactory> internalizerFactories = ServiceLoader.load(InternalizerFactory.class);
 
         DefaultInternalizationContext context = new DefaultInternalizationContext();
-        internalizerFactories.forEach(factory -> factory.registerInstance(context::registerInternalizer));
+        internalizerFactories.forEach(factory -> factory.registerInstance(context::register));
         return new InMemoryBackend(context);
     }
 }

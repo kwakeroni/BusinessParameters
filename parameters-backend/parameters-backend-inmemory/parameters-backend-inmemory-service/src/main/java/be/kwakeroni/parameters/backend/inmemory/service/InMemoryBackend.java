@@ -27,17 +27,13 @@ public class InMemoryBackend implements BusinessParametersBackend {
         this(new HashMap<>(), context);
     }
 
-    public InMemoryBackend(Collection<Internalizer> internalizers) {
-        this(new HashMap<>(), internalizers);
-    }
-
-    private InMemoryBackend(Map<String, GroupData> data, Collection<Internalizer> internalizers) {
-        this(data, new DefaultInternalizationContext(internalizers));
-    }
-
     private InMemoryBackend(Map<String, GroupData> data, InternalizationContext<DataQuery<?>> context) {
         this.data = data;
         this.internalizationContext = context;
+    }
+
+    public void setGroupData(String groupName, GroupData data){
+        this.data.put(groupName, data);
     }
 
     public void addGroupData(String groupName, GroupData data) {
@@ -51,10 +47,18 @@ public class InMemoryBackend implements BusinessParametersBackend {
         GroupData groupData = getGroupData(group);
         System.out.println("Internalizing query {}" + queryObject);
         DataQuery<?> query = internalizationContext.internalize(groupData.getGroup(), queryObject);
-        System.out.println("Executing query {}" + query +" on {}" + group);
-        Object result = query.apply(groupData.getEntries()).orElse(null);
-        System.out.println("Query on {}" + group + " has result {}" + result);
+        Object result = getExternalResult(query, group, groupData);
+        System.out.println("Returning result {}" + result + " for query {}" + query);
         return result;
+    }
+
+    private <T> Object getExternalResult(DataQuery<T> query, String group, GroupData groupData){
+        System.out.println("Executing query {}" + query +" on {}" + group);
+        T result = query.apply(groupData.getEntries()).orElse(null);
+        System.out.println("Query on {}" + group + " has result {}" + result);
+        System.out.println("Externalizing result {}" + result);
+        Object external = query.externalizeResult(result, this.internalizationContext);
+        return external;
     }
 
     private GroupData getGroupData(String name) {

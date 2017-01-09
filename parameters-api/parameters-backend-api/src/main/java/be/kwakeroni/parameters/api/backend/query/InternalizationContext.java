@@ -8,5 +8,5 @@ import be.kwakeroni.parameters.api.backend.BackendGroup;
 public interface InternalizationContext<Q> {
 
     Q internalize(BackendGroup<Q> group, Object query);
-//    <Int extends BackendInternalizer> Int getInternalizer(Class<Int> type);
+    <Int extends Internalizer> Int getInternalizer(Class<Int> type);
 }

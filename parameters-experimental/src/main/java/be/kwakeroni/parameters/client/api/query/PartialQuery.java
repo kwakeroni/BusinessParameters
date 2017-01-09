@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.client.api.query;
 
+
 import be.kwakeroni.parameters.api.client.model.EntryType;
 import be.kwakeroni.parameters.api.client.query.Query;
 

@@ -5,10 +5,15 @@ import be.kwakeroni.parameters.api.backend.BackendGroup;
 import be.kwakeroni.parameters.api.backend.query.InternalizationContext;
 import be.kwakeroni.parameters.api.backend.query.Internalizer;
 
+import java.util.Map;
+
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
 public interface BasicInternalizer extends Internalizer {
+
+    Object externalizeValueResult(String value);
+    Object externalizeEntryResult(Map<String, String> entry);
 
     default <Q> Q internalizeValueQuery(String parameter, BackendGroup<Q> group, InternalizationContext<Q> context) {
         SimpleBackendGroup<Q> simple = group.as(SimpleBackendGroup.class);
@@ -31,5 +36,7 @@ public interface BasicInternalizer extends Internalizer {
         Q subQuery = context.internalize(mapped.getSubGroup(), rawSubQuery);
         return mapped.getEntryQuery(key, subQuery);
     }
+
+
 
 }

@@ -41,8 +41,8 @@ public class RangedQuery<V, ET extends EntryType, T> implements Query<Ranged<V, 
     }
 
     @Override
-    public T internalize(Object result, ExternalizationContext context) {
-        return this.subQuery.internalize(result, context);
+    public T internalizeResult(Object result, ExternalizationContext context) {
+        return this.subQuery.internalizeResult(result, context);
     }
 
     @Override

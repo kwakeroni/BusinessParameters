@@ -1,8 +1,9 @@
 package be.kwakeroni.parameters.basic.client.query;
 
-import be.kwakeroni.parameters.api.client.model.Entry;
+
 import be.kwakeroni.parameters.api.client.query.ExternalizationContext;
 import be.kwakeroni.parameters.api.client.query.Query;
+import be.kwakeroni.parameters.basic.client.model.Entry;
 import be.kwakeroni.parameters.basic.client.model.Simple;
 
 /**
@@ -16,7 +17,7 @@ public class EntryQuery implements Query<Simple, Entry> {
     }
 
     @Override
-    public Entry internalize(Object result, ExternalizationContext context) {
+    public Entry internalizeResult(Object result, ExternalizationContext context) {
         return context.getExternalizer(BasicExternalizer.class).internalizeEntry(result, this, context);
     }
 

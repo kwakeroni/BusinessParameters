@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class ExternalizerRegistry implements ExternalizationContext {
 
-    private Map<Class<?>, Object> objects = new HashMap<>(2);
+    private Map<Class<?>, Externalizer> objects = new HashMap<>(2);
 
     public <E extends Externalizer> void register(Class<? super E> type, E externalizer){
         this.objects.put(type, externalizer);

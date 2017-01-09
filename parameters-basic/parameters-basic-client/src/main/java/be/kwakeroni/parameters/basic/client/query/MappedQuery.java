@@ -41,8 +41,8 @@ public class MappedQuery<K, ET extends EntryType, T> implements Query<Mapped<K, 
     }
 
     @Override
-    public T internalize(Object result, ExternalizationContext context) {
-        return this.subQuery.internalize(result, context);
+    public T internalizeResult(Object result, ExternalizationContext context) {
+        return this.subQuery.internalizeResult(result, context);
     }
 
     @Override

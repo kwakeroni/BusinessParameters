@@ -1,5 +1,6 @@
 package be.kwakeroni.scratch.tv;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,20 @@ public class Slot implements Comparable<Slot> {
         return (this.hour == o.hour) ?
                 Boolean.compare(this.halfPast, o.halfPast) :
                 Integer.compare(this.hour, o.hour);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Slot slot = (Slot) o;
+        return hour == slot.hour &&
+                halfPast == slot.halfPast;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hour, halfPast);
     }
 
     public String toString() {

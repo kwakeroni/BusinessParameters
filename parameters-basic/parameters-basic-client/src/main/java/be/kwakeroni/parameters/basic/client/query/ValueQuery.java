@@ -25,7 +25,7 @@ public class ValueQuery<T> implements Query<Simple, T> {
     }
 
     @Override
-    public T internalize(Object result, ExternalizationContext context) {
+    public T internalizeResult(Object result, ExternalizationContext context) {
         return context.getExternalizer(BasicExternalizer.class).internalizeValue(result, this, context);
     }
 

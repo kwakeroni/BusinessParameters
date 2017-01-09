@@ -54,7 +54,7 @@ public class DirectBusinessParametersConnector implements BusinessParameters {
     private <T> T internalize(Object result, Query<?, T> query){
         LOG.debug("Internalizing result {}", query);
         System.out.println("Internalizing result {}" + query);
-        return query.internalize(result, this.externalizers);
+        return query.internalizeResult(result, this.externalizers);
     }
 
 

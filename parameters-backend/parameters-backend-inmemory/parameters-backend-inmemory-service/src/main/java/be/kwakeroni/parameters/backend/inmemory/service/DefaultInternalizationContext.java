@@ -5,36 +5,17 @@ import be.kwakeroni.parameters.api.backend.BackendGroup;
 import be.kwakeroni.parameters.api.backend.query.InternalizationContext;
 import be.kwakeroni.parameters.api.backend.query.Internalizer;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
 public class DefaultInternalizationContext implements InternalizationContext<DataQuery<?>> {
 
-    private final Collection<Internalizer> internalizers;
+    private final Map<Class<?>, Internalizer> internalizers = new HashMap<>(2);
 
-    public DefaultInternalizationContext(Iterable<Internalizer> internalizers){
-        HashSet<Internalizer> set = new HashSet<>();
-        for (Internalizer internalizer : internalizers){
-            set.add(internalizer);
-        }
-        this.internalizers = set;
-    }
-
-    public DefaultInternalizationContext(Internalizer... internalizers) {
-        this.internalizers = Arrays.asList(internalizers);
-    }
-
-    public DefaultInternalizationContext(){
-        this.internalizers = new HashSet<>();
-    }
-
-    public void registerInternalizer(Internalizer internalizer){
-        this.internalizers.add(internalizer);
+    public <I extends Internalizer> void register(Class<? super I> type, I externalizer){
+        this.internalizers.put(type, externalizer);
     }
 
     @Override
@@ -44,11 +25,22 @@ public class DefaultInternalizationContext implements InternalizationContext<Dat
         }
 
         return internalizers
+                .values()
                 .stream()
                 .map(internalizer -> internalizer.tryInternalize(group, query, this))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Could not internalize query: " + query));
+    }
+
+    @Override
+    public <I extends Internalizer> I getInternalizer(Class<I> type) {
+        Object externalizer = this.internalizers.get(type);
+        if (externalizer != null) {
+            return type.cast(externalizer);
+        } else {
+            throw new IllegalStateException("No externalizer of type " + type.getName() + " registered");
+        }
     }
 }

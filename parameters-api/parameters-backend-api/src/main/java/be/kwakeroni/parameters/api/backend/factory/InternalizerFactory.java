@@ -11,6 +11,6 @@ public interface InternalizerFactory {
 
     @FunctionalInterface
     public static interface Registry {
-        public <I extends Internalizer> void register(I internalizer);
+        public <I extends Internalizer> void register(Class<? super I> type, I internalizer);
     }
 }

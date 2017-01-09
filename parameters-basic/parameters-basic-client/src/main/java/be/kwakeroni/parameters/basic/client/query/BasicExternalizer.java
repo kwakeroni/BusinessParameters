@@ -1,8 +1,8 @@
 package be.kwakeroni.parameters.basic.client.query;
 
-import be.kwakeroni.parameters.api.client.model.Entry;
 import be.kwakeroni.parameters.api.client.query.ExternalizationContext;
 import be.kwakeroni.parameters.api.client.query.Externalizer;
+import be.kwakeroni.parameters.basic.client.model.Entry;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck

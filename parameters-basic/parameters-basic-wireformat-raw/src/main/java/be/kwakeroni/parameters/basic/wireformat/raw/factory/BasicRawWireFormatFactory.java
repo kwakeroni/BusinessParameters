@@ -3,6 +3,7 @@ package be.kwakeroni.parameters.basic.wireformat.raw.factory;
 import be.kwakeroni.parameters.api.backend.factory.InternalizerFactory;
 import be.kwakeroni.parameters.api.client.factory.ExternalizerFactory;
 import be.kwakeroni.parameters.api.client.query.Externalizer;
+import be.kwakeroni.parameters.basic.backend.query.BasicInternalizer;
 import be.kwakeroni.parameters.basic.client.query.BasicExternalizer;
 import be.kwakeroni.parameters.basic.wireformat.raw.BasicRawWireFormat;
 
@@ -22,6 +23,6 @@ public class BasicRawWireFormatFactory implements ExternalizerFactory, Internali
 
     @Override
     public void registerInstance(InternalizerFactory.Registry registry) {
-        registry.register(WIRE_FORMAT);
+        registry.register(BasicInternalizer.class, WIRE_FORMAT);
     }
 }

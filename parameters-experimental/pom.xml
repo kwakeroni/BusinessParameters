@@ -22,19 +22,12 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>be.kwakeroni.parameters</groupId>
-                <artifactId>parameters-api</artifactId>
+                <groupId>be.kwakeroni.parameters.client</groupId>
+                <artifactId>parameters-client</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!--<dependency>-->
-                <!--<groupId>be.kwakeroni.parameters</groupId>-->
-                <!--<artifactId>parameters-connector</artifactId>-->
-                <!--<version>${project.version}</version>-->
-                <!--<type>pom</type>-->
-                <!--<scope>import</scope>-->
-            <!--</dependency>-->
             <dependency>
                 <groupId>be.kwakeroni.parameters.basic</groupId>
                 <artifactId>parameters-basic</artifactId>
@@ -53,11 +46,11 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
+            <groupId>be.kwakeroni.parameters.client</groupId>
             <artifactId>parameters-client-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-client</artifactId>
         </dependency>
     </dependencies>

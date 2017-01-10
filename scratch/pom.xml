@@ -21,15 +21,8 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>be.kwakeroni.parameters</groupId>
-                <artifactId>parameters-api</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>be.kwakeroni.parameters</groupId>
-                <artifactId>parameters-connector</artifactId>
+                <groupId>be.kwakeroni.parameters.client</groupId>
+                <artifactId>parameters-client</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -43,7 +36,7 @@
             </dependency>
             <dependency>
                 <groupId>be.kwakeroni.parameters.backend</groupId>
-                <artifactId>parameters-backend-inmemory</artifactId>
+                <artifactId>parameters-backend</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -52,29 +45,28 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
+            <groupId>be.kwakeroni.parameters.client</groupId>
             <artifactId>parameters-client-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-wireformat-raw</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
-            <artifactId>parameters-connector-direct</artifactId>
+            <groupId>be.kwakeroni.parameters.client</groupId>
+            <artifactId>parameters-client-direct</artifactId>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.backend</groupId>
-            <artifactId>parameters-backend-inmemory-service</artifactId>
+            <artifactId>parameters-backend-inmemory</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-inmemory</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
         <!--<dependency>-->
             <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->

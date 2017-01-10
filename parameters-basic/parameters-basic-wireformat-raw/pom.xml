@@ -3,28 +3,39 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>parameters-basic</artifactId>
         <groupId>be.kwakeroni.parameters.basic</groupId>
+        <artifactId>parameters-basic</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>be.kwakeroni.parameters</groupId>
     <artifactId>parameters-basic-wireformat-raw</artifactId>
+    <packaging>bundle</packaging>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-deps</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>parameters-basic-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>parameters-basic-backend</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.10</version>
         </dependency>
     </dependencies>
 

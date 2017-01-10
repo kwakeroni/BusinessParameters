@@ -10,27 +10,27 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>be.kwakeroni.parameters</groupId>
-    <artifactId>parameters-api</artifactId>
+    <groupId>be.kwakeroni.parameters.client</groupId>
+    <artifactId>parameters-client</artifactId>
     <packaging>pom</packaging>
 
-    <description>This module is the root of all Business Parameters API's.</description>
+    <description>This module is the root of all Business Parameters client libraries.</description>
 
     <modules>
         <module>parameters-client-api</module>
-        <module>parameters-backend-api</module>
+        <module>parameters-client-direct</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>be.kwakeroni.parameters</groupId>
                 <artifactId>parameters-client-api</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>be.kwakeroni.parameters</groupId>
-                <artifactId>parameters-backend-api</artifactId>
+                <artifactId>parameters-client-direct</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

@@ -12,7 +12,6 @@ import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.basic.client.model.Simple;
 
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.function.Function.identity;

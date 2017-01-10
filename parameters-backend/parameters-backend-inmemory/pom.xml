@@ -26,10 +26,9 @@
         </dependencies>
     </dependencyManagement>
 
-
     <dependencies>
         <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
+            <groupId>be.kwakeroni.parameters.backend</groupId>
             <artifactId>parameters-backend-api</artifactId>
         </dependency>
         <dependency>
@@ -37,14 +36,4 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

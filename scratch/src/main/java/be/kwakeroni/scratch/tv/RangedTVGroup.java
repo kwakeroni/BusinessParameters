@@ -3,7 +3,6 @@ package be.kwakeroni.scratch.tv;
 import be.kwakeroni.parameters.api.backend.BackendGroup;
 import be.kwakeroni.parameters.api.client.model.Parameter;
 import be.kwakeroni.parameters.api.client.model.ParameterGroup;
-import be.kwakeroni.parameters.backend.inmemory.InmemoryMappedGroup;
 import be.kwakeroni.parameters.backend.inmemory.InmemoryRangedGroup;
 import be.kwakeroni.parameters.backend.inmemory.InmemorySimpleGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;

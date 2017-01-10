@@ -66,4 +66,19 @@ public class MinimalTest {
         assertEquals(Range.of(Slot.atHalfPast(20), Slot.atHour(22)), entry.getValue(RangedTVGroup.SLOT));
         assertEquals("Morgen Maandag", entry.getValue(RangedTVGroup.PROGRAM));
     }
+
+    @Test
+    public void testMappedRangedValueQuery(){
+        assertEquals("Samson", getMappedRangedProgram(Dag.ZATERDAG, Slot.atHalfPast(11)));
+        assertEquals("Koers", getMappedRangedProgram(Dag.ZATERDAG, Slot.atHour(14)));
+        assertEquals("Morgen Maandag", getMappedRangedProgram(Dag.ZONDAG, Slot.atHour(21)));
+        assertEquals("Gisteren Zondag", getMappedRangedProgram(Dag.MAANDAG, Slot.atHour(21)));
+    }
+
+    private String getMappedRangedProgram(Dag day, Slot slot){
+        return environment.getBusinessParameters().get(MappedRangedTVGroup.instance(),
+                new MappedQuery<>(day, Dag::toString,
+                    new RangedQuery<>(slot, Slot::toString,
+                        new ValueQuery<>(MappedRangedTVGroup.PROGRAM))));
+    }
 }

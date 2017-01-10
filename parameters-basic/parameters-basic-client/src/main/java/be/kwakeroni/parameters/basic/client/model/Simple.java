@@ -14,6 +14,6 @@ public interface Simple extends EntryType {
 //    public default Entry getEntry() {
 //        return get(BasicQueries.entry());
 //    }
-
-    public <T> T get(Query<Simple, T> query);
+//
+//    public <T> T get(Query<Simple, T> query);
 }

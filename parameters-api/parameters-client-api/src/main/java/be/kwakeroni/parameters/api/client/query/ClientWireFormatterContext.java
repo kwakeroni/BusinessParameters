@@ -5,6 +5,6 @@ package be.kwakeroni.parameters.api.client.query;
  */
 public interface ClientWireFormatterContext {
 
-    <F extends ClientWireFormatter> F getWireFormatter(Class<F> type);
+    public <F extends ClientWireFormatter> F getWireFormatter(Class<F> type);
 
 }

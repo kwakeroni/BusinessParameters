@@ -9,6 +9,6 @@ import java.util.Optional;
  */
 public interface BackendWireFormatter {
 
-    <Q> Optional<Q> tryInternalize(BackendGroup<Q> group, Object query, BackendWireFormatterContext<Q> context);
+    public <Q> Optional<Q> tryInternalize(BackendGroup<Q> group, Object query, BackendWireFormatterContext<Q> context);
 
 }

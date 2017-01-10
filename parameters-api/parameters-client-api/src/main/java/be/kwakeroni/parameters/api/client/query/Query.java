@@ -7,8 +7,8 @@ import be.kwakeroni.parameters.api.client.model.EntryType;
  */
 public interface Query<ET extends EntryType, Result> {
 
-    Object externalize(ClientWireFormatterContext context);
+    public Object externalize(ClientWireFormatterContext context);
 
-    Result internalizeResult(Object result, ClientWireFormatterContext context);
+    public Result internalizeResult(Object result, ClientWireFormatterContext context);
 
 }

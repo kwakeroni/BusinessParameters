@@ -7,7 +7,7 @@ import java.util.Collection;
  */
 public interface BusinessParametersBackend {
 
-    Object get(String group, Object query);
+    public Object get(String group, Object query);
 
-    Collection<String> getGroupNames();
+    public Collection<String> getGroupNames();
 }

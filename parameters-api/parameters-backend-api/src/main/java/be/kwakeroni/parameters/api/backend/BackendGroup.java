@@ -5,7 +5,7 @@ package be.kwakeroni.parameters.api.backend;
  */
 public interface BackendGroup<Q> {
 
-    default <ES extends BackendGroup<Q>> ES as(Class<? super ES> type){
+    public default <ES extends BackendGroup<Q>> ES as(Class<? super ES> type){
         return (ES) type.cast(this);
     }
 

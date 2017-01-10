@@ -5,6 +5,7 @@ import be.kwakeroni.parameters.api.client.factory.BusinessParametersFactory;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendServiceFactory;
 import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
 import be.kwakeroni.scratch.tv.Dag;
+import be.kwakeroni.scratch.tv.MappedTVGroup;
 import be.kwakeroni.scratch.tv.SimpleTVGroup;
 import be.kwakeroni.scratch.tv.Slot;
 
@@ -50,5 +51,6 @@ public class Environment {
 
     private void initData(){
         this.backend.setGroupData(SimpleTVGroup.instance().getName(), SimpleTVGroup.getData(Dag.MAANDAG, Slot.atHour(20)));
+        this.backend.setGroupData(MappedTVGroup.instance().getName(), MappedTVGroup.getData(Dag.ZATERDAG, "Samson", Dag.ZONDAG, "Morgen Maandag"));
     }
 }

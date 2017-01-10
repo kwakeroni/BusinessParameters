@@ -26,7 +26,7 @@ public class InmemoryMappedGroup implements MappedBackendGroup<DataQuery<?>> {
 
     @Override
     public DataQuery<?> getEntryQuery(String keyValue, DataQuery<?> subQuery) {
-        return new IntermediateDataQuery<>(data -> data.filter(entryWithKey(keyValue)), subQuery);
+        return IntermediateDataQuery.filter(entryWithKey(keyValue), subQuery);
     }
 
     private Predicate<EntryData> entryWithKey(String keyValue) {

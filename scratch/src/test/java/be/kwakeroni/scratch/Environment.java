@@ -4,10 +4,7 @@ import be.kwakeroni.parameters.api.client.BusinessParameters;
 import be.kwakeroni.parameters.api.client.factory.BusinessParametersFactory;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendServiceFactory;
 import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
-import be.kwakeroni.scratch.tv.Dag;
-import be.kwakeroni.scratch.tv.MappedTVGroup;
-import be.kwakeroni.scratch.tv.SimpleTVGroup;
-import be.kwakeroni.scratch.tv.Slot;
+import be.kwakeroni.scratch.tv.*;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -50,7 +47,14 @@ public class Environment {
     }
 
     private void initData(){
-        this.backend.setGroupData(SimpleTVGroup.instance().getName(), SimpleTVGroup.getData(Dag.MAANDAG, Slot.atHour(20)));
-        this.backend.setGroupData(MappedTVGroup.instance().getName(), MappedTVGroup.getData(Dag.ZATERDAG, "Samson", Dag.ZONDAG, "Morgen Maandag"));
+        this.backend.setGroupData(SimpleTVGroup.instance().getName(),
+                SimpleTVGroup.getData(Dag.MAANDAG, Slot.atHour(20)));
+        this.backend.setGroupData(MappedTVGroup.instance().getName(),
+                MappedTVGroup.getData(Dag.ZATERDAG, "Samson",
+                                      Dag.ZONDAG, "Morgen Maandag"));
+        this.backend.setGroupData(RangedTVGroup.instance().getName(),
+                RangedTVGroup.getData(Slot.atHour(8), Slot.atHour(12), "Samson",
+                                      Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag"));
+
     }
 }

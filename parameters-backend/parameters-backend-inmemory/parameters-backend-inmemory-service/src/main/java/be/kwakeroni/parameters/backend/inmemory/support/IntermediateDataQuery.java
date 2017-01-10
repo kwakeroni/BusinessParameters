@@ -5,6 +5,7 @@ import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
@@ -29,6 +30,10 @@ public class IntermediateDataQuery<T> implements DataQuery<T> {
     @Override
     public Object externalizeResult(T result, BackendWireFormatterContext<? super DataQuery<?>> context) {
         return subQuery.externalizeResult(result, context);
+    }
+
+    public static <T> IntermediateDataQuery<T> filter(Predicate<? super EntryData> filter, DataQuery<T> subQuery) {
+        return new IntermediateDataQuery<>(data -> data.filter(filter), subQuery);
     }
 
 }

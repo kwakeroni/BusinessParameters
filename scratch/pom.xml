@@ -70,7 +70,7 @@
         </dependency>
         <!--<dependency>-->
             <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
-            <!--<artifactId>parameters-basic-client-model</artifactId>-->
+            <!--<artifactId>parameters-basic-api-model</artifactId>-->
         <!--</dependency>-->
         <!--<dependency>-->
             <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
@@ -81,12 +81,12 @@
             <!--<artifactId>parameters-basic-wireformat-raw</artifactId>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>be.kwakeroni.parameters.backend</groupId>-->
-            <!--<artifactId>parameters-backend-inmemory-service</artifactId>-->
+            <!--<groupId>be.kwakeroni.parameters.api</groupId>-->
+            <!--<artifactId>parameters-api-inmemory-service</artifactId>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>be.kwakeroni.parameters.backend</groupId>-->
-            <!--<artifactId>parameters-backend-inmemory-basic</artifactId>-->
+            <!--<groupId>be.kwakeroni.parameters.api</groupId>-->
+            <!--<artifactId>parameters-api-inmemory-basic</artifactId>-->
         <!--</dependency>-->
         <dependency>
             <groupId>org.slf4j</groupId>

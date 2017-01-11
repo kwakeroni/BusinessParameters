@@ -60,7 +60,7 @@ public enum ExternalQuery {
     };
 
     public final String getDiscriminator() {
-        return "be.kwakeroni.parameters.client.basic$" + name();
+        return "be.kwakeroni.parameters.api.basic$" + name();
     }
 
     public abstract <Q> Q internalize(Map<String, Object> rawQuery, EntrySet<Q> entrySet, InternalizationContext<Q> context);

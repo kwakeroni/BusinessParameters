@@ -1,7 +1,7 @@
 package be.kwakeroni.parameters.basic.wireformat.raw.factory;
 
-import be.kwakeroni.parameters.api.backend.factory.BackendWireFormatterFactory;
-import be.kwakeroni.parameters.api.client.factory.ClientWireFormatterFactory;
+import be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory;
+import be.kwakeroni.parameters.client.api.factory.ClientWireFormatterFactory;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
 import be.kwakeroni.parameters.basic.client.query.BasicClientWireFormatter;
 import be.kwakeroni.parameters.basic.wireformat.raw.BasicRawWireFormat;

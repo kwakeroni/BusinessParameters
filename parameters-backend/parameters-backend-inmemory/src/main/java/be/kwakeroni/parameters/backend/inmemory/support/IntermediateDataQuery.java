@@ -1,6 +1,6 @@
 package be.kwakeroni.parameters.backend.inmemory.support;
 
-import be.kwakeroni.parameters.api.backend.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 

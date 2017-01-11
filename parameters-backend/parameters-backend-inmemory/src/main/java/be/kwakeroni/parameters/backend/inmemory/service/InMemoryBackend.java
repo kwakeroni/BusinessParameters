@@ -1,7 +1,7 @@
 package be.kwakeroni.parameters.backend.inmemory.service;
 
-import be.kwakeroni.parameters.api.backend.BusinessParametersBackend;
-import be.kwakeroni.parameters.api.backend.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import org.slf4j.Logger;

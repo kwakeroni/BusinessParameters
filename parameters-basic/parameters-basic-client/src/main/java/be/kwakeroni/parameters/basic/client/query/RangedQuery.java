@@ -1,8 +1,8 @@
 package be.kwakeroni.parameters.basic.client.query;
 
-import be.kwakeroni.parameters.api.client.model.EntryType;
-import be.kwakeroni.parameters.api.client.query.ClientWireFormatterContext;
-import be.kwakeroni.parameters.api.client.query.Query;
+import be.kwakeroni.parameters.client.api.model.EntryType;
+import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
+import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.basic.client.model.Ranged;
 
 import java.util.Objects;

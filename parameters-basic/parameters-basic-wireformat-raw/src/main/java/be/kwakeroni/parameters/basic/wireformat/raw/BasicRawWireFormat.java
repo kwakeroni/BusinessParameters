@@ -1,8 +1,8 @@
 package be.kwakeroni.parameters.basic.wireformat.raw;
 
-import be.kwakeroni.parameters.api.backend.BackendGroup;
-import be.kwakeroni.parameters.api.backend.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.api.client.query.ClientWireFormatterContext;
+import be.kwakeroni.parameters.backend.api.BackendGroup;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
 import be.kwakeroni.parameters.basic.client.model.Entry;
 import be.kwakeroni.parameters.basic.client.query.*;

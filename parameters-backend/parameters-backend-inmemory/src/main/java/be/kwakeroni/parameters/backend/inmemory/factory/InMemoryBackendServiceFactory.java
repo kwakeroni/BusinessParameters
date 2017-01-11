@@ -1,8 +1,8 @@
 package be.kwakeroni.parameters.backend.inmemory.factory;
 
-import be.kwakeroni.parameters.api.backend.BusinessParametersBackend;
-import be.kwakeroni.parameters.api.backend.factory.BusinessParametersBackendFactory;
-import be.kwakeroni.parameters.api.backend.factory.BackendWireFormatterFactory;
+import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
+import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
+import be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory;
 import be.kwakeroni.parameters.backend.inmemory.service.DefaultBackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
 

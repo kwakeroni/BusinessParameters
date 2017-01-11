@@ -1,6 +1,6 @@
 package be.kwakeroni.parameters.backend.inmemory.api;
 
-import be.kwakeroni.parameters.api.backend.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 
 import java.util.Optional;
 import java.util.stream.Stream;

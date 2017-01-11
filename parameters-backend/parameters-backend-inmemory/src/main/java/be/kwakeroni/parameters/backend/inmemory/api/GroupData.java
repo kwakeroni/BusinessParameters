@@ -1,6 +1,6 @@
 package be.kwakeroni.parameters.backend.inmemory.api;
 
-import be.kwakeroni.parameters.api.backend.BackendGroup;
+import be.kwakeroni.parameters.backend.api.BackendGroup;
 
 import java.util.stream.Stream;
 

@@ -1,10 +1,10 @@
 package be.kwakeroni.scratch.tv;
 
-import be.kwakeroni.parameters.api.backend.BackendGroup;
-import be.kwakeroni.parameters.api.client.model.Parameter;
-import be.kwakeroni.parameters.api.client.model.ParameterGroup;
-import be.kwakeroni.parameters.backend.inmemory.InmemoryRangedGroup;
-import be.kwakeroni.parameters.backend.inmemory.InmemorySimpleGroup;
+import be.kwakeroni.parameters.backend.api.BackendGroup;
+import be.kwakeroni.parameters.client.api.model.Parameter;
+import be.kwakeroni.parameters.client.api.model.ParameterGroup;
+import be.kwakeroni.parameters.basic.backend.inmemory.InmemoryRangedGroup;
+import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;

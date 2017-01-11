@@ -1,7 +1,7 @@
 package be.kwakeroni.scratch;
 
-import be.kwakeroni.parameters.api.client.BusinessParameters;
-import be.kwakeroni.parameters.api.client.factory.BusinessParametersFactory;
+import be.kwakeroni.parameters.client.api.BusinessParameters;
+import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendServiceFactory;
 import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
 import be.kwakeroni.scratch.tv.*;

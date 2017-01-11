@@ -36,8 +36,8 @@
                 <scope>import</scope>
             </dependency>
             <!--<dependency>-->
-                <!--<groupId>be.kwakeroni.parameters.backend</groupId>-->
-                <!--<artifactId>parameters-backend-inmemory</artifactId>-->
+                <!--<groupId>be.kwakeroni.parameters.api</groupId>-->
+                <!--<artifactId>parameters-api-inmemory</artifactId>-->
                 <!--<version>${project.version}</version>-->
                 <!--<type>pom</type>-->
                 <!--<scope>import</scope>-->

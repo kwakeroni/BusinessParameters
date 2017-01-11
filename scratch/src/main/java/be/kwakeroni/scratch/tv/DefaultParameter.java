@@ -1,6 +1,6 @@
 package be.kwakeroni.scratch.tv;
 
-import be.kwakeroni.parameters.api.client.model.Parameter;
+import be.kwakeroni.parameters.client.api.model.Parameter;
 
 import java.util.function.Function;
 

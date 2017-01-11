@@ -1,7 +1,7 @@
 package be.kwakeroni.parameters.basic.client.query;
 
-import be.kwakeroni.parameters.api.client.query.ClientWireFormatterContext;
-import be.kwakeroni.parameters.api.client.query.ClientWireFormatter;
+import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
+import be.kwakeroni.parameters.client.api.query.ClientWireFormatter;
 import be.kwakeroni.parameters.basic.client.model.Entry;
 
 /**

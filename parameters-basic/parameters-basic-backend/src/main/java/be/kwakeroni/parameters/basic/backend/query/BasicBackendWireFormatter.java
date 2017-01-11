@@ -1,9 +1,9 @@
 package be.kwakeroni.parameters.basic.backend.query;
 
 
-import be.kwakeroni.parameters.api.backend.BackendGroup;
-import be.kwakeroni.parameters.api.backend.query.BackendWireFormatter;
-import be.kwakeroni.parameters.api.backend.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.api.BackendGroup;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatter;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 
 import java.util.Map;
 

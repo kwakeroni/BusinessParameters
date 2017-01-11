@@ -1,7 +1,7 @@
 package be.kwakeroni.parameters.basic.backend.inmemory;
 
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
 
@@ -11,11 +11,11 @@ import java.util.stream.Stream;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-class ValueDataQuery implements DataQuery<String> {
+class ValueInMemoryQuery implements InMemoryQuery<String> {
 
     private final String parameterName;
 
-    ValueDataQuery(String parameterName) {
+    ValueInMemoryQuery(String parameterName) {
         this.parameterName = parameterName;
     }
 
@@ -26,7 +26,7 @@ class ValueDataQuery implements DataQuery<String> {
     }
 
     @Override
-    public Object externalizeResult(String result, BackendWireFormatterContext<? super DataQuery<?>> context) {
+    public Object externalizeResult(String result, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
         return context.getWireFormatter(BasicBackendWireFormatter.class).externalizeValueResult(result);
     }
 }

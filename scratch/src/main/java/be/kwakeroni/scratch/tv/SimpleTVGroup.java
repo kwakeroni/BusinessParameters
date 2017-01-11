@@ -3,7 +3,7 @@ package be.kwakeroni.scratch.tv;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
-import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
@@ -42,7 +42,7 @@ public class SimpleTVGroup implements ParameterGroup<Simple> {
             }
 
             @Override
-            public BackendGroup<DataQuery<?>> getGroup() {
+            public BackendGroup<InMemoryQuery<?>> getGroup() {
                 return group;
             }
         };

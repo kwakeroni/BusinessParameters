@@ -10,5 +10,5 @@ import java.util.stream.Stream;
 public interface GroupData {
 
     Stream<EntryData> getEntries();
-    BackendGroup<DataQuery<?>> getGroup();
+    BackendGroup<InMemoryQuery<?>> getGroup();
 }

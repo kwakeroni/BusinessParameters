@@ -1,6 +1,6 @@
 package be.kwakeroni.parameters.basic.backend.inmemory;
 
-import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.basic.backend.query.SimpleBackendGroup;
 
@@ -10,16 +10,16 @@ import java.util.function.BinaryOperator;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class InmemorySimpleGroup implements SimpleBackendGroup<DataQuery<?>> {
+public class InmemorySimpleGroup implements SimpleBackendGroup<InMemoryQuery<?>> {
 
     @Override
-    public DataQuery<Map<String, String>> getEntryQuery() {
-        return EntryDataQuery.INSTANCE;
+    public InMemoryQuery<Map<String, String>> getEntryQuery() {
+        return EntryInMemoryQuery.INSTANCE;
     }
 
     @Override
-    public DataQuery<String> getValueQuery(String parameterName) {
-        return new ValueDataQuery(parameterName);
+    public InMemoryQuery<String> getValueQuery(String parameterName) {
+        return new ValueInMemoryQuery(parameterName);
     }
 
     static BinaryOperator<EntryData> atMostOne() {

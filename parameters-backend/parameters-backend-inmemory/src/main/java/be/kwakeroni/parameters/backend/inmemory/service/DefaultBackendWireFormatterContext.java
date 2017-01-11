@@ -1,7 +1,7 @@
 package be.kwakeroni.parameters.backend.inmemory.service;
 
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatter;
-import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 
@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class DefaultBackendWireFormatterContext implements BackendWireFormatterContext<DataQuery<?>> {
+public class DefaultBackendWireFormatterContext implements BackendWireFormatterContext<InMemoryQuery<?>> {
 
     private final Map<Class<?>, BackendWireFormatter> formatters = new HashMap<>(2);
 
@@ -19,7 +19,7 @@ public class DefaultBackendWireFormatterContext implements BackendWireFormatterC
     }
 
     @Override
-    public DataQuery<?> internalize(BackendGroup<DataQuery<?>> group, Object query) {
+    public InMemoryQuery<?> internalize(BackendGroup<InMemoryQuery<?>> group, Object query) {
         if (this.formatters.isEmpty()){
             throw new IllegalStateException("No formatters registered");
         }

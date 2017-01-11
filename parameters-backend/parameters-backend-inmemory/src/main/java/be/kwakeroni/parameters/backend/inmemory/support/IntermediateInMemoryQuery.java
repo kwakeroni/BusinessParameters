@@ -1,7 +1,7 @@
 package be.kwakeroni.parameters.backend.inmemory.support;
 
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 
 import java.util.Optional;
@@ -12,12 +12,12 @@ import java.util.stream.Stream;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class IntermediateDataQuery<T> implements DataQuery<T> {
+public class IntermediateInMemoryQuery<T> implements InMemoryQuery<T> {
 
-    private final DataQuery<T> subQuery;
+    private final InMemoryQuery<T> subQuery;
     private final UnaryOperator<Stream<EntryData>> operator;
 
-    public IntermediateDataQuery(UnaryOperator<Stream<EntryData>> operator, DataQuery<T> subQuery) {
+    public IntermediateInMemoryQuery(UnaryOperator<Stream<EntryData>> operator, InMemoryQuery<T> subQuery) {
         this.operator = operator;
         this.subQuery = subQuery;
     }
@@ -28,12 +28,12 @@ public class IntermediateDataQuery<T> implements DataQuery<T> {
     }
 
     @Override
-    public Object externalizeResult(T result, BackendWireFormatterContext<? super DataQuery<?>> context) {
+    public Object externalizeResult(T result, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
         return subQuery.externalizeResult(result, context);
     }
 
-    public static <T> IntermediateDataQuery<T> filter(Predicate<? super EntryData> filter, DataQuery<T> subQuery) {
-        return new IntermediateDataQuery<>(data -> data.filter(filter), subQuery);
+    public static <T> IntermediateInMemoryQuery<T> filter(Predicate<? super EntryData> filter, InMemoryQuery<T> subQuery) {
+        return new IntermediateInMemoryQuery<>(data -> data.filter(filter), subQuery);
     }
 
 }

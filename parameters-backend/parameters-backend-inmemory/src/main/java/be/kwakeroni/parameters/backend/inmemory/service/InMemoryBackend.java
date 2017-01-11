@@ -2,7 +2,7 @@ package be.kwakeroni.parameters.backend.inmemory.service;
 
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.backend.inmemory.api.DataQuery;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +20,13 @@ public class InMemoryBackend implements BusinessParametersBackend {
     Logger LOG = LoggerFactory.getLogger(InMemoryBackend.class);
 
     private final Map<String, GroupData> data;
-    private final BackendWireFormatterContext<DataQuery<?>> wireFormatterContext;
+    private final BackendWireFormatterContext<InMemoryQuery<?>> wireFormatterContext;
 
-    public InMemoryBackend(BackendWireFormatterContext<DataQuery<?>> context) {
+    public InMemoryBackend(BackendWireFormatterContext<InMemoryQuery<?>> context) {
         this(new HashMap<>(), context);
     }
 
-    private InMemoryBackend(Map<String, GroupData> data, BackendWireFormatterContext<DataQuery<?>> context) {
+    private InMemoryBackend(Map<String, GroupData> data, BackendWireFormatterContext<InMemoryQuery<?>> context) {
         this.data = data;
         this.wireFormatterContext = context;
     }
@@ -45,13 +45,13 @@ public class InMemoryBackend implements BusinessParametersBackend {
     public Object get(String group, Object queryObject) {
         GroupData groupData = getGroupData(group);
         System.out.println("Internalizing query {}" + queryObject);
-        DataQuery<?> query = wireFormatterContext.internalize(groupData.getGroup(), queryObject);
+        InMemoryQuery<?> query = wireFormatterContext.internalize(groupData.getGroup(), queryObject);
         Object result = getExternalResult(query, group, groupData);
         System.out.println("Returning result {}" + result + " for query {}" + query);
         return result;
     }
 
-    private <T> Object getExternalResult(DataQuery<T> query, String group, GroupData groupData){
+    private <T> Object getExternalResult(InMemoryQuery<T> query, String group, GroupData groupData){
         System.out.println("Executing query {}" + query +" on {}" + group);
         T result = query.apply(groupData.getEntries()).orElse(null);
         System.out.println("Query on {}" + group + " has result {}" + result);

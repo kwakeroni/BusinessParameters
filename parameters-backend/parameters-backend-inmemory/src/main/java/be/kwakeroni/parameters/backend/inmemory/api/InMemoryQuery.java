@@ -8,9 +8,9 @@ import java.util.stream.Stream;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public interface DataQuery<T> {
+public interface InMemoryQuery<T> {
 
     Optional<T> apply(Stream<EntryData> stream);
 
-    Object externalizeResult(T result, BackendWireFormatterContext<? super DataQuery<?>> context);
+    Object externalizeResult(T result, BackendWireFormatterContext<? super InMemoryQuery<?>> context);
 }

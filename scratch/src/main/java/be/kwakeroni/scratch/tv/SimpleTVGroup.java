@@ -26,8 +26,8 @@ public class SimpleTVGroup implements ParameterGroup<Simple> {
         return "tv.simple";
     }
 
-    public static Parameter<Dag> DAY = new DefaultParameter<>("day", Dag::valueOf, Dag::name);
-    public static Parameter<Slot> SLOT = new DefaultParameter<>("slot", Slot::fromString, Slot::toString);
+    public static Parameter<Dag> DAY = new DefaultParameter<>("day", Dag.type);
+    public static Parameter<Slot> SLOT = new DefaultParameter<>("slot", Slot.type);
 
     // For test purposes
     public static final GroupData getData(Dag dag, Slot slot){

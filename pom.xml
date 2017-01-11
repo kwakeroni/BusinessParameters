@@ -16,6 +16,7 @@
         <module>parameters-client</module>
         <module>parameters-deps</module>
         <module>parameters-experimental</module>
+        <module>parameters-types</module>
         <module>scratch</module>
     </modules>
 

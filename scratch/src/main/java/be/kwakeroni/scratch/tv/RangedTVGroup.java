@@ -16,7 +16,7 @@ import be.kwakeroni.parameters.basic.client.support.Ranges;
 
 import java.util.stream.Stream;
 
-import static java.util.function.Function.identity;
+import static be.kwakeroni.parameters.types.support.ParameterTypes.*;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -31,7 +31,7 @@ public class RangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>> {
     }
 
     public static Parameter<Range<Slot>> SLOT = new DefaultParameter<>("slot", Ranges.fromStringOf(Slot::fromString), Ranges.toStringOf(Slot::toString));
-    public static Parameter<String> PROGRAM = new DefaultParameter<>("program", identity(), identity());
+    public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
 
     // For test purposes
     private static EntryData entryData(Slot from, Slot to, String program){

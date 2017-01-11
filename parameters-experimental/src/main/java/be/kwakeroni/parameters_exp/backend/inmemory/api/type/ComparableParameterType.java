@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.backend.inmemory.api.type;
+package be.kwakeroni.parameters_exp.backend.inmemory.api.type;
 
 import java.util.Comparator;
 import java.util.function.Function;

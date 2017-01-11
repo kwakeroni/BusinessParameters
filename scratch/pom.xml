@@ -21,6 +21,13 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>be.kwakeroni.parameters.client</groupId>
+                <artifactId>parameters-client</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>be.kwakeroni.parameters.basic</groupId>
                 <artifactId>parameters-basic</artifactId>
                 <version>${project.version}</version>
@@ -29,7 +36,7 @@
             </dependency>
             <dependency>
                 <groupId>be.kwakeroni.parameters.backend</groupId>
-                <artifactId>parameters-backend-inmemory</artifactId>
+                <artifactId>parameters-backend</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -42,28 +49,48 @@
             <artifactId>parameters-client-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.kwakeroni.parameters.client</groupId>
-            <artifactId>parameters-client-model</artifactId>
-        </dependency>
-        <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
-            <artifactId>parameters-basic-client-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.kwakeroni.parameters.basic</groupId>
-            <artifactId>parameters-basic-wireformat-standard</artifactId>
+            <artifactId>parameters-basic-client</artifactId>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-wireformat-raw</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.kwakeroni.parameters.backend</groupId>
-            <artifactId>parameters-backend-inmemory-service</artifactId>
+            <groupId>be.kwakeroni.parameters.client</groupId>
+            <artifactId>parameters-client-direct</artifactId>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.backend</groupId>
-            <artifactId>parameters-backend-inmemory-basic</artifactId>
+            <artifactId>parameters-backend-inmemory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-inmemory</artifactId>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
+            <!--<artifactId>parameters-basic-api-model</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
+            <!--<artifactId>parameters-basic-wireformat-standard</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
+            <!--<artifactId>parameters-basic-wireformat-raw</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>be.kwakeroni.parameters.api</groupId>-->
+            <!--<artifactId>parameters-api-inmemory-service</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>be.kwakeroni.parameters.api</groupId>-->
+            <!--<artifactId>parameters-api-inmemory-basic</artifactId>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

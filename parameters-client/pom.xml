@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://maven.apache.org/POM/4.0.0         http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -13,31 +14,26 @@
     <artifactId>parameters-client</artifactId>
     <packaging>pom</packaging>
 
-    <description>This module is the root of all client application access modules.</description>
+    <description>This module is the root of all Business Parameters client libraries.</description>
 
     <modules>
         <module>parameters-client-api</module>
-        <module>parameters-client-model</module>
-        <module>parameters-client-connector</module>
+        <module>parameters-client-direct</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>be.kwakeroni.parameters.client</groupId>
-                <artifactId>parameters-client-model</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>be.kwakeroni.parameters.client</groupId>
                 <artifactId>parameters-client-api</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>be.kwakeroni.parameters.client</groupId>
-                <artifactId>parameters-client-connector</artifactId>
+                <artifactId>parameters-client-direct</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 </project>

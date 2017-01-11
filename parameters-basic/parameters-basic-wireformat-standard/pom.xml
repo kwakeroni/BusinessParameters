@@ -15,12 +15,12 @@
 
     <dependencies>
         <!--<dependency>-->
-        <!--<groupId>be.kwakeroni.parameters.client</groupId>-->
-        <!--<artifactId>parameters-client-api</artifactId>-->
+        <!--<groupId>be.kwakeroni.parameters.api</groupId>-->
+        <!--<artifactId>parameters-api-api</artifactId>-->
         <!--</dependency>-->
         <!--<dependency>-->
-        <!--<groupId>be.kwakeroni.parameters.client</groupId>-->
-        <!--<artifactId>parameters-client-model</artifactId>-->
+        <!--<groupId>be.kwakeroni.parameters.api</groupId>-->
+        <!--<artifactId>parameters-api-model</artifactId>-->
         <!--</dependency>-->
         <dependency>
             <groupId>be.kwakeroni.parameters.client</groupId>

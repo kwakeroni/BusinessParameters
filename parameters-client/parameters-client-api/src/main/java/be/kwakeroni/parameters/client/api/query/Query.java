@@ -1,13 +1,14 @@
 package be.kwakeroni.parameters.client.api.query;
 
-import be.kwakeroni.parameters.client.api.externalize.ExternalizationContext;
-import be.kwakeroni.parameters.client.model.EntryType;
+import be.kwakeroni.parameters.client.api.model.EntryType;
 
 /**
  * Created by kwakeroni on 6/05/2016.
  */
 public interface Query<ET extends EntryType, Result> {
 
-    Object externalize(ExternalizationContext context);
+    public Object externalize(ClientWireFormatterContext context);
+
+    public Result internalizeResult(Object result, ClientWireFormatterContext context);
 
 }

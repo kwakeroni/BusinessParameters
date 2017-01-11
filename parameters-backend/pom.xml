@@ -16,11 +16,22 @@
     <description>This module is the root of all client application access modules.</description>
 
     <modules>
+        <module>parameters-backend-api</module>
         <module>parameters-backend-inmemory</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <artifactId>parameters-backend-api</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>parameters-backend-inmemory</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

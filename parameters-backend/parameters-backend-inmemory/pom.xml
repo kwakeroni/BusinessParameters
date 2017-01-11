@@ -10,34 +10,30 @@
     </parent>
 
     <artifactId>parameters-backend-inmemory</artifactId>
-    <packaging>pom</packaging>
+    <packaging>bundle</packaging>
 
     <description>Provides an in-memory backend to Business Parameters for testing purposes.</description>
-
-    <modules>
-        <module>parameters-backend-inmemory-api</module>
-        <module>parameters-backend-inmemory-basic</module>
-        <module>parameters-backend-inmemory-service</module>
-    </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>be.kwakeroni.parameters.backend</groupId>
-                <artifactId>parameters-backend-inmemory-api</artifactId>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-deps</artifactId>
+                <type>pom</type>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>be.kwakeroni.parameters.backend</groupId>
-                <artifactId>parameters-backend-inmemory-basic</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>be.kwakeroni.parameters.backend</groupId>
-                <artifactId>parameters-backend-inmemory-service</artifactId>
-                <version>${project.version}</version>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.backend</groupId>
+            <artifactId>parameters-backend-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+    </dependencies>
 </project>

@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class Slot implements Comparable<Slot> {
 
-    public static final ParameterType<Slot> type = ParameterTypes.of(Slot::fromString, Slot::toString);
+    public static final ParameterType<Slot> type = ParameterTypes.of(Slot.class, Slot::fromString, Slot::toString);
 
     private final int hour;
     private final boolean halfPast;

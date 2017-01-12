@@ -1,6 +1,7 @@
 package be.kwakeroni.scratch.tv;
 
 import be.kwakeroni.parameters.client.api.model.Parameter;
+import be.kwakeroni.parameters.types.api.ParameterType;
 
 import java.util.function.Function;
 
@@ -12,6 +13,10 @@ public final class DefaultParameter<T> implements Parameter<T> {
     private final String name;
     private final Function<T, String> toString;
     private final Function<String, T> fromString;
+
+    public DefaultParameter(String name, ParameterType<T> type){
+        this(name, type::fromString, type::toString);
+    }
 
     public DefaultParameter(String name, Function<String, T> fromString, Function<T, String> toString) {
         this.fromString = fromString;

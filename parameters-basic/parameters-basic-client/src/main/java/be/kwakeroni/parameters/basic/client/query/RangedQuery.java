@@ -4,6 +4,7 @@ import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.basic.client.model.Ranged;
+import be.kwakeroni.parameters.types.api.ParameterType;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -16,6 +17,10 @@ public class RangedQuery<V, ET extends EntryType, T> implements Query<Ranged<V, 
     private final V value;
     private final Function<? super V, String> type;
     private final Query<ET, T> subQuery;
+
+    public RangedQuery(V value, ParameterType<V> valueType, Query<ET, T> subQuery) {
+        this(value, valueType::toString, subQuery);
+    }
 
     public RangedQuery(V value, Function<? super V, String> type, Query<ET, T> subQuery) {
         this.value = Objects.requireNonNull(value, "value");

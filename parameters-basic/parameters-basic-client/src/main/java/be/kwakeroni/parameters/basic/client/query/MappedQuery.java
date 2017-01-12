@@ -4,6 +4,7 @@ import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.basic.client.model.Mapped;
+import be.kwakeroni.parameters.types.api.ParameterType;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -16,6 +17,10 @@ public class MappedQuery<K, ET extends EntryType, T> implements Query<Mapped<K, 
     private final K key;
     private final Function<? super K, String> keyStringConverter;
     private final Query<ET, T> subQuery;
+
+    public MappedQuery(K key, ParameterType<K> keyType, Query<ET, T> subQuery){
+        this(key, keyType::toString, subQuery);
+    }
 
     public MappedQuery(K key, Function<? super K, String> keyStringConverter, Query<ET, T> subQuery) {
         this.key = Objects.requireNonNull(key, "key");

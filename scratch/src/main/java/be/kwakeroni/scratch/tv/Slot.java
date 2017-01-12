@@ -1,5 +1,8 @@
 package be.kwakeroni.scratch.tv;
 
+import be.kwakeroni.parameters.types.api.ParameterType;
+import be.kwakeroni.parameters.types.support.ParameterTypes;
+
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,6 +11,8 @@ import java.util.regex.Pattern;
  * (C) 2016 Maarten Van Puymbroeck
  */
 public class Slot implements Comparable<Slot> {
+
+    public static final ParameterType<Slot> type = ParameterTypes.of(Slot.class, Slot::fromString, Slot::toString);
 
     private final int hour;
     private final boolean halfPast;
@@ -55,8 +60,6 @@ public class Slot implements Comparable<Slot> {
         }
         throw new IllegalArgumentException("Incorrect Slot format: " + string);
     }
-
-//    public static ComparableParameterType<Slot> TYPE = ComparableParameterType.of(Slot::toString, Slot::fromString);
 
     public static Slot atHour(int hour) {
         return new Slot(hour, false);

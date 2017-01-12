@@ -6,6 +6,8 @@ import be.kwakeroni.parameters.basic.client.query.EntryQuery;
 import be.kwakeroni.parameters.basic.client.query.MappedQuery;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
+import be.kwakeroni.parameters.types.api.ParameterType;
+import be.kwakeroni.parameters.types.support.ParameterTypes;
 import be.kwakeroni.scratch.tv.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,7 +38,7 @@ public class MinimalTest {
     @Test
     public void testMappedValueQuery(){
         String program = environment.getBusinessParameters().get(MappedTVGroup.instance(),
-                new MappedQuery<>(Dag.ZATERDAG, Dag::toString,
+                new MappedQuery<>(Dag.ZATERDAG, Dag.type,
                         new ValueQuery<>(MappedTVGroup.PROGRAM)));
         assertEquals("Samson", program);
     }
@@ -44,7 +46,7 @@ public class MinimalTest {
     @Test
     public void testMappedEntryQuery(){
         Entry entry = environment.getBusinessParameters().get(MappedTVGroup.instance(),
-                new MappedQuery<>(Dag.ZONDAG, Dag::toString,
+                new MappedQuery<>(Dag.ZONDAG, Dag.type,
                         new EntryQuery()));
         assertEquals(Dag.ZONDAG, entry.getValue(MappedTVGroup.DAY));
         assertEquals("Morgen Maandag", entry.getValue(MappedTVGroup.PROGRAM));
@@ -53,7 +55,7 @@ public class MinimalTest {
     @Test
     public void testRangedValueQuery(){
         String program = environment.getBusinessParameters().get(RangedTVGroup.instance(),
-                new RangedQuery<>(Slot.atHalfPast(9), Slot::toString,
+                new RangedQuery<>(Slot.atHalfPast(9), Slot.type,
                         new ValueQuery<>(RangedTVGroup.PROGRAM)));
         assertEquals("Samson", program);
     }
@@ -61,7 +63,7 @@ public class MinimalTest {
     @Test
     public void testRangedEntryQuery(){
         Entry entry = environment.getBusinessParameters().get(RangedTVGroup.instance(),
-                new RangedQuery<>(Slot.atHour(21), Slot::toString,
+                new RangedQuery<>(Slot.atHour(21), Slot.type,
                         new EntryQuery()));
         assertEquals(Range.of(Slot.atHalfPast(20), Slot.atHour(22)), entry.getValue(RangedTVGroup.SLOT));
         assertEquals("Morgen Maandag", entry.getValue(RangedTVGroup.PROGRAM));
@@ -77,8 +79,9 @@ public class MinimalTest {
 
     private String getMappedRangedProgram(Dag day, Slot slot){
         return environment.getBusinessParameters().get(MappedRangedTVGroup.instance(),
-                new MappedQuery<>(day, Dag::toString,
-                    new RangedQuery<>(slot, Slot::toString,
+                new MappedQuery<>(day, Dag.type,
+                    new RangedQuery<>(slot, Slot.type,
                         new ValueQuery<>(MappedRangedTVGroup.PROGRAM))));
     }
+
 }

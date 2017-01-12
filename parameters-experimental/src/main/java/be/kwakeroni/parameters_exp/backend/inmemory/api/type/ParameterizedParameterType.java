@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.backend.inmemory.api.type;
+package be.kwakeroni.parameters_exp.backend.inmemory.api.type;
 
 import java.util.function.Function;
 
@@ -29,4 +29,13 @@ public interface ParameterizedParameterType<T> extends ParameterType<T> {
             }
         };
     }
+
+//    experimental from Ranges class:
+//    public static <T> ParameterizedParameterType<Range<T>> rangeOfType(ComparableParameterType<T> type) {
+//        return ParameterizedParameterType.of(
+//                toString(type::convertToString),
+//                fromString(type::convertFromString, type::compare),
+//                type
+//        );
+//    }
 }

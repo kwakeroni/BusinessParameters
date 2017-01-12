@@ -60,7 +60,5 @@ enum JavaLangType implements ParameterType {
         public String toString(Object value) {
             return Character.toString((char) value);
         }
-    }
-
-    ;
+    };
 }

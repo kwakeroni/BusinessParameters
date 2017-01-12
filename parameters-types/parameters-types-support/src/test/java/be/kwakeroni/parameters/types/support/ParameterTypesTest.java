@@ -8,7 +8,6 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 import static be.kwakeroni.parameters.types.support.ParameterTypes.*;
@@ -25,7 +24,8 @@ public class ParameterTypesTest<T> {
     private static final ParameterType<byte[]> BYTE_ARRAY = ParameterTypes.of(byte[].class, String::getBytes, String::new);
     private static final ParameterType<byte[]> ANONYMOUS = ParameterTypes.of(String::getBytes, String::new);
 
-    static { System.out.println(Integer.toHexString(199));
+    static {
+        System.out.println(Integer.toHexString(199));
         expectMapping(STRING, "myString", "myString");
         expectMapping(INT, 18, "18");
         expectMapping(LONG, 18L, "18");
@@ -47,12 +47,12 @@ public class ParameterTypesTest<T> {
     public String stringValue;
 
     @Test
-    public void testToString(){
+    public void testToString() {
         assertThat(type.toString(value)).isEqualTo(stringValue);
     }
 
     @Test
-    public void testFromString(){
+    public void testFromString() {
         assertThat(type.fromString(stringValue)).isEqualTo(value);
     }
 

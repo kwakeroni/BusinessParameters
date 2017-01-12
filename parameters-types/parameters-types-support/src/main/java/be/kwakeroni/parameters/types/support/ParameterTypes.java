@@ -15,15 +15,15 @@ public interface ParameterTypes {
     public static ParameterType<Boolean> BOOLEAN = JavaLangType.BOOLEAN;
     public static ParameterType<Character> CHAR = JavaLangType.CHAR;
 
-    public static <E extends Enum<E>> ParameterType<E> ofEnum(Class<E> type){
+    public static <E extends Enum<E>> ParameterType<E> ofEnum(Class<E> type) {
         return new EnumType<>(type);
     }
 
-    public static <T> ParameterType<T> of(Class<T> type, Function<? super String, ? extends T> fromString, Function<? super T, String> toString){
+    public static <T> ParameterType<T> of(Class<T> type, Function<? super String, ? extends T> fromString, Function<? super T, String> toString) {
         return new AdhocType<>(type, fromString, toString);
     }
 
-    public static <T> ParameterType<T> of(Function<? super String, ? extends T> fromString, Function<? super T, String> toString){
+    public static <T> ParameterType<T> of(Function<? super String, ? extends T> fromString, Function<? super T, String> toString) {
         return new AdhocType<>(fromString, toString);
     }
 

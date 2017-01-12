@@ -35,7 +35,7 @@ class AdhocType<T> implements ParameterType<T> {
     }
 
     @Override
-    public String toString(){
-        return "ADHOC[" + ((type==null)? "?" : type.getSimpleName()) + "]";
+    public String toString() {
+        return "ADHOC[" + ((type == null) ? "?" : type.getSimpleName()) + "]";
     }
 }

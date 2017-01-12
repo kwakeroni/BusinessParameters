@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.backend.inmemory.api.type;
+package be.kwakeroni.parameters_exp.backend.inmemory.api.type;
 
 import java.util.Comparator;
 import java.util.function.Function;
@@ -6,7 +6,7 @@ import java.util.function.Function;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public interface ComparableParameterType<T> extends ParameterType<T> {
+public interface ComparableParameterType<T> extends ParameterType<T>, Comparator<T> {
 
     public int compare(T one, T two);
 

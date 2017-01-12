@@ -23,6 +23,13 @@
                 <version>${project.version}</version>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.types</groupId>
+                <artifactId>parameters-types</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -30,6 +37,14 @@
         <dependency>
             <groupId>be.kwakeroni.parameters.client</groupId>
             <artifactId>parameters-client-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.types</groupId>
+            <artifactId>parameters-types-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.types</groupId>
+            <artifactId>parameters-types-support</artifactId>
         </dependency>
     </dependencies>
 </project>

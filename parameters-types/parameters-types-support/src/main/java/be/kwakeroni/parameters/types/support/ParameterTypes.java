@@ -10,6 +10,10 @@ import java.util.function.Function;
 public interface ParameterTypes {
 
     public static ParameterType<String> STRING = JavaLangType.STRING;
+    public static ParameterType<Integer> INT = JavaLangType.INT;
+    public static ParameterType<Long> LONG = JavaLangType.LONG;
+    public static ParameterType<Boolean> BOOLEAN = JavaLangType.BOOLEAN;
+    public static ParameterType<Character> CHAR = JavaLangType.CHAR;
 
     public static <E extends Enum<E>> ParameterType<E> ofEnum(Class<E> type){
         return new EnumType<>(type);

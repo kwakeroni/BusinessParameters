@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
+import static be.kwakeroni.parameters.types.support.ParameterTypes.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -25,8 +25,13 @@ public class ParameterTypesTest<T> {
     private static final ParameterType<byte[]> BYTE_ARRAY = ParameterTypes.of(byte[].class, String::getBytes, String::new);
     private static final ParameterType<byte[]> ANONYMOUS = ParameterTypes.of(String::getBytes, String::new);
 
-    static {
+    static { System.out.println(Integer.toHexString(199));
         expectMapping(STRING, "myString", "myString");
+        expectMapping(INT, 18, "18");
+        expectMapping(LONG, 18L, "18");
+        expectMapping(BOOLEAN, true, "true");
+        expectMapping(BOOLEAN, false, "false");
+        expectMapping(CHAR, '\u00C7', "Ç");
         expectMapping(TEST_ENUM, TestEnum.ONE, "ONE");
         expectMapping(TEST_ENUM, TestEnum.TWO, "TWO");
         expectMapping(TEST_ENUM, TestEnum.THREE, "THREE");

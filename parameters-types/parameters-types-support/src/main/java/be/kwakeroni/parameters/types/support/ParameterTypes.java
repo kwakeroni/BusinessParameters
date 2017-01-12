@@ -15,6 +15,10 @@ public interface ParameterTypes {
         return new EnumType<>(type);
     }
 
+    public static <T> ParameterType<T> of(Class<T> type, Function<? super String, ? extends T> fromString, Function<? super T, String> toString){
+        return new AdhocType<>(type, fromString, toString);
+    }
+
     public static <T> ParameterType<T> of(Function<? super String, ? extends T> fromString, Function<? super T, String> toString){
         return new AdhocType<>(fromString, toString);
     }

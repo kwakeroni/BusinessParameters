@@ -2,6 +2,7 @@ package be.kwakeroni.parameters.types.support;
 
 import be.kwakeroni.parameters.types.api.ParameterType;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -11,10 +12,16 @@ class AdhocType<T> implements ParameterType<T> {
 
     private final Function<? super String, ? extends T> fromString;
     private final Function<? super T, String> toString;
+    private final Class<T> type;
 
     AdhocType(Function<? super String, ? extends T> fromString, Function<? super T, String> toString) {
-        this.fromString = fromString;
-        this.toString = toString;
+        this(null, fromString, toString);
+    }
+
+    AdhocType(Class<T> type, Function<? super String, ? extends T> fromString, Function<? super T, String> toString) {
+        this.fromString = Objects.requireNonNull(fromString);
+        this.toString = Objects.requireNonNull(toString);
+        this.type = type;
     }
 
     @Override
@@ -25,5 +32,10 @@ class AdhocType<T> implements ParameterType<T> {
     @Override
     public String toString(T value) {
         return toString.apply(value);
+    }
+
+    @Override
+    public String toString(){
+        return "ADHOC[" + ((type==null)? "?" : type.getSimpleName()) + "]";
     }
 }

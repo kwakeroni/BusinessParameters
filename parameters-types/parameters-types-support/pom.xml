@@ -12,10 +12,30 @@
     <artifactId>parameters-types-support</artifactId>
     <packaging>bundle</packaging>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-deps</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>parameters-types-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
         </dependency>
     </dependencies>
 

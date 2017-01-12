@@ -42,5 +42,9 @@
             <groupId>be.kwakeroni.parameters.types</groupId>
             <artifactId>parameters-types-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.types</groupId>
+            <artifactId>parameters-types-support</artifactId>
+        </dependency>
     </dependencies>
 </project>

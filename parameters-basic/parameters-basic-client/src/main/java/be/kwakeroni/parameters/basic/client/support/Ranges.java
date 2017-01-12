@@ -1,6 +1,8 @@
 package be.kwakeroni.parameters.basic.client.support;
 
 import be.kwakeroni.parameters.basic.client.model.Range;
+import be.kwakeroni.parameters.types.api.ParameterType;
+import be.kwakeroni.parameters.types.support.ParameterTypes;
 
 import java.util.Comparator;
 import java.util.function.BiPredicate;
@@ -13,14 +15,6 @@ import java.util.regex.Pattern;
  */
 public class Ranges {
 
-//    public static <T> ParameterizedParameterType<Range<T>> ofType(ComparableParameterType<T> type) {
-//        return ParameterizedParameterType.of(
-//                toString(type::convertToString),
-//                fromString(type::convertFromString, type::compare),
-//                type
-//        );
-//    }
-
     // @todo: Escaping
     public static String toRangeString(String from, String to){
         return "[" + from + "," + to + "]";
@@ -30,7 +24,7 @@ public class Ranges {
         return toRangeString(typeConverter.apply(from), typeConverter.apply(to));
     }
 
-    public static <T> Function<Range<T>, String> toStringOf(Function<T, String> typeConverter) {
+    private static <T> Function<Range<T>, String> toStringOf(Function<T, String> typeConverter) {
         return range -> toRangeString(range.getFrom(), range.getTo(), typeConverter);
     }
 
@@ -49,32 +43,16 @@ public class Ranges {
         return Range.of(from, to);
     }
 
-    public static <T> Function<String, Range<T>> fromStringOf(Function<String, ? extends T> typeConverter, Comparator<? super T> comparator) {
+    private static <T> Function<String, Range<T>> fromStringOf(Function<String, ? extends T> typeConverter, Comparator<? super T> comparator) {
         return string -> fromString(string, typeConverter, comparator);
     }
 
-    public static <T extends Comparable<? super T>> Function<String, Range<T>> fromStringOf(Function<String, T> typeConverter) {
+    private static <T extends Comparable<? super T>> Function<String, Range<T>> fromStringOf(Function<String, T> typeConverter) {
         return string -> fromString(string, typeConverter);
     }
 
-    public static <T> boolean containsValue(String rangeString, String value, Function<String, ? extends T> typeConverter, Comparator<? super T> comparator){
-        return Ranges.<T> fromString(rangeString, typeConverter, comparator).contains(typeConverter.apply(value));
-    }
-
-    public static <T extends Comparable<? super T>> boolean containsValue(String rangeString, String value, Function<String, ? extends T> typeConverter){
-        return Ranges.<T> fromString(rangeString, typeConverter).contains(typeConverter.apply(value));
-    }
-
-    public static <T> BiPredicate<String, String> containsValueOf(Function<String, ? extends T> typeConverter, Comparator<? super T> comparator){
-        return (rangeString, valueString) -> containsValue(rangeString, valueString, typeConverter, comparator);
-    }
-
-    public static <T extends Comparable<? super T>> BiPredicate<String, String> containsValueOf(Function<String, ? extends T> typeConverter){
-        return (rangeString, valueString) -> containsValue(rangeString, valueString, typeConverter);
-    }
-
 //
-//    private static Function<String, Range<String>> fromString(Comparator<? super String> comparator) {
+//    private static Function<String, Range<String>> fromStringOf(Comparator<? super String> comparator) {
 //        return string -> {
 //            String[] fromTo = toStringPair(string);
 //            return new DefaultRange<>(fromTo[0], fromTo[1], comparator);
@@ -93,5 +71,33 @@ public class Ranges {
 
     private static final Pattern PATTERN = Pattern.compile("^\\[(.+)\\,(.+)\\]$");
 
+
+    public static <T> boolean containsValue(String rangeString, String value, Function<String, ? extends T> typeConverter, Comparator<? super T> comparator){
+        return Ranges.<T> fromString(rangeString, typeConverter, comparator).contains(typeConverter.apply(value));
+    }
+
+    public static <T extends Comparable<? super T>> boolean containsValue(String rangeString, String value, Function<String, ? extends T> typeConverter){
+        return Ranges.<T> fromString(rangeString, typeConverter).contains(typeConverter.apply(value));
+    }
+
+    public static <T> BiPredicate<String, String> containsValueOf(Function<String, ? extends T> typeConverter, Comparator<? super T> comparator){
+        return (rangeString, valueString) -> containsValue(rangeString, valueString, typeConverter, comparator);
+    }
+
+    public static <T extends Comparable<? super T>> BiPredicate<String, String> containsValueOf(Function<String, ? extends T> typeConverter){
+        return (rangeString, valueString) -> containsValue(rangeString, valueString, typeConverter);
+    }
+
+    public static <T> ParameterType<Range<T>> rangeTypeOf(ParameterType<T> type, Comparator<? super T> comparator){
+        return ParameterTypes.of(fromStringOf(type::fromString, comparator), toStringOf(type::toString));
+    }
+
+    public static <T, Type extends ParameterType<T> & Comparator<T>> ParameterType<Range<T>> rangeTypeOfComparingType(Type type){
+        return rangeTypeOf(type, type);
+    }
+
+    public static <T extends Comparable<? super T>> ParameterType<Range<T>> rangeTypeOf(ParameterType<T> type){
+        return ParameterTypes.of(fromStringOf(type::fromString), toStringOf(type::toString));
+    }
 
 }

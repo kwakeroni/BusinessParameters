@@ -29,4 +29,13 @@ public interface ParameterizedParameterType<T> extends ParameterType<T> {
             }
         };
     }
+
+//    experimental from Ranges class:
+//    public static <T> ParameterizedParameterType<Range<T>> rangeOfType(ComparableParameterType<T> type) {
+//        return ParameterizedParameterType.of(
+//                toString(type::convertToString),
+//                fromString(type::convertFromString, type::compare),
+//                type
+//        );
+//    }
 }

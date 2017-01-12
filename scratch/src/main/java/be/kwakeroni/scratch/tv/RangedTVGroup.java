@@ -30,7 +30,7 @@ public class RangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>> {
         return "tv.ranged";
     }
 
-    public static Parameter<Range<Slot>> SLOT = new DefaultParameter<>("slot", Ranges.fromStringOf(Slot::fromString), Ranges.toStringOf(Slot::toString));
+    public static Parameter<Range<Slot>> SLOT = new DefaultParameter<>("slot", Ranges.rangeTypeOf(Slot.type));
     public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
 
     // For test purposes

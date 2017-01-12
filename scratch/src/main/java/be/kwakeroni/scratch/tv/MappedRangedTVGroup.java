@@ -33,7 +33,7 @@ public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Sl
     }
 
     public static Parameter<Dag> DAY = new DefaultParameter<>("day", Dag.type);
-    public static Parameter<Range<Slot>> SLOT = new DefaultParameter<>("slot", Ranges.fromStringOf(Slot::fromString), Ranges.toStringOf(Slot::toString));
+    public static Parameter<Range<Slot>> SLOT = new DefaultParameter<>("slot", Ranges.rangeTypeOf(Slot.type));
     public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
 
     // For test purposes

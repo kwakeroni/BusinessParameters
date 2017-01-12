@@ -6,7 +6,7 @@ import java.util.function.Function;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public interface ComparableParameterType<T> extends ParameterType<T> {
+public interface ComparableParameterType<T> extends ParameterType<T>, Comparator<T> {
 
     public int compare(T one, T two);
 

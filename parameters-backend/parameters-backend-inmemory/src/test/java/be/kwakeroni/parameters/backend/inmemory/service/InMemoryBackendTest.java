@@ -53,6 +53,7 @@ public class InMemoryBackendTest {
 
         doReturn(internalQuery).when(context).internalize(any(), same(externalQuery));
         doReturn(externalValue).when(internalQuery).externalizeResult(same(internalValue), same(context));
+        doReturn(internalValue).when(internalQuery).internalizeValue(same(externalValue), same(context));
         doReturn(group1Stream).when(group1Data).getEntries();
     }
 
@@ -86,9 +87,11 @@ public class InMemoryBackendTest {
 
     @Test
     public void testSet() throws Exception {
-        //backend.set(group1, externalQuery, externalValue);
-    }
+        backend.set(group1, externalQuery, externalValue);
 
+        verify(internalQuery).setValue(internalValue, group1Stream);
+        verifyZeroInteractions(group2Data);
+    }
 
     @Test
     public void testGetGroupNames() throws Exception {

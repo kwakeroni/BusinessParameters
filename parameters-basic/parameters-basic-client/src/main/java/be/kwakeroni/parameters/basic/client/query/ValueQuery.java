@@ -1,9 +1,9 @@
 package be.kwakeroni.parameters.basic.client.query;
 
+import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.basic.client.model.Simple;
 
 import java.util.Objects;
 
@@ -22,6 +22,11 @@ public class ValueQuery<T> implements Query<Simple, T> {
     @Override
     public Object externalize(ClientWireFormatterContext context) {
         return context.getWireFormatter(BasicClientWireFormatter.class).externalizeValueQuery(this, context);
+    }
+
+    @Override
+    public Object externalizeValue(T value, ClientWireFormatterContext context) {
+        return context.getWireFormatter(BasicClientWireFormatter.class).externalizeValue(value, this, context);
     }
 
     @Override

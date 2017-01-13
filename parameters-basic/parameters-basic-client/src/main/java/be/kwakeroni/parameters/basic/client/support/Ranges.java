@@ -15,12 +15,16 @@ import java.util.regex.Pattern;
  */
 public class Ranges {
 
+    private Ranges() {
+
+    }
+
     // @todo: Escaping
-    public static String toRangeString(String from, String to){
+    public static String toRangeString(String from, String to) {
         return "[" + from + "," + to + "]";
     }
 
-    public static <T> String toRangeString(T from, T to, Function<T, String> typeConverter){
+    public static <T> String toRangeString(T from, T to, Function<T, String> typeConverter) {
         return toRangeString(typeConverter.apply(from), typeConverter.apply(to));
     }
 
@@ -29,14 +33,14 @@ public class Ranges {
     }
 
 
-    public static <T> Range<T> fromString(String rangeString, Function<String, ? extends T> typeConverter, Comparator<? super T> comparator){
+    public static <T> Range<T> fromString(String rangeString, Function<String, ? extends T> typeConverter, Comparator<? super T> comparator) {
         String[] fromTo = toStringPair(rangeString);
         T from = typeConverter.apply(fromTo[0]);
         T to = typeConverter.apply(fromTo[1]);
         return Range.of(from, to, comparator);
     }
 
-    public static <T extends Comparable<? super T>> Range<T> fromString(String rangeString, Function<String, ? extends T> typeConverter){
+    public static <T extends Comparable<? super T>> Range<T> fromString(String rangeString, Function<String, ? extends T> typeConverter) {
         String[] fromTo = toStringPair(rangeString);
         T from = typeConverter.apply(fromTo[0]);
         T to = typeConverter.apply(fromTo[1]);
@@ -72,31 +76,31 @@ public class Ranges {
     private static final Pattern PATTERN = Pattern.compile("^\\[(.+)\\,(.+)\\]$");
 
 
-    public static <T> boolean containsValue(String rangeString, String value, Function<String, ? extends T> typeConverter, Comparator<? super T> comparator){
-        return Ranges.<T> fromString(rangeString, typeConverter, comparator).contains(typeConverter.apply(value));
+    public static <T> boolean containsValue(String rangeString, String value, Function<String, ? extends T> typeConverter, Comparator<? super T> comparator) {
+        return Ranges.<T>fromString(rangeString, typeConverter, comparator).contains(typeConverter.apply(value));
     }
 
-    public static <T extends Comparable<? super T>> boolean containsValue(String rangeString, String value, Function<String, ? extends T> typeConverter){
-        return Ranges.<T> fromString(rangeString, typeConverter).contains(typeConverter.apply(value));
+    public static <T extends Comparable<? super T>> boolean containsValue(String rangeString, String value, Function<String, ? extends T> typeConverter) {
+        return Ranges.<T>fromString(rangeString, typeConverter).contains(typeConverter.apply(value));
     }
 
-    public static <T> BiPredicate<String, String> containsValueOf(Function<String, ? extends T> typeConverter, Comparator<? super T> comparator){
+    public static <T> BiPredicate<String, String> containsValueOf(Function<String, ? extends T> typeConverter, Comparator<? super T> comparator) {
         return (rangeString, valueString) -> containsValue(rangeString, valueString, typeConverter, comparator);
     }
 
-    public static <T extends Comparable<? super T>> BiPredicate<String, String> containsValueOf(Function<String, ? extends T> typeConverter){
+    public static <T extends Comparable<? super T>> BiPredicate<String, String> containsValueOf(Function<String, ? extends T> typeConverter) {
         return (rangeString, valueString) -> containsValue(rangeString, valueString, typeConverter);
     }
 
-    public static <T> ParameterType<Range<T>> rangeTypeOf(ParameterType<T> type, Comparator<? super T> comparator){
+    public static <T> ParameterType<Range<T>> rangeTypeOf(ParameterType<T> type, Comparator<? super T> comparator) {
         return ParameterTypes.of(fromStringOf(type::fromString, comparator), toStringOf(type::toString));
     }
 
-    public static <T, Type extends ParameterType<T> & Comparator<T>> ParameterType<Range<T>> rangeTypeOfComparingType(Type type){
+    public static <T, Type extends ParameterType<T> & Comparator<T>> ParameterType<Range<T>> rangeTypeOfComparingType(Type type) {
         return rangeTypeOf(type, type);
     }
 
-    public static <T extends Comparable<? super T>> ParameterType<Range<T>> rangeTypeOf(ParameterType<T> type){
+    public static <T extends Comparable<? super T>> ParameterType<Range<T>> rangeTypeOf(ParameterType<T> type) {
         return ParameterTypes.of(fromStringOf(type::fromString), toStringOf(type::toString));
     }
 

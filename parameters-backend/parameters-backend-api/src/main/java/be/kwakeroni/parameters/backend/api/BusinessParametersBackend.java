@@ -9,5 +9,7 @@ public interface BusinessParametersBackend {
 
     public Object get(String group, Object query);
 
+    public void set(String group, Object queryObject, Object value);
+
     public Collection<String> getGroupNames();
 }

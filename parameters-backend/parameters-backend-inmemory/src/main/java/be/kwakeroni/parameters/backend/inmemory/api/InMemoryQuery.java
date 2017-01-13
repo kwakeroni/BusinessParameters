@@ -12,5 +12,9 @@ public interface InMemoryQuery<T> {
 
     Optional<T> apply(Stream<EntryData> stream);
 
+    void setValue(T value, Stream<EntryData> stream);
+
     Object externalizeResult(T result, BackendWireFormatterContext<? super InMemoryQuery<?>> context);
+
+    T internalizeValue(Object value, BackendWireFormatterContext<? super InMemoryQuery<?>> context);
 }

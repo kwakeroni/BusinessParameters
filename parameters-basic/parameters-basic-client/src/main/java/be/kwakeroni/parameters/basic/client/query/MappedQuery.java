@@ -1,9 +1,9 @@
 package be.kwakeroni.parameters.basic.client.query;
 
+import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.types.api.ParameterType;
 
 import java.util.Objects;
@@ -18,7 +18,7 @@ public class MappedQuery<K, ET extends EntryType, T> implements Query<Mapped<K, 
     private final Function<? super K, String> keyStringConverter;
     private final Query<ET, T> subQuery;
 
-    public MappedQuery(K key, ParameterType<K> keyType, Query<ET, T> subQuery){
+    public MappedQuery(K key, ParameterType<K> keyType, Query<ET, T> subQuery) {
         this(key, keyType::toString, subQuery);
     }
 
@@ -43,6 +43,11 @@ public class MappedQuery<K, ET extends EntryType, T> implements Query<Mapped<K, 
     @Override
     public Object externalize(ClientWireFormatterContext context) {
         return context.getWireFormatter(BasicClientWireFormatter.class).externalizeMappedQuery(this, context);
+    }
+
+    @Override
+    public Object externalizeValue(T t, ClientWireFormatterContext context) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -2,10 +2,14 @@ package be.kwakeroni.parameters.basic.wireformat.raw;
 
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
 import be.kwakeroni.parameters.basic.client.model.Entry;
-import be.kwakeroni.parameters.basic.client.query.*;
+import be.kwakeroni.parameters.basic.client.query.BasicClientWireFormatter;
+import be.kwakeroni.parameters.basic.client.query.EntryQuery;
+import be.kwakeroni.parameters.basic.client.query.MappedQuery;
+import be.kwakeroni.parameters.basic.client.query.RangedQuery;
+import be.kwakeroni.parameters.basic.client.query.ValueQuery;
+import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,23 +63,54 @@ public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBacken
     }
 
 
-    @Override
-    public Entry internalizeEntry(Object result, EntryQuery query, ClientWireFormatterContext context) {
-        return (Entry) result;
+    @Override // client -> wire
+    public Object externalizeEntry(Entry entry, EntryQuery query, ClientWireFormatterContext context) {
+        return entry;
+//        Map<String, String> map = query.getParameters()
+//                .stream()
+//                .filter(entry::hasValue)
+//                .collect(Collectors.toMap(Parameter::getName, parameter -> getStringValue(parameter, entry)));
     }
 
+//    private <T> String getStringValue(Parameter<T> parameter, Entry entry){
+//        T value = entry.getValue(parameter);
+//        return (value == null)? null : parameter.toString(value);
+//    }
+
     @Override
+    public Map<String, String> internalizeEntry(Object entryObject) {
+        return ((Entry) entryObject).toMap();
+    }
+
+    @Override // backend -> wire
     public Object externalizeEntryResult(Map<String, String> entry) {
         return new DefaultEntry(entry);
     }
 
-    @Override
-    public <T> T internalizeValue(Object result, ValueQuery<T> query, ClientWireFormatterContext context) {
-        return (result == null)? null : query.getParameter().fromString((String) result);
+    @Override // wire -> client
+    public Entry internalizeEntry(Object result, EntryQuery query, ClientWireFormatterContext context) {
+        return (Entry) result;
     }
 
-    @Override
-    public Object externalizeValueResult(String value) {
-        return (value == null)? null : value;
+    @Override // client -> wire
+    public <T> Object externalizeValue(T value, ValueQuery<T> query, ClientWireFormatterContext context) {
+        return (value == null) ? null : query.getParameter().toString(value);
     }
+
+    @Override // wire -> backend
+    public String internalizeValue(Object value) {
+        return (value == null) ? null : (String) value;
+    }
+
+    @Override // backend -> wire
+    public Object externalizeValueResult(String value) {
+        return (value == null) ? null : value;
+    }
+
+    @Override // wire -> client
+    public <T> T internalizeValue(Object result, ValueQuery<T> query, ClientWireFormatterContext context) {
+        return (result == null) ? null : query.getParameter().fromString((String) result);
+    }
+
+
 }

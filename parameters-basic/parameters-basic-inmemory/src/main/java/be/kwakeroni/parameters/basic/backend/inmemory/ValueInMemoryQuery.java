@@ -21,12 +21,28 @@ class ValueInMemoryQuery implements InMemoryQuery<String> {
 
     @Override
     public Optional<String> apply(Stream<EntryData> stream) {
-        return stream.reduce(InmemorySimpleGroup.atMostOne())
-                .map(entry -> entry.getValue(this.parameterName));
+        return getEntryFrom(stream)
+                    .map(entry -> entry.getValue(this.parameterName));
+    }
+
+
+    @Override
+    public void setValue(String value, Stream<EntryData> stream) {
+        getEntryFrom(stream).ifPresent(entry -> entry.setValue(this.parameterName, value));
+    }
+
+    private Optional<EntryData> getEntryFrom(Stream<EntryData> stream){
+        return stream.reduce(InmemorySimpleGroup.atMostOne());
     }
 
     @Override
     public Object externalizeResult(String result, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
         return context.getWireFormatter(BasicBackendWireFormatter.class).externalizeValueResult(result);
+    }
+
+
+    @Override
+    public String internalizeValue(Object value, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
+        return context.getWireFormatter(BasicBackendWireFormatter.class).internalizeValue(value);
     }
 }

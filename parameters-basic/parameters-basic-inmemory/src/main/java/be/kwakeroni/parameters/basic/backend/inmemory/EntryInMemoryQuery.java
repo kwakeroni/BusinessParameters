@@ -1,8 +1,8 @@
 package be.kwakeroni.parameters.basic.backend.inmemory;
 
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
 
 import java.util.Map;
@@ -18,12 +18,26 @@ class EntryInMemoryQuery implements InMemoryQuery<Map<String, String>> {
 
     @Override
     public Optional<Map<String, String>> apply(Stream<EntryData> stream) {
-        return stream.reduce(InmemorySimpleGroup.atMostOne())
+        return getEntryFrom(stream)
                 .map(EntryData::asMap);
+    }
+
+    @Override
+    public void setValue(Map<String, String> entry, Stream<EntryData> stream) {
+        getEntryFrom(stream).ifPresent(data -> entry.forEach(data::setValue));
+    }
+
+    private Optional<EntryData> getEntryFrom(Stream<EntryData> stream) {
+        return stream.reduce(InmemorySimpleGroup.atMostOne());
     }
 
     @Override
     public Object externalizeResult(Map<String, String> result, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
         return context.getWireFormatter(BasicBackendWireFormatter.class).externalizeEntryResult(result);
+    }
+
+    @Override
+    public Map<String, String> internalizeValue(Object value, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
+        return context.getWireFormatter(BasicBackendWireFormatter.class).internalizeEntry(value);
     }
 }

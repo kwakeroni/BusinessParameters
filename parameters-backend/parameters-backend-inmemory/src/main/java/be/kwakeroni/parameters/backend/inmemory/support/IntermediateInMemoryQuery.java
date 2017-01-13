@@ -1,8 +1,8 @@
 package be.kwakeroni.parameters.backend.inmemory.support;
 
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -28,8 +28,18 @@ public class IntermediateInMemoryQuery<T> implements InMemoryQuery<T> {
     }
 
     @Override
+    public void setValue(T value, Stream<EntryData> stream) {
+        subQuery.setValue(value, operator.apply(stream));
+    }
+
+    @Override
     public Object externalizeResult(T result, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
         return subQuery.externalizeResult(result, context);
+    }
+
+    @Override
+    public T internalizeValue(Object value, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
+        return subQuery.internalizeValue(value, context);
     }
 
     public static <T> IntermediateInMemoryQuery<T> filter(Predicate<? super EntryData> filter, InMemoryQuery<T> subQuery) {

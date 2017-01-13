@@ -50,25 +50,50 @@ public class InMemoryBackend implements BusinessParametersBackend {
                 MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
                 MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", group)) {
             LOG.debug("Query on {}: {}", group, queryObject);
+
             GroupData groupData = getGroupData(group);
-            LOG.debug("Internalizing query: {}", queryObject);
-            InMemoryQuery<?> query = wireFormatterContext.internalize(groupData.getGroup(), queryObject);
-            Object result = getExternalResult(query, group, groupData);
+            InMemoryQuery<?> query = internalizeQuery(queryObject, groupData);
+            Object result = getExternalResult(query, groupData);
+
             LOG.debug("Returning result: {}", result);
             return result;
         }
     }
 
-    private <T> Object getExternalResult(InMemoryQuery<T> query, String group, GroupData groupData) {
+
+    public void set(String group, Object queryObject, Object value) {
+        try (
+                MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
+                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", group)) {
+            LOG.debug("Write on {}: {} <- {}", group, queryObject, value);
+            GroupData groupData = getGroupData(group);
+            InMemoryQuery<?> query = internalizeQuery(queryObject, groupData);
+            setInternalResult(value, query, groupData);
+        }
+    }
+
+    private GroupData getGroupData(String name) {
+        return Optional.ofNullable(data.get(name))
+                .orElseThrow(() -> new IllegalArgumentException("No group defined with name " + name));
+    }
+
+    private InMemoryQuery<?> internalizeQuery(Object query, GroupData groupData) {
+        LOG.debug("Internalizing query: {}", query);
+        return wireFormatterContext.internalize(groupData.getGroup(), query);
+    }
+
+    private <T> Object getExternalResult(InMemoryQuery<T> query, GroupData groupData) {
         LOG.debug("Executing query: {}", query);
         T result = query.apply(groupData.getEntries()).orElse(null);
         LOG.debug("Externalizing query result: {}", result);
         return query.externalizeResult(result, this.wireFormatterContext);
     }
 
-    private GroupData getGroupData(String name) {
-        return Optional.ofNullable(data.get(name))
-                .orElseThrow(() -> new IllegalArgumentException("No group defined with name " + name));
+    private <T> void setInternalResult(Object valueObject, InMemoryQuery<T> query, GroupData groupData) {
+        LOG.debug("Internalizing value to be written: {}", valueObject);
+        T value = query.internalizeValue(valueObject, this.wireFormatterContext);
+        LOG.debug("Writing value {} to query: {}", value, query);
+        query.setValue(value, groupData.getEntries());
     }
 
     @Override

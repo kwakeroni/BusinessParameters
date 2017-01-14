@@ -9,7 +9,7 @@ public interface Query<ET extends EntryType, Result> {
 
     public Object externalize(ClientWireFormatterContext context);
 
-    public Object externalizeValue(Result result, ClientWireFormatterContext context);
+    public Object externalizeValue(Result value, ClientWireFormatterContext context);
 
     public Result internalizeResult(Object result, ClientWireFormatterContext context);
 

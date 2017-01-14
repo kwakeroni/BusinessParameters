@@ -74,7 +74,7 @@ public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBacken
 
     @Override
     public Object backendEntryToWire(Map<String, String> entry) {
-        return new DefaultEntry(entry);
+        return (entry == null) ? null : new DefaultEntry(entry);
     }
 
     @Override

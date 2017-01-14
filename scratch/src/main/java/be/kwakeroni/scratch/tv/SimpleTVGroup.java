@@ -1,23 +1,20 @@
 package be.kwakeroni.scratch.tv;
 
-import be.kwakeroni.parameters.client.api.model.Parameter;
-import be.kwakeroni.parameters.client.api.model.ParameterGroup;
-import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
-import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
-import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
+import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
+import be.kwakeroni.parameters.basic.client.model.Entry;
 import be.kwakeroni.parameters.basic.client.model.Simple;
-import be.kwakeroni.parameters.backend.api.BackendGroup;
-
-import java.util.stream.Stream;
+import be.kwakeroni.parameters.basic.client.support.Entries;
+import be.kwakeroni.parameters.client.api.model.Parameter;
+import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
 public class SimpleTVGroup implements ParameterGroup<Simple> {
 
-    public static final SimpleTVGroup instance(){
+    public static final SimpleTVGroup instance() {
         return new SimpleTVGroup();
     }
 
@@ -29,22 +26,18 @@ public class SimpleTVGroup implements ParameterGroup<Simple> {
     public static Parameter<Dag> DAY = new DefaultParameter<>("day", Dag.type);
     public static Parameter<Slot> SLOT = new DefaultParameter<>("slot", Slot.type);
 
-    // For test purposes
-    public static final GroupData getData(Dag dag, Slot slot){
-        InmemorySimpleGroup group = new InmemorySimpleGroup();
-        return new GroupData() {
-            @Override
-            public Stream<EntryData> getEntries() {
-                return Stream.of(DefaultEntryData.of(
-                    DAY.getName(), dag.toString(),
-                    SLOT.getName(), slot.toString()
-                ));
-            }
+    public static Entry entry(Dag dag, Slot slot) {
+        return Entries.entryOf(DAY, dag, SLOT, slot);
+    }
 
-            @Override
-            public BackendGroup<InMemoryQuery<?>> getGroup() {
-                return group;
-            }
-        };
+    // For test purposes
+    public static final GroupData getData(Dag dag, Slot slot) {
+        return new DefaultGroupData(
+                new InmemorySimpleGroup(),
+                DefaultEntryData.of(
+                        DAY.getName(), dag.toString(),
+                        SLOT.getName(), slot.toString()
+                )
+        );
     }
 }

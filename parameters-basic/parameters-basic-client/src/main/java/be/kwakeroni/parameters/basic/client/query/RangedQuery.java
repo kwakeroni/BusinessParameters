@@ -46,8 +46,8 @@ public class RangedQuery<V, ET extends EntryType, T> implements Query<Ranged<V, 
     }
 
     @Override
-    public Object externalizeValue(T t, ClientWireFormatterContext context) {
-        throw new UnsupportedOperationException();
+    public Object externalizeValue(T value, ClientWireFormatterContext context) {
+        return this.subQuery.externalizeValue(value, context);
     }
 
     @Override

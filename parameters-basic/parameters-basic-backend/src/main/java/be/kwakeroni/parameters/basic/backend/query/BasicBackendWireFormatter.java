@@ -12,10 +12,10 @@ import java.util.Map;
  */
 public interface BasicBackendWireFormatter extends BackendWireFormatter {
 
-    String internalizeValue(Object value);
-    Object externalizeValueResult(String value);
-    Map<String, String> internalizeEntry(Object entry);
-    Object externalizeEntryResult(Map<String, String> entry);
+    String wireToBackendValue(Object value);
+    Object backendValueToWire(String value);
+    Map<String, String> wireToBackendEntry(Object entry);
+    Object backendEntryToWire(Map<String, String> entry);
 
     default <Q> Q internalizeValueQuery(String parameter, BackendGroup<Q> group, BackendWireFormatterContext<Q> context) {
         SimpleBackendGroup<Q> simple = group.as(SimpleBackendGroup.class);

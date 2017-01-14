@@ -62,55 +62,44 @@ public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBacken
         return Optional.empty();
     }
 
-
-    @Override // client -> wire
-    public Object externalizeEntry(Entry entry, EntryQuery query, ClientWireFormatterContext context) {
+    @Override
+    public Object clientEntryToWire(Entry entry, EntryQuery query, ClientWireFormatterContext context) {
         return entry;
-//        Map<String, String> map = query.getParameters()
-//                .stream()
-//                .filter(entry::hasValue)
-//                .collect(Collectors.toMap(Parameter::getName, parameter -> getStringValue(parameter, entry)));
     }
 
-//    private <T> String getStringValue(Parameter<T> parameter, Entry entry){
-//        T value = entry.getValue(parameter);
-//        return (value == null)? null : parameter.toString(value);
-//    }
-
     @Override
-    public Map<String, String> internalizeEntry(Object entryObject) {
+    public Map<String, String> wireToBackendEntry(Object entryObject) {
         return ((Entry) entryObject).toMap();
     }
 
-    @Override // backend -> wire
-    public Object externalizeEntryResult(Map<String, String> entry) {
+    @Override
+    public Object backendEntryToWire(Map<String, String> entry) {
         return new DefaultEntry(entry);
     }
 
-    @Override // wire -> client
-    public Entry internalizeEntry(Object result, EntryQuery query, ClientWireFormatterContext context) {
+    @Override
+    public Entry wireToClientEntry(Object result, EntryQuery query, ClientWireFormatterContext context) {
         return (Entry) result;
     }
 
-    @Override // client -> wire
-    public <T> Object externalizeValue(T value, ValueQuery<T> query, ClientWireFormatterContext context) {
+    @Override
+    public <T> Object clientValueToWire(T value, ValueQuery<T> query, ClientWireFormatterContext context) {
         return (value == null) ? null : query.getParameter().toString(value);
     }
 
-    @Override // wire -> backend
-    public String internalizeValue(Object value) {
+    @Override
+    public String wireToBackendValue(Object value) {
         return (value == null) ? null : (String) value;
     }
 
-    @Override // backend -> wire
-    public Object externalizeValueResult(String value) {
+    @Override
+    public Object backendValueToWire(String value) {
         return (value == null) ? null : value;
     }
 
-    @Override // wire -> client
-    public <T> T internalizeValue(Object result, ValueQuery<T> query, ClientWireFormatterContext context) {
+    @Override
+    public <T> T wireToClientValue(Object result, ValueQuery<T> query, ClientWireFormatterContext context) {
         return (result == null) ? null : query.getParameter().fromString((String) result);
     }
-
 
 }

@@ -32,12 +32,12 @@ public class EntryQuery implements Query<Simple, Entry> {
 
     @Override
     public Object externalizeValue(Entry entry, ClientWireFormatterContext context) {
-        return context.getWireFormatter(BasicClientWireFormatter.class).externalizeEntry(entry, this, context);
+        return context.getWireFormatter(BasicClientWireFormatter.class).clientEntryToWire(entry, this, context);
     }
 
     @Override
     public Entry internalizeResult(Object result, ClientWireFormatterContext context) {
-        return context.getWireFormatter(BasicClientWireFormatter.class).internalizeEntry(result, this, context);
+        return context.getWireFormatter(BasicClientWireFormatter.class).wireToClientEntry(result, this, context);
     }
 
     @Override

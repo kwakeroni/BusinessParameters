@@ -17,11 +17,11 @@ public interface BasicClientWireFormatter extends ClientWireFormatter {
 
     Object externalizeRangedQuery(RangedQuery<?, ?, ?> query, ClientWireFormatterContext context);
 
-    <T> Object externalizeValue(T value, ValueQuery<T> query, ClientWireFormatterContext context);
+    <T> Object clientValueToWire(T value, ValueQuery<T> query, ClientWireFormatterContext context);
 
-    <T> T internalizeValue(Object result, ValueQuery<T> query, ClientWireFormatterContext context);
+    <T> T wireToClientValue(Object result, ValueQuery<T> query, ClientWireFormatterContext context);
 
-    Object externalizeEntry(Entry entry, EntryQuery query, ClientWireFormatterContext context);
+    Object clientEntryToWire(Entry entry, EntryQuery query, ClientWireFormatterContext context);
 
-    Entry internalizeEntry(Object result, EntryQuery query, ClientWireFormatterContext context);
+    Entry wireToClientEntry(Object result, EntryQuery query, ClientWireFormatterContext context);
 }

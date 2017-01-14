@@ -26,12 +26,12 @@ public class ValueQuery<T> implements Query<Simple, T> {
 
     @Override
     public Object externalizeValue(T value, ClientWireFormatterContext context) {
-        return context.getWireFormatter(BasicClientWireFormatter.class).externalizeValue(value, this, context);
+        return context.getWireFormatter(BasicClientWireFormatter.class).clientValueToWire(value, this, context);
     }
 
     @Override
     public T internalizeResult(Object result, ClientWireFormatterContext context) {
-        return context.getWireFormatter(BasicClientWireFormatter.class).internalizeValue(result, this, context);
+        return context.getWireFormatter(BasicClientWireFormatter.class).wireToClientValue(result, this, context);
     }
 
     @Override

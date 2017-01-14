@@ -33,11 +33,11 @@ class EntryInMemoryQuery implements InMemoryQuery<Map<String, String>> {
 
     @Override
     public Object externalizeResult(Map<String, String> result, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
-        return context.getWireFormatter(BasicBackendWireFormatter.class).externalizeEntryResult(result);
+        return context.getWireFormatter(BasicBackendWireFormatter.class).backendEntryToWire(result);
     }
 
     @Override
     public Map<String, String> internalizeValue(Object value, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
-        return context.getWireFormatter(BasicBackendWireFormatter.class).internalizeEntry(value);
+        return context.getWireFormatter(BasicBackendWireFormatter.class).wireToBackendEntry(value);
     }
 }

@@ -37,12 +37,12 @@ class ValueInMemoryQuery implements InMemoryQuery<String> {
 
     @Override
     public Object externalizeResult(String result, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
-        return context.getWireFormatter(BasicBackendWireFormatter.class).externalizeValueResult(result);
+        return context.getWireFormatter(BasicBackendWireFormatter.class).backendValueToWire(result);
     }
 
 
     @Override
     public String internalizeValue(Object value, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
-        return context.getWireFormatter(BasicBackendWireFormatter.class).internalizeValue(value);
+        return context.getWireFormatter(BasicBackendWireFormatter.class).wireToBackendValue(value);
     }
 }

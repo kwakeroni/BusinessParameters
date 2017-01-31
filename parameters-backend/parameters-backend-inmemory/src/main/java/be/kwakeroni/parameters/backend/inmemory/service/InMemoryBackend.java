@@ -2,8 +2,11 @@ package be.kwakeroni.parameters.backend.inmemory.service;
 
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
+import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -72,6 +75,20 @@ public class InMemoryBackend implements BusinessParametersBackend {
         }
     }
 
+    @Override
+    public void addEntry(String group, Map<String, String> entry) {
+        try (
+                MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
+                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", group)) {
+
+            LOG.debug("Add entry on {}: {} <- {}", group, entry);
+            GroupData groupData = getGroupData(group);
+            EntryData entryData = DefaultEntryData.of(entry);
+            groupData.addEntry(entryData);
+        }
+
+    }
+
     private GroupData getGroupData(String name) {
         return Optional.ofNullable(data.get(name))
                 .orElseThrow(() -> new IllegalArgumentException("No group defined with name " + name));
@@ -93,7 +110,9 @@ public class InMemoryBackend implements BusinessParametersBackend {
         LOG.debug("Internalizing value to be written: {}", valueObject);
         T value = query.internalizeValue(valueObject, this.wireFormatterContext);
         LOG.debug("Writing value {} to query: {}", value, query);
-        query.setValue(value, groupData.getEntries());
+
+        EntryModification modification = query.getEntryModification(value, groupData.getEntries());
+        groupData.modifyEntry(modification.getEntry(), modification.getModifier());
     }
 
     @Override

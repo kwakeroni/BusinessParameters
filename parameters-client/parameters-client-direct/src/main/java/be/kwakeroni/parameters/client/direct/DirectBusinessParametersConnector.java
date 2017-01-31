@@ -2,6 +2,7 @@ package be.kwakeroni.parameters.client.direct;
 
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.client.api.WritableBusinessParameters;
+import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
@@ -38,6 +39,12 @@ public class DirectBusinessParametersConnector implements WritableBusinessParame
         Object externalQuery = externalize(query);
         Object externalValue = externalizeValue(value, query);
         executeWrite(backend, group.getName(), externalQuery, externalValue);
+    }
+
+    @Override
+    public void addEntry(ParameterGroup<?> group, Entry entry) {
+        BusinessParametersBackend backend = getBackend(group);
+        backend.addEntry(group.getName(), entry.toMap());
     }
 
     private Object externalize(Query<?, ?> query) {

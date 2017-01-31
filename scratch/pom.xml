@@ -65,6 +65,10 @@
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-client</artifactId>
         </dependency>
         <dependency>
@@ -111,11 +115,10 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.mockito</groupId>-->
-            <!--<artifactId>mockito-core</artifactId>-->
-            <!--<version>1.9.5</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

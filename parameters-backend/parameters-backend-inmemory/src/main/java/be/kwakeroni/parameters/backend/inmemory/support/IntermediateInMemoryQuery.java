@@ -2,6 +2,7 @@ package be.kwakeroni.parameters.backend.inmemory.support;
 
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 
 import java.util.Optional;
@@ -28,8 +29,8 @@ public class IntermediateInMemoryQuery<T> implements InMemoryQuery<T> {
     }
 
     @Override
-    public void setValue(T value, Stream<EntryData> stream) {
-        subQuery.setValue(value, operator.apply(stream));
+    public EntryModification getEntryModification(T value, Stream<EntryData> stream) {
+        return subQuery.getEntryModification(value, operator.apply(stream));
     }
 
     @Override

@@ -2,11 +2,13 @@ package be.kwakeroni.parameters.backend.inmemory.service;
 
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -44,6 +46,8 @@ public class InMemoryBackendTest {
     private Object externalValue;
     @Mock
     private Object internalValue;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private EntryModification entryModification;
 
     @Before
     public void setUpData() {
@@ -87,9 +91,12 @@ public class InMemoryBackendTest {
 
     @Test
     public void testSet() throws Exception {
+        when(internalQuery.getEntryModification(internalValue, group1Stream)).thenReturn(entryModification);
+
         backend.set(group1, externalQuery, externalValue);
 
-        verify(internalQuery).setValue(internalValue, group1Stream);
+        verify(internalQuery).getEntryModification(internalValue, group1Stream);
+        verify(group1Data).modifyEntry(entryModification.getEntry(), entryModification.getModifier());
         verifyZeroInteractions(group2Data);
     }
 

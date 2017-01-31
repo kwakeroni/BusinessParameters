@@ -5,12 +5,16 @@ import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemoryMappedGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
-import be.kwakeroni.parameters.basic.client.model.Entry;
 import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.basic.client.model.Simple;
+import be.kwakeroni.parameters.basic.client.query.EntryQuery;
+import be.kwakeroni.parameters.basic.client.query.MappedQuery;
+import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.client.support.Entries;
+import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
+import be.kwakeroni.parameters.client.api.query.Query;
 
 import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 
@@ -25,9 +29,8 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
 
     @Override
     public String getName() {
-        return "tv.mapped";
+        return NAME;
     }
-
     public static Parameter<Dag> DAY = new DefaultParameter<>("day", Dag.type);
     public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
 
@@ -46,10 +49,27 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
     // For test purposes
     public static final GroupData getData(Dag dag0, String program0, Dag dag1, String program1) {
         return new DefaultGroupData(
-                new InmemoryMappedGroup(DAY.getName(), String::equals, new InmemorySimpleGroup()),
+                INMEMORY_GROUP,
                 entryData(dag0, program0),
                 entryData(dag1, program1)
         );
     }
+
+    // For test purposes
+    public static Query<Mapped<Dag, Simple>, String> programQuery(Dag dag) {
+        return valueQuery(dag, MappedTVGroup.PROGRAM);
+    }
+
+    public static <T> Query<Mapped<Dag, Simple>, T> valueQuery(Dag dag, Parameter<T> parameter){
+        return new MappedQuery<>(dag, Dag.type,
+                new ValueQuery<>(parameter));
+    }
+
+    public static Query<Mapped<Dag, Simple>, Entry> entryQuery(Dag dag){
+        return new MappedQuery<>(dag, Dag.type, new EntryQuery());
+    }
+
+    private static final String NAME = "tv.mapped";
+    private static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, new InmemorySimpleGroup(NAME, false, DAY.getName(), PROGRAM.getName()));
 
 }

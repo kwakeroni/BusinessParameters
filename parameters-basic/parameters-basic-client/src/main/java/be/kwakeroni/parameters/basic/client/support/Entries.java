@@ -1,6 +1,6 @@
 package be.kwakeroni.parameters.basic.client.support;
 
-import be.kwakeroni.parameters.basic.client.model.Entry;
+import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 
 /**

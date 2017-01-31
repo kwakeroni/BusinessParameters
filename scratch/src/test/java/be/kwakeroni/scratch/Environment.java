@@ -67,10 +67,10 @@ public class Environment {
                         Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag"));
         this.backend.setGroupData(MappedRangedTVGroup.instance().getName(),
                 MappedRangedTVGroup.getData(
-                        MappedRangedTVGroup.entry(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag"),
-                        MappedRangedTVGroup.entry(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson"),
-                        MappedRangedTVGroup.entry(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers"),
-                        MappedRangedTVGroup.entry(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag")
+                        MappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag"),
+                        MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson"),
+                        MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers"),
+                        MappedRangedTVGroup.entryData(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag")
                 ));
 
     }

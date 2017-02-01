@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.backend.inmemory.service;
 
+import be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatter;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.api.BackendGroup;
@@ -15,7 +16,20 @@ public class DefaultBackendWireFormatterContext implements BackendWireFormatterC
     private final Map<Class<?>, BackendWireFormatter> formatters = new HashMap<>(2);
 
     public <I extends BackendWireFormatter> void register(Class<? super I> type, I formatter){
-        this.formatters.put(type, formatter);
+        this.formatters.merge(type, formatter,
+                (one, two) -> { throw new IllegalStateException("Duplicate formatters for type: " + type); });
+    }
+
+    public void unregister(Class<?> type){
+        this.formatters.remove(type);
+    }
+
+    public void register(BackendWireFormatterFactory formatterFactory){
+        formatterFactory.registerInstance(this::register);
+    }
+
+    public void unregister(BackendWireFormatterFactory formatterFactory){
+        formatterFactory.unregisterInstance(this::unregister);
     }
 
     @Override

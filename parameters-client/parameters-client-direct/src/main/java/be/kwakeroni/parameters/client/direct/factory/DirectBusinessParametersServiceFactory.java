@@ -27,9 +27,7 @@ public class DirectBusinessParametersServiceFactory implements BusinessParameter
 
     private void registerFormatters(WireFormatterRegistry registry){
         ServiceLoader<ClientWireFormatterFactory> loader = ServiceLoader.load(ClientWireFormatterFactory.class);
-        for (ClientWireFormatterFactory factory : loader){
-            factory.registerInstance(registry::register);
-        }
+        loader.forEach(registry::register);
     }
 
     private void registerBackends(BackendRegistry registry){

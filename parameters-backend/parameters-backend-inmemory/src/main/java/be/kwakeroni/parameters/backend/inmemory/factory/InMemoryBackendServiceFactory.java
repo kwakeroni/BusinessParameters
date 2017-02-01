@@ -28,7 +28,7 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
         ServiceLoader<BackendWireFormatterFactory> wireFormatterFactories = ServiceLoader.load(BackendWireFormatterFactory.class);
 
         DefaultBackendWireFormatterContext context = new DefaultBackendWireFormatterContext();
-        wireFormatterFactories.forEach(factory -> factory.registerInstance(context::register));
+        wireFormatterFactories.forEach(context::register);
         return new InMemoryBackend(context);
     }
 }

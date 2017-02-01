@@ -16,6 +16,7 @@
     <modules>
         <module>parameters-basic-backend</module>
         <module>parameters-basic-client</module>
+        <module>parameters-basic-common</module>
         <module>parameters-basic-inmemory</module>
         <module>parameters-basic-wireformat-raw</module>
     </modules>
@@ -29,6 +30,11 @@
             </dependency>
             <dependency>
                 <artifactId>parameters-basic-client</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>parameters-basic-common</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>

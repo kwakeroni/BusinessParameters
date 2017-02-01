@@ -1,9 +1,9 @@
 package be.kwakeroni.parameters.basic.client.query;
 
+import be.kwakeroni.parameters.basic.client.model.Ranged;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.basic.client.model.Ranged;
 import be.kwakeroni.parameters.types.api.ParameterType;
 
 import java.util.Objects;
@@ -43,6 +43,11 @@ public class RangedQuery<V, ET extends EntryType, T> implements Query<Ranged<V, 
     @Override
     public Object externalize(ClientWireFormatterContext context) {
         return context.getWireFormatter(BasicClientWireFormatter.class).externalizeRangedQuery(this, context);
+    }
+
+    @Override
+    public Object externalizeValue(T value, ClientWireFormatterContext context) {
+        return this.subQuery.externalizeValue(value, context);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class DefaultBackendWireFormatterContext implements BackendWireFormatterC
     }
 
     @Override
-    public InMemoryQuery<?> internalize(BackendGroup<InMemoryQuery<?>> group, Object query) {
+    public InMemoryQuery<?> internalize(BackendGroup<InMemoryQuery<?>, ?, ?> group, Object query) {
         if (this.formatters.isEmpty()){
             throw new IllegalStateException("No formatters registered");
         }

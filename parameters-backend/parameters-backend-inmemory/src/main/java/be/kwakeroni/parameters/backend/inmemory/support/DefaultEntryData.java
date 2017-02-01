@@ -15,7 +15,7 @@ public class DefaultEntryData implements EntryData {
     private Map<String, String> map;
 
     private DefaultEntryData(Map<String, String> map) {
-        this.map = Collections.unmodifiableMap(map);
+        this.map = map;
     }
 
     @Override
@@ -24,8 +24,17 @@ public class DefaultEntryData implements EntryData {
     }
 
     @Override
+    public void setValue(String parameterName, String value) {
+        if (this.map.containsKey(parameterName)) {
+            this.map.put(parameterName, value);
+        } else {
+            throw new IllegalArgumentException("Unknown parameter: " + parameterName);
+        }
+    }
+
+    @Override
     public Map<String, String> asMap() {
-        return this.map;
+        return Collections.unmodifiableMap(this.map);
     }
 
     public static DefaultEntryData of(String parameter, String value, String... andSoOn) {
@@ -40,6 +49,10 @@ public class DefaultEntryData implements EntryData {
         }
 
         return new DefaultEntryData(map);
+    }
+
+    public static DefaultEntryData of(Map<String, String> entry){
+        return new DefaultEntryData(new HashMap<>(entry));
     }
 
 //    public static DefaultEntryData of(Parameter<?> parameter, String value, Object... andSoOn){

@@ -3,6 +3,7 @@ package be.kwakeroni.parameters.client.direct.factory;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
+import be.kwakeroni.parameters.client.api.WritableBusinessParameters;
 import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
 import be.kwakeroni.parameters.client.api.factory.ClientWireFormatterFactory;
 import be.kwakeroni.parameters.client.direct.BackendRegistry;
@@ -18,6 +19,11 @@ public class DirectBusinessParametersServiceFactory implements BusinessParameter
 
     @Override
     public BusinessParameters getInstance() {
+        return getWritableInstance();
+    }
+
+    @Override
+    public WritableBusinessParameters getWritableInstance() {
         WireFormatterRegistry registry = new WireFormatterRegistry();
         registerFormatters(registry);
         BackendRegistry backends = new BackendRegistry();
@@ -25,14 +31,14 @@ public class DirectBusinessParametersServiceFactory implements BusinessParameter
         return new DirectBusinessParametersConnector(registry, backends);
     }
 
-    private void registerFormatters(WireFormatterRegistry registry){
+    private void registerFormatters(WireFormatterRegistry registry) {
         ServiceLoader<ClientWireFormatterFactory> loader = ServiceLoader.load(ClientWireFormatterFactory.class);
         loader.forEach(registry::register);
     }
 
-    private void registerBackends(BackendRegistry registry){
+    private void registerBackends(BackendRegistry registry) {
         ServiceLoader<BusinessParametersBackendFactory> loader = ServiceLoader.load(BusinessParametersBackendFactory.class);
-        for (BusinessParametersBackendFactory factory : loader){
+        for (BusinessParametersBackendFactory factory : loader) {
             BusinessParametersBackend backend = factory.getInstance();
             registry.register(backend);
         }

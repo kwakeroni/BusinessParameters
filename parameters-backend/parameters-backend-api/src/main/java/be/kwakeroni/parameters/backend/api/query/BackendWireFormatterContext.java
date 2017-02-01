@@ -7,6 +7,6 @@ import be.kwakeroni.parameters.backend.api.BackendGroup;
  */
 public interface BackendWireFormatterContext<Q> {
 
-    public Q internalize(BackendGroup<Q> group, Object query);
+    public Q internalize(BackendGroup<Q, ?, ?> group, Object query);
     public <F extends BackendWireFormatter> F getWireFormatter(Class<F> type);
 }

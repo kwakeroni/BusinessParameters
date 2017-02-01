@@ -1,10 +1,7 @@
-package be.kwakeroni.parameters.basic.client.model;
+package be.kwakeroni.parameters.basic.type;
 
 import java.util.Comparator;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -34,6 +31,19 @@ class DefaultRange<V> implements Range<V> {
 
     public boolean contains(V value) {
         return comparator.compare(value, this.to) < 0 && comparator.compare(value, this.from) >= 0;
+    }
+
+    @Override
+    public boolean overlaps(Range<V> otherRange) {
+        V otherFrom = otherRange.getFrom();
+        V otherTo = otherRange.getTo();
+        return (comparator.compare(otherTo, this.from) > 0 && comparator.compare(otherTo, this.to) < 0)
+                || (comparator.compare(otherFrom, this.from) >= 0 && comparator.compare(otherFrom, this.to) < 0)
+                || (comparator.compare(this.from, otherFrom) >= 0 && comparator.compare(this.from, otherTo) < 0)
+                || (comparator.compare(this.to, otherFrom) > 0 && comparator.compare(this.to, otherTo) < 0);
+
+
+
     }
 
     @Override

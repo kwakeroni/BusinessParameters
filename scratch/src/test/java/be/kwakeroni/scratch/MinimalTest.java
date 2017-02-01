@@ -1,15 +1,12 @@
 package be.kwakeroni.scratch;
 
-import be.kwakeroni.parameters.basic.client.model.Entry;
-import be.kwakeroni.parameters.basic.client.model.Range;
+import be.kwakeroni.parameters.basic.type.Range;
+import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.basic.client.query.EntryQuery;
 import be.kwakeroni.parameters.basic.client.query.MappedQuery;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
-import be.kwakeroni.parameters.types.api.ParameterType;
-import be.kwakeroni.parameters.types.support.ParameterTypes;
 import be.kwakeroni.scratch.tv.*;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -17,24 +17,24 @@ public interface BasicBackendWireFormatter extends BackendWireFormatter {
     Map<String, String> wireToBackendEntry(Object entry);
     Object backendEntryToWire(Map<String, String> entry);
 
-    default <Q> Q internalizeValueQuery(String parameter, BackendGroup<Q> group, BackendWireFormatterContext<Q> context) {
-        SimpleBackendGroup<Q> simple = group.as(SimpleBackendGroup.class);
+    default <Q> Q internalizeValueQuery(String parameter, BackendGroup<Q, ?, ?> group, BackendWireFormatterContext<Q> context) {
+        SimpleBackendGroup<Q, ?, ?> simple = group.as(SimpleBackendGroup.class);
         return simple.getValueQuery(parameter);
     }
 
-    default <Q> Q internalizeEntryQuery(BackendGroup<Q> group, BackendWireFormatterContext<Q> context) {
-        SimpleBackendGroup<Q> simple = group.as(SimpleBackendGroup.class);
+    default <Q> Q internalizeEntryQuery(BackendGroup<Q, ?, ?> group, BackendWireFormatterContext<Q> context) {
+        SimpleBackendGroup<Q, ?, ?> simple = group.as(SimpleBackendGroup.class);
         return simple.getEntryQuery();
     }
 
-    default <Q> Q internalizeRangedQuery(String value, Object rawSubQuery, BackendGroup<Q> group, BackendWireFormatterContext<Q> context) {
-        RangedBackendGroup<Q> ranged = group.as(RangedBackendGroup.class);
+    default <Q> Q internalizeRangedQuery(String value, Object rawSubQuery, BackendGroup<Q, ?, ?> group, BackendWireFormatterContext<Q> context) {
+        RangedBackendGroup<Q, ?, ?> ranged = group.as(RangedBackendGroup.class);
         Q subQuery = context.internalize(ranged.getSubGroup(), rawSubQuery);
         return ranged.getEntryQuery(value, subQuery);
     }
 
-    default <Q> Q internalizeMappedQuery(String key, Object rawSubQuery, BackendGroup<Q> group, BackendWireFormatterContext<Q> context) {
-        MappedBackendGroup<Q> mapped = group.as(MappedBackendGroup.class);
+    default <Q> Q internalizeMappedQuery(String key, Object rawSubQuery, BackendGroup<Q, ?, ?> group, BackendWireFormatterContext<Q> context) {
+        MappedBackendGroup<Q, ?, ?> mapped = group.as(MappedBackendGroup.class);
         Q subQuery = context.internalize(mapped.getSubGroup(), rawSubQuery);
         return mapped.getEntryQuery(key, subQuery);
     }

@@ -1,6 +1,5 @@
-package be.kwakeroni.parameters.basic.client.support;
+package be.kwakeroni.parameters.basic.type;
 
-import be.kwakeroni.parameters.basic.client.model.Range;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.ParameterTypes;
 
@@ -104,4 +103,13 @@ public class Ranges {
         return ParameterTypes.of(fromStringOf(type::fromString), toStringOf(type::toString));
     }
 
+    public static <T> ParameterType<Range<String>> stringRangeTypeOf(ParameterType<T> type, Comparator<? super T> comparator){
+        Comparator<String> stringComparator = (string1, string2) -> comparator.compare(type.fromString(string1), type.fromString(string2));
+        return rangeTypeOf(ParameterTypes.STRING, stringComparator);
+    }
+
+    public static <T extends Comparable<? super T>> ParameterType<Range<String>> stringRangeTypeOf(ParameterType<T> type){
+        Comparator<String> stringComparator = (string1, string2) -> type.fromString(string1).compareTo(type.fromString(string2));
+        return rangeTypeOf(ParameterTypes.STRING, stringComparator);
+    }
 }

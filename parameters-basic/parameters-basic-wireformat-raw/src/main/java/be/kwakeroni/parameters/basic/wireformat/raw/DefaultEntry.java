@@ -1,6 +1,6 @@
 package be.kwakeroni.parameters.basic.wireformat.raw;
 
-import be.kwakeroni.parameters.basic.client.model.Entry;
+import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 
 import java.util.Collections;

@@ -51,6 +51,10 @@ public class DefaultEntryData implements EntryData {
         return new DefaultEntryData(map);
     }
 
+    public static DefaultEntryData of(Map<String, String> entry){
+        return new DefaultEntryData(new HashMap<>(entry));
+    }
+
 //    public static DefaultEntryData of(Parameter<?> parameter, String value, Object... andSoOn){
 //        if (andSoOn.length % 2 != 0){
 //            throw new IllegalArgumentException("Expected parameter-value pairs: " + Arrays.toString(andSoOn));

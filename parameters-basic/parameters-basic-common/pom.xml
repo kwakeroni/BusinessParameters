@@ -9,16 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>parameters-basic-inmemory</artifactId>
+    <artifactId>parameters-basic-common</artifactId>
     <packaging>bundle</packaging>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>be.kwakeroni.parameters.backend</groupId>
-                <artifactId>parameters-backend</artifactId>
-                <type>pom</type>
+                <groupId>be.kwakeroni.parameters.types</groupId>
+                <artifactId>parameters-types</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
@@ -26,16 +26,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>parameters-basic-backend</artifactId>
+            <groupId>be.kwakeroni.parameters.types</groupId>
+            <artifactId>parameters-types-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.kwakeroni.parameters.basic</groupId>
-            <artifactId>parameters-basic-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.kwakeroni.parameters.backend</groupId>
-            <artifactId>parameters-backend-inmemory</artifactId>
+            <groupId>be.kwakeroni.parameters.types</groupId>
+            <artifactId>parameters-types-support</artifactId>
         </dependency>
     </dependencies>
+
 </project>

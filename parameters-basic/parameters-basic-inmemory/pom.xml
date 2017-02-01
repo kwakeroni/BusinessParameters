@@ -30,6 +30,10 @@
             <artifactId>parameters-basic-backend</artifactId>
         </dependency>
         <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>be.kwakeroni.parameters.backend</groupId>
             <artifactId>parameters-backend-inmemory</artifactId>
         </dependency>

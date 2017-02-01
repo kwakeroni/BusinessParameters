@@ -1,7 +1,6 @@
-package be.kwakeroni.parameters.basic.client.model;
+package be.kwakeroni.parameters.basic.type;
 
 import java.util.Comparator;
-import java.util.function.Function;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -13,6 +12,8 @@ public interface Range<T> {
     public T getTo();
 
     public boolean contains(T value);
+
+    public boolean overlaps(Range<T> otherRange);
 
     public static <T> Range<T> of(T from, T to, Comparator<? super T> comparator){
         return new DefaultRange<>(from, to, comparator);

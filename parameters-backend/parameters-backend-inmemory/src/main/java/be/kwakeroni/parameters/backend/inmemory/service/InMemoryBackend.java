@@ -2,15 +2,20 @@ package be.kwakeroni.parameters.backend.inmemory.service;
 
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
+import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -31,7 +36,7 @@ public class InMemoryBackend implements BusinessParametersBackend {
         this.wireFormatterContext = context;
     }
 
-    public void setGroupData(String groupName, GroupData data){
+    public void setGroupData(String groupName, GroupData data) {
         this.data.put(groupName, data);
     }
 
@@ -43,26 +48,71 @@ public class InMemoryBackend implements BusinessParametersBackend {
 
     @Override
     public Object get(String group, Object queryObject) {
-        GroupData groupData = getGroupData(group);
-        System.out.println("Internalizing query {}" + queryObject);
-        InMemoryQuery<?> query = wireFormatterContext.internalize(groupData.getGroup(), queryObject);
-        Object result = getExternalResult(query, group, groupData);
-        System.out.println("Returning result {}" + result + " for query {}" + query);
-        return result;
+
+        try (
+                MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
+                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", group)) {
+            LOG.debug("Query on {}: {}", group, queryObject);
+
+            GroupData groupData = getGroupData(group);
+            InMemoryQuery<?> query = internalizeQuery(queryObject, groupData);
+            Object result = getExternalResult(query, groupData);
+
+            LOG.debug("Returning result: {}", result);
+            return result;
+        }
     }
 
-    private <T> Object getExternalResult(InMemoryQuery<T> query, String group, GroupData groupData){
-        System.out.println("Executing query {}" + query +" on {}" + group);
-        T result = query.apply(groupData.getEntries()).orElse(null);
-        System.out.println("Query on {}" + group + " has result {}" + result);
-        System.out.println("Externalizing result {}" + result);
-        Object external = query.externalizeResult(result, this.wireFormatterContext);
-        return external;
+
+    public void set(String group, Object queryObject, Object value) {
+        try (
+                MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
+                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", group)) {
+            LOG.debug("Write on {}: {} <- {}", group, queryObject, value);
+            GroupData groupData = getGroupData(group);
+            InMemoryQuery<?> query = internalizeQuery(queryObject, groupData);
+            setInternalResult(value, query, groupData);
+        }
+    }
+
+    @Override
+    public void addEntry(String group, Map<String, String> entry) {
+        try (
+                MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
+                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", group)) {
+
+            LOG.debug("Add entry on {}: {} <- {}", group, entry);
+            GroupData groupData = getGroupData(group);
+            EntryData entryData = DefaultEntryData.of(entry);
+            groupData.addEntry(entryData);
+        }
+
     }
 
     private GroupData getGroupData(String name) {
         return Optional.ofNullable(data.get(name))
                 .orElseThrow(() -> new IllegalArgumentException("No group defined with name " + name));
+    }
+
+    private InMemoryQuery<?> internalizeQuery(Object query, GroupData groupData) {
+        LOG.debug("Internalizing query: {}", query);
+        return wireFormatterContext.internalize(groupData.getGroup(), query);
+    }
+
+    private <T> Object getExternalResult(InMemoryQuery<T> query, GroupData groupData) {
+        LOG.debug("Executing query: {}", query);
+        T result = query.apply(groupData.getEntries()).orElse(null);
+        LOG.debug("Externalizing query result: {}", result);
+        return query.externalizeResult(result, this.wireFormatterContext);
+    }
+
+    private <T> void setInternalResult(Object valueObject, InMemoryQuery<T> query, GroupData groupData) {
+        LOG.debug("Internalizing value to be written: {}", valueObject);
+        T value = query.internalizeValue(valueObject, this.wireFormatterContext);
+        LOG.debug("Writing value {} to query: {}", value, query);
+
+        EntryModification modification = query.getEntryModification(value, groupData.getEntries());
+        groupData.modifyEntry(modification.getEntry(), modification.getModifier());
     }
 
     @Override

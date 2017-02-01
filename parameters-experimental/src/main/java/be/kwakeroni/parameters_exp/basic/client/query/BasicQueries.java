@@ -3,7 +3,7 @@ package be.kwakeroni.parameters_exp.basic.client.query;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.basic.client.model.Entry;
+import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.basic.client.model.Ranged;
 import be.kwakeroni.parameters.basic.client.model.Simple;

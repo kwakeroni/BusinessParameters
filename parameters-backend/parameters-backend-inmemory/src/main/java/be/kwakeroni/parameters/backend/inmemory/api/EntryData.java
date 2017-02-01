@@ -9,6 +9,7 @@ public interface EntryData {
 
     public String getValue(String parameterName);
 
-    public Map<String, String> asMap();
+    public void setValue(String parameterName, String value);
 
+    public Map<String, String> asMap();
 }

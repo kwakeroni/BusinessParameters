@@ -19,6 +19,7 @@
         <module>parameters-types</module>
         <module>scratch</module>
         <module>parameters-features</module>
+        <module>parameters-adapter</module>
     </modules>
 
     <properties>

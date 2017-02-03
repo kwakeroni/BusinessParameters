@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.client.direct;
+package be.kwakeroni.parameters.adapter.direct;
 
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 

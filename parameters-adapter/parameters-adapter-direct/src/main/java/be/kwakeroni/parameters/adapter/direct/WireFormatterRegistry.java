@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.client.direct;
+package be.kwakeroni.parameters.adapter.direct;
 
 import be.kwakeroni.parameters.client.api.factory.ClientWireFormatterFactory;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;

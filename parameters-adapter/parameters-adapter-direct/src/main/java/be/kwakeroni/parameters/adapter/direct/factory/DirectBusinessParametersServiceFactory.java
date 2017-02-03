@@ -1,14 +1,14 @@
-package be.kwakeroni.parameters.client.direct.factory;
+package be.kwakeroni.parameters.adapter.direct.factory;
 
+import be.kwakeroni.parameters.adapter.direct.BackendRegistry;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.WritableBusinessParameters;
 import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
 import be.kwakeroni.parameters.client.api.factory.ClientWireFormatterFactory;
-import be.kwakeroni.parameters.client.direct.BackendRegistry;
-import be.kwakeroni.parameters.client.direct.DirectBusinessParametersConnector;
-import be.kwakeroni.parameters.client.direct.WireFormatterRegistry;
+import be.kwakeroni.parameters.adapter.direct.DirectBusinessParametersConnector;
+import be.kwakeroni.parameters.adapter.direct.WireFormatterRegistry;
 
 import java.util.ServiceLoader;
 

@@ -48,6 +48,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.adapter</groupId>
+                <artifactId>parameters-adapter</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -76,8 +83,8 @@
             <artifactId>parameters-basic-wireformat-raw</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.kwakeroni.parameters.client</groupId>
-            <artifactId>parameters-client-direct</artifactId>
+            <groupId>be.kwakeroni.parameters.adapter</groupId>
+            <artifactId>parameters-adapter-direct</artifactId>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.backend</groupId>
@@ -87,26 +94,6 @@
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-inmemory</artifactId>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
-            <!--<artifactId>parameters-basic-api-model</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
-            <!--<artifactId>parameters-basic-wireformat-standard</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
-            <!--<artifactId>parameters-basic-wireformat-raw</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>be.kwakeroni.parameters.api</groupId>-->
-            <!--<artifactId>parameters-api-inmemory-service</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>be.kwakeroni.parameters.api</groupId>-->
-            <!--<artifactId>parameters-api-inmemory-basic</artifactId>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>

@@ -1,37 +1,47 @@
 package be.kwakeroni.parameters.adapter.direct;
 
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
 public class BackendRegistry {
 
-    private Map<String, BusinessParametersBackend> backendsByGroupName = new HashMap<>();
-    private Collection<BusinessParametersBackend> backends = new ArrayList<>();
+    private final Map<String, DirectBackendAdapter> backendsByGroupName = new HashMap<>();
+    private final Collection<BusinessParametersBackend<?>> backends = new ArrayList<>();
+    private final BackendWireFormatterContext wireFormatterContext;
 
-    public void register(BusinessParametersBackend backend) {
+    public BackendRegistry(BackendWireFormatterContext wireFormatterContext) {
+        this.wireFormatterContext = wireFormatterContext;
+    }
+
+    public void register(BusinessParametersBackend<?> backend) {
         if (!backends.contains(backend)) {
             backends.add(backend);
         }
-        registerGroups(backend);
+        registerGroups(new DirectBackendAdapter(backend, wireFormatterContext));
     }
 
-    private void registerGroups(BusinessParametersBackend backend) {
+    private void registerGroups(DirectBackendAdapter backend) {
         registerGroups(backend, backend.getGroupNames());
     }
 
-    private void registerGroups(BusinessParametersBackend backend, Collection<String> backendGroups) {
+    private void registerGroups(DirectBackendAdapter backend, Collection<String> backendGroups) {
         clearGroupCache(backend);
         for (String group : backendGroups) {
             register(group, backend);
         }
     }
 
-    private void clearGroupCache(BusinessParametersBackend backend) {
-        Iterator<BusinessParametersBackend> iter = backendsByGroupName.values().iterator();
+    private void clearGroupCache(DirectBackendAdapter backend) {
+        Iterator<DirectBackendAdapter> iter = backendsByGroupName.values().iterator();
         while (iter.hasNext()) {
             if (backend.equals(iter.next())) {
                 iter.remove();
@@ -39,7 +49,7 @@ public class BackendRegistry {
         }
     }
 
-    private void register(String groupName, BusinessParametersBackend backend) {
+    private void register(String groupName, DirectBackendAdapter backend) {
         this.backendsByGroupName.compute(groupName, (key, value) -> {
             if (value == null) {
                 return backend;
@@ -49,8 +59,8 @@ public class BackendRegistry {
         });
     }
 
-    public BusinessParametersBackend get(String groupName) {
-        BusinessParametersBackend backend = this.backendsByGroupName.get(groupName);
+    public DirectBackendAdapter get(String groupName) {
+        DirectBackendAdapter backend = this.backendsByGroupName.get(groupName);
         if (backend == null) {
             backend = findBackendForGroup(groupName);
         }
@@ -62,12 +72,13 @@ public class BackendRegistry {
         }
     }
 
-    private BusinessParametersBackend findBackendForGroup(String groupName) {
-        for (BusinessParametersBackend backend : this.backends) {
+    private DirectBackendAdapter findBackendForGroup(String groupName) {
+        for (BusinessParametersBackend<?> backend : this.backends) {
             Collection<String> backendGroups = backend.getGroupNames();
             if (backendGroups.contains(groupName)) {
-                registerGroups(backend, backendGroups);
-                return backend;
+                DirectBackendAdapter adapter = new DirectBackendAdapter(backend, wireFormatterContext);
+                registerGroups(adapter, backendGroups);
+                return adapter;
             }
         }
         return null;

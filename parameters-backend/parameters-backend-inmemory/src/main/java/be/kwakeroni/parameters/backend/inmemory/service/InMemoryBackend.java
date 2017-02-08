@@ -1,7 +1,8 @@
 package be.kwakeroni.parameters.backend.inmemory.service;
 
+import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
-import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
@@ -9,31 +10,27 @@ import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class InMemoryBackend implements BusinessParametersBackend {
+public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<?>> {
 
     Logger LOG = LoggerFactory.getLogger(InMemoryBackend.class);
 
     private final Map<String, GroupData> data;
-    private final BackendWireFormatterContext<InMemoryQuery<?>> wireFormatterContext;
 
-    public InMemoryBackend(BackendWireFormatterContext<InMemoryQuery<?>> context) {
-        this(new HashMap<>(), context);
+    public InMemoryBackend() {
+        this(new HashMap<>());
     }
 
-    private InMemoryBackend(Map<String, GroupData> data, BackendWireFormatterContext<InMemoryQuery<?>> context) {
+    private InMemoryBackend(Map<String, GroupData> data) {
         this.data = data;
-        this.wireFormatterContext = context;
     }
 
     public void setGroupData(String groupName, GroupData data) {
@@ -47,72 +44,41 @@ public class InMemoryBackend implements BusinessParametersBackend {
     }
 
     @Override
-    public Object get(String group, Object queryObject) {
-
-        try (
-                MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
-                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", group)) {
-            LOG.debug("Query on {}: {}", group, queryObject);
-
-            GroupData groupData = getGroupData(group);
-            InMemoryQuery<?> query = internalizeQuery(queryObject, groupData);
-            Object result = getExternalResult(query, groupData);
-
-            LOG.debug("Returning result: {}", result);
-            return result;
-        }
-    }
-
-
-    public void set(String group, Object queryObject, Object value) {
-        try (
-                MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
-                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", group)) {
-            LOG.debug("Write on {}: {} <- {}", group, queryObject, value);
-            GroupData groupData = getGroupData(group);
-            InMemoryQuery<?> query = internalizeQuery(queryObject, groupData);
-            setInternalResult(value, query, groupData);
-        }
+    public BackendGroup<InMemoryQuery<?>, ?, ?> getGroup(String name) {
+        return getGroupData(name).getGroup();
     }
 
     @Override
-    public void addEntry(String group, Map<String, String> entry) {
-        try (
-                MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
-                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", group)) {
+    public <V> V select(BackendGroup<InMemoryQuery<?>, ?, ?> group, BackendQuery<? extends InMemoryQuery<?>, V> query) {
+        return getValue(query, getGroupData(group.getName()));
+    }
 
-            LOG.debug("Add entry on {}: {} <- {}", group, entry);
-            GroupData groupData = getGroupData(group);
-            EntryData entryData = DefaultEntryData.of(entry);
-            groupData.addEntry(entryData);
-        }
+    private <T> T getValue(BackendQuery<? extends InMemoryQuery<?>, T> query, GroupData groupData) {
+        return (T) query.raw().apply(groupData.getEntries()).orElse(null);
+    }
+
+    @Override
+    public <V> void update(BackendGroup<InMemoryQuery<?>, ?, ?> group, BackendQuery<? extends InMemoryQuery<?>, V> query, V value) {
+        GroupData groupData = getGroupData(group.getName());
+        setValue(value, query, groupData);
+    }
+
+    private <T> void setValue(T value, BackendQuery<? extends InMemoryQuery<?>, T> query, GroupData groupData) {
+        EntryModification modification = ((InMemoryQuery<T>) query.raw()).getEntryModification(value, groupData.getEntries());
+        groupData.modifyEntry(modification.getEntry(), modification.getModifier());
+    }
+
+    @Override
+    public void insert(BackendGroup<InMemoryQuery<?>, ?, ?> group, Map<String, String> entry) {
+        GroupData groupData = getGroupData(group.getName());
+        EntryData entryData = DefaultEntryData.of(entry);
+        groupData.addEntry(entryData);
 
     }
 
     private GroupData getGroupData(String name) {
         return Optional.ofNullable(data.get(name))
                 .orElseThrow(() -> new IllegalArgumentException("No group defined with name " + name));
-    }
-
-    private InMemoryQuery<?> internalizeQuery(Object query, GroupData groupData) {
-        LOG.debug("Internalizing query: {}", query);
-        return wireFormatterContext.internalize(groupData.getGroup(), query);
-    }
-
-    private <T> Object getExternalResult(InMemoryQuery<T> query, GroupData groupData) {
-        LOG.debug("Executing query: {}", query);
-        T result = query.apply(groupData.getEntries()).orElse(null);
-        LOG.debug("Externalizing query result: {}", result);
-        return query.externalizeResult(result, this.wireFormatterContext);
-    }
-
-    private <T> void setInternalResult(Object valueObject, InMemoryQuery<T> query, GroupData groupData) {
-        LOG.debug("Internalizing value to be written: {}", valueObject);
-        T value = query.internalizeValue(valueObject, this.wireFormatterContext);
-        LOG.debug("Writing value {} to query: {}", value, query);
-
-        EntryModification modification = query.getEntryModification(value, groupData.getEntries());
-        groupData.modifyEntry(modification.getEntry(), modification.getModifier());
     }
 
     @Override

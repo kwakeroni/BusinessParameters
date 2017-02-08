@@ -1,40 +1,43 @@
-package be.kwakeroni.parameters.backend.inmemory.service;
+package be.kwakeroni.parameters.adapter.direct.factory;
 
+import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatter;
-import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
-import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class DefaultBackendWireFormatterContext implements BackendWireFormatterContext<InMemoryQuery<?>> {
+class DefaultBackendWireFormatterContext implements BackendWireFormatterContext {
 
     private final Map<Class<?>, BackendWireFormatter> formatters = new HashMap<>(2);
 
-    public <I extends BackendWireFormatter> void register(Class<? super I> type, I formatter){
+    public <I extends BackendWireFormatter> void register(Class<? super I> type, I formatter) {
         this.formatters.merge(type, formatter,
-                (one, two) -> { throw new IllegalStateException("Duplicate formatters for type: " + type); });
+                (one, two) -> {
+                    throw new IllegalStateException("Duplicate formatters for type: " + type);
+                });
     }
 
-    public void unregister(Class<?> type){
+    public void unregister(Class<?> type) {
         this.formatters.remove(type);
     }
 
-    public void register(BackendWireFormatterFactory formatterFactory){
+    public void register(BackendWireFormatterFactory formatterFactory) {
         formatterFactory.registerInstance(this::register);
     }
 
-    public void unregister(BackendWireFormatterFactory formatterFactory){
+    public void unregister(BackendWireFormatterFactory formatterFactory) {
         formatterFactory.unregisterInstance(this::unregister);
     }
 
     @Override
-    public InMemoryQuery<?> internalize(BackendGroup<InMemoryQuery<?>, ?, ?> group, Object query) {
-        if (this.formatters.isEmpty()){
+    public <Q> Q internalize(BackendGroup<Q, ?, ?> group, Object query) {
+        if (this.formatters.isEmpty()) {
             throw new IllegalStateException("No formatters registered");
         }
 

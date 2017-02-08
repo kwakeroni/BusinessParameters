@@ -12,12 +12,12 @@ import java.util.ServiceLoader;
 public class ServiceLoaderTest {
 
     @Test
-    public void test(){
-        testLoad("Backend", BusinessParametersBackend.class);
+    public void test() {
+        testLoad("BusinessParametersBackend", BusinessParametersBackend.class);
         testLoad("BackendWireFormatter", QueryInternalizer.class);
     }
 
-    private <T> void testLoad(String name, Class<T> serviceType){
+    private <T> void testLoad(String name, Class<T> serviceType) {
         ServiceLoader<T> backendLoader = ServiceLoader.load(serviceType);
 
         backendLoader.forEach(backend -> System.out.println(name + ": " + backend.getClass()));

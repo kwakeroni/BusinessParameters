@@ -27,7 +27,7 @@ class EntryInMemoryQuery implements InMemoryQuery<Map<String, String>> {
     @Override
     public EntryModification getEntryModification(Map<String, String> value, Stream<EntryData> stream) {
         return getEntryFrom(stream)
-                .map(entry -> new EntryModification(){
+                .map(entry -> new EntryModification() {
                     @Override
                     public EntryData getEntry() {
                         return entry;
@@ -46,12 +46,12 @@ class EntryInMemoryQuery implements InMemoryQuery<Map<String, String>> {
     }
 
     @Override
-    public Object externalizeResult(Map<String, String> result, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
-        return context.getWireFormatter(BasicBackendWireFormatter.class).backendEntryToWire(result);
+    public Map<String, String> internalizeValue(Object value, BackendWireFormatterContext context) {
+        return context.getWireFormatter(BasicBackendWireFormatter.class).wireToBackendEntry(value);
     }
 
     @Override
-    public Map<String, String> internalizeValue(Object value, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
-        return context.getWireFormatter(BasicBackendWireFormatter.class).wireToBackendEntry(value);
+    public Object externalizeValue(Map<String, String> value, BackendWireFormatterContext wireFormatterContext) {
+        return wireFormatterContext.getWireFormatter(BasicBackendWireFormatter.class).backendEntryToWire(value);
     }
 }

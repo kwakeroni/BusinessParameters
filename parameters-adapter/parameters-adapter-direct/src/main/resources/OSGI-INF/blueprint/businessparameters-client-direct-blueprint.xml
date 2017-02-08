@@ -6,8 +6,8 @@
        					http://www.isabel.be/schema/security-filters http://www.isabel.be/schema/security-filters.xsd">
 
     <bean id="backendRegistry" class="be.kwakeroni.parameters.adapter.direct.BackendRegistry" />
-    <bean id="wireFormatterRegistry" class="be.kwakeroni.parameters.adapter.direct.WireFormatterRegistry" />
-    <bean id="directBusinessParameters" class="be.kwakeroni.parameters.adapter.direct.DirectBusinessParametersConnector">
+    <bean id="wireFormatterRegistry" class="be.kwakeroni.parameters.adapter.direct.factory.DefaultClientWireFormatterContext" />
+    <bean id="directBusinessParameters" class="be.kwakeroni.parameters.adapter.direct.DirectBusinessParametersClient">
         <argument ref="wireFormatterRegistry" />
         <argument ref="backendRegistry" />
     </bean>

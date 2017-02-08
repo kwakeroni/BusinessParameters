@@ -1,8 +1,10 @@
 package be.kwakeroni.parameters.basic.backend.inmemory;
 
+import be.kwakeroni.parameters.backend.api.query.BackendQuery;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
-import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.basic.backend.query.SimpleBackendGroup;
 
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class InmemorySimpleGroup implements SimpleBackendGroup<InMemoryQuery<?>,
     private final boolean fixedEntries;
     private final Set<String> parameters;
 
-    public InmemorySimpleGroup(String name, boolean fixedEntries, String... parameters){
+    public InmemorySimpleGroup(String name, boolean fixedEntries, String... parameters) {
         this(name, fixedEntries, new HashSet<>(Arrays.asList(parameters)));
     }
 
@@ -32,9 +34,14 @@ public class InmemorySimpleGroup implements SimpleBackendGroup<InMemoryQuery<?>,
         this.name = Objects.requireNonNull(name, "name");
         this.fixedEntries = fixedEntries;
 
-        if (parameters.isEmpty()){
+        if (parameters.isEmpty()) {
             throw new IllegalArgumentException("parameters cannot be empty");
         }
+    }
+
+    @Override
+    public BackendQuery<? extends InMemoryQuery<?>, ?> internalize(Object query, BackendWireFormatterContext context) {
+        return context.internalize(this, query);
     }
 
     @Override
@@ -66,36 +73,36 @@ public class InmemorySimpleGroup implements SimpleBackendGroup<InMemoryQuery<?>,
 //            throw new UnsupportedOperationException("Cannot add entries to group: " + this.getName());
 //        }
 
-        if (storage.getEntries().findAny().isPresent()){
+        if (storage.getEntries().findAny().isPresent()) {
             throw new IllegalStateException("Cannot add entry to group=" + this.getName());
         }
 
         // Verify the entry is complete
         Map<String, String> map = entry.asMap();
-        if (! parametersMatch(this.parameters, map.keySet())){
+        if (!parametersMatch(this.parameters, map.keySet())) {
             Collection<String> missing = minus(this.parameters, map.keySet());
             Collection<String> unexpected = minus(map.keySet(), this.parameters);
             throw new IllegalArgumentException("Incorrect parameters in entry:"
-                    + ((missing.isEmpty())? "" : " missing: " + missing)
-                    + ((unexpected.isEmpty()? "" : " unexpected: " + unexpected))
+                    + ((missing.isEmpty()) ? "" : " missing: " + missing)
+                    + ((unexpected.isEmpty() ? "" : " unexpected: " + unexpected))
             );
         }
 
         map.forEach((key, value) -> {
-            if (value == null){
+            if (value == null) {
                 throw new IllegalArgumentException("Parameter values cannot be null: " + key);
             }
         });
     }
 
-    private boolean parametersMatch(Collection<String> expected, Collection<String> actual){
-        if (expected.size() != actual.size()){
+    private boolean parametersMatch(Collection<String> expected, Collection<String> actual) {
+        if (expected.size() != actual.size()) {
             return false;
         }
         return actual.containsAll(expected) && expected.containsAll(actual);
     }
 
-    private Collection<String> minus(Collection<String> reference, Collection<String> removed){
+    private Collection<String> minus(Collection<String> reference, Collection<String> removed) {
         Collection<String> result = new ArrayList<>(reference);
         result.removeAll(removed);
         return result;

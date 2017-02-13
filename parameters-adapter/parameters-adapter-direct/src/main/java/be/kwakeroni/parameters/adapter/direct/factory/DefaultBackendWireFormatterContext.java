@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-class DefaultBackendWireFormatterContext implements BackendWireFormatterContext {
+public class DefaultBackendWireFormatterContext implements BackendWireFormatterContext {
 
     private final Map<Class<?>, BackendWireFormatter> formatters = new HashMap<>(2);
 

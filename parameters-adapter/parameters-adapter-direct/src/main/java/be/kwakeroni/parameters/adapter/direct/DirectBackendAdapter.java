@@ -27,6 +27,10 @@ class DirectBackendAdapter {
         this.wireFormatterContext = wireFormatterContext;
     }
 
+    public BusinessParametersBackend<?> getBackend(){
+        return this.backend;
+    }
+
     public Collection<String> getGroupNames() {
         return backend.getGroupNames();
     }

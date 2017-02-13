@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-class DefaultClientWireFormatterContext implements ClientWireFormatterContext {
+public class DefaultClientWireFormatterContext implements ClientWireFormatterContext {
 
     private Map<Class<?>, ClientWireFormatter> objects = new HashMap<>(2);
 

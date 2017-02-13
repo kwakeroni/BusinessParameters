@@ -29,6 +29,17 @@ public class BackendRegistry {
         registerGroups(new DirectBackendAdapter(backend, wireFormatterContext));
     }
 
+    public void unregister(BusinessParametersBackend<?> backend){
+        backends.remove(backend);
+        Iterator<Map.Entry<String, DirectBackendAdapter>> iter = backendsByGroupName.entrySet().iterator();
+        while (iter.hasNext()){
+            Map.Entry<String, DirectBackendAdapter> entry = iter.next();
+            if (entry.getValue().getBackend().equals(backend)){
+                iter.remove();
+            }
+        }
+    }
+
     private void registerGroups(DirectBackendAdapter backend) {
         registerGroups(backend, backend.getGroupNames());
     }

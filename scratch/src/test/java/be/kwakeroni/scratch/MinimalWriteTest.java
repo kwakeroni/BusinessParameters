@@ -26,8 +26,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.Assert.*;
 
 /**
@@ -48,12 +49,12 @@ public class MinimalWriteTest {
     public void testWriteSimpleValue() {
         Query<Simple, Dag> query = new ValueQuery<>(SimpleTVGroup.DAY);
 
-        Dag original = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query);
+        Dag original = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query).get();
         assertEquals(Dag.MAANDAG, original);
 
         environment.getWritableBusinessParameters().set(SimpleTVGroup.instance(), query, Dag.DONDERDAG);
 
-        Dag modified = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query);
+        Dag modified = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query).get();
         assertEquals(Dag.DONDERDAG, modified);
     }
 
@@ -61,13 +62,13 @@ public class MinimalWriteTest {
     public void testWriteSimpleEntry() {
         Query<Simple, Entry> query = new EntryQuery();
 
-        Entry entry = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query);
+        Entry entry = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query).get();
         assertEquals(Dag.MAANDAG, entry.getValue(SimpleTVGroup.DAY));
         assertEquals(Slot.atHour(20), entry.getValue(SimpleTVGroup.SLOT));
 
         environment.getWritableBusinessParameters().set(SimpleTVGroup.instance(), query, SimpleTVGroup.entry(Dag.DONDERDAG, Slot.atHalfPast(18)));
 
-        Entry modified = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query);
+        Entry modified = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query).get();
         assertEquals(Dag.DONDERDAG, modified.getValue(SimpleTVGroup.DAY));
         assertEquals(Slot.atHalfPast(18), modified.getValue(SimpleTVGroup.SLOT));
     }
@@ -78,12 +79,12 @@ public class MinimalWriteTest {
                 new MappedQuery<>(Dag.ZATERDAG, Dag.type,
                         new ValueQuery<>(MappedTVGroup.PROGRAM));
 
-        String program = environment.getBusinessParameters().get(MappedTVGroup.instance(), query);
+        String program = environment.getBusinessParameters().get(MappedTVGroup.instance(), query).get();
         assertEquals("Samson", program);
 
         environment.getWritableBusinessParameters().set(MappedTVGroup.instance(), query, "TikTak");
 
-        String modified = environment.getBusinessParameters().get(MappedTVGroup.instance(), query);
+        String modified = environment.getBusinessParameters().get(MappedTVGroup.instance(), query).get();
         assertEquals("TikTak", modified);
     }
 
@@ -93,17 +94,17 @@ public class MinimalWriteTest {
                 new MappedQuery<>(Dag.ZONDAG, Dag.type,
                         new EntryQuery());
 
-        Entry entry = environment.getBusinessParameters().get(MappedTVGroup.instance(), query);
+        Entry entry = environment.getBusinessParameters().get(MappedTVGroup.instance(), query).get();
         assertEquals(Dag.ZONDAG, entry.getValue(MappedTVGroup.DAY));
         assertEquals("Morgen Maandag", entry.getValue(MappedTVGroup.PROGRAM));
 
         environment.getWritableBusinessParameters().set(MappedTVGroup.instance(), query, MappedTVGroup.entry(Dag.DONDERDAG, "Alles Kan Beter"));
 
-        Entry old = environment.getBusinessParameters().get(MappedTVGroup.instance(), query);
-        assertNull(old);
+        assertThat(environment.getBusinessParameters().get(MappedTVGroup.instance(), query)).isEmpty();
+
 
         Entry modified = environment.getBusinessParameters().get(MappedTVGroup.instance(),
-                new MappedQuery<>(Dag.DONDERDAG, Dag.type, new EntryQuery()));
+                new MappedQuery<>(Dag.DONDERDAG, Dag.type, new EntryQuery())).get();
         assertEquals(Dag.DONDERDAG, modified.getValue(MappedTVGroup.DAY));
         assertEquals("Alles Kan Beter", modified.getValue(MappedTVGroup.PROGRAM));
 
@@ -114,12 +115,12 @@ public class MinimalWriteTest {
         Query<Ranged<Slot, Simple>, String> query = new RangedQuery<>(Slot.atHalfPast(9), Slot.type,
                 new ValueQuery<>(RangedTVGroup.PROGRAM));
 
-        String original = environment.getBusinessParameters().get(RangedTVGroup.instance(), query);
+        String original = environment.getBusinessParameters().get(RangedTVGroup.instance(), query).get();
         assertEquals("Samson", original);
 
         environment.getWritableBusinessParameters().set(RangedTVGroup.instance(), query, "TikTak");
 
-        String modified = environment.getBusinessParameters().get(RangedTVGroup.instance(), query);
+        String modified = environment.getBusinessParameters().get(RangedTVGroup.instance(), query).get();
         assertEquals("TikTak", modified);
 
     }
@@ -130,58 +131,57 @@ public class MinimalWriteTest {
         Query<Ranged<Slot, Simple>, Entry> query = new RangedQuery<>(Slot.atHalfPast(9), Slot.type,
                 new EntryQuery());
 
-        Entry entry = get(RangedTVGroup.instance(), query);
+        Entry entry = get(RangedTVGroup.instance(), query).get();
         assertEquals(Range.of(Slot.atHour(8), Slot.atHour(12)), entry.getValue(RangedTVGroup.SLOT));
         assertEquals("Samson", entry.getValue(RangedTVGroup.PROGRAM));
 
         environment.getWritableBusinessParameters().set(RangedTVGroup.instance(), query, RangedTVGroup.entry(Slot.atHour(10), Slot.atHour(12), "TikTak"));
 
-        Entry old = get(RangedTVGroup.instance(), query);
-        assertNull(old);
+        assertThat(get(RangedTVGroup.instance(), query)).isEmpty();
 
-        Entry modified = get(RangedTVGroup.instance(), new RangedQuery<>(Slot.atHour(10), Slot.type, new EntryQuery()));
+        Entry modified = get(RangedTVGroup.instance(), new RangedQuery<>(Slot.atHour(10), Slot.type, new EntryQuery())).get();
         assertEquals(Range.of(Slot.atHour(10), Slot.atHour(12)), modified.getValue(RangedTVGroup.SLOT));
         assertEquals("TikTak", modified.getValue(MappedTVGroup.PROGRAM));
     }
 
     @Test
     public void testAddMappedEntry() {
-        assertNull(get(MappedTVGroup.instance(), MappedTVGroup.programQuery(Dag.DINSDAG)));
+        assertThat(get(MappedTVGroup.instance(), MappedTVGroup.programQuery(Dag.DINSDAG))).isEmpty();
 
         Entry entry = MappedTVGroup.entry(Dag.DINSDAG, "Panorama");
         environment.getWritableBusinessParameters().addEntry(MappedTVGroup.instance(), entry);
 
-        assertEquals("Panorama", get(MappedTVGroup.instance(), MappedTVGroup.programQuery(Dag.DINSDAG)));
+        assertEquals("Panorama", get(Dag.DINSDAG));
     }
 
     @Test
     public void testAddRangedEntry() {
-        assertNull(get(RangedTVGroup.instance(), RangedTVGroup.programQuery(Slot.atHalfPast(3))));
+        assertThat(get(RangedTVGroup.instance(), RangedTVGroup.programQuery(Slot.atHalfPast(3)))).isEmpty();
 
         Entry entry = RangedTVGroup.entry(Slot.atHour(3), Slot.atHour(4), "TestBeeld");
         environment.getWritableBusinessParameters().addEntry(RangedTVGroup.instance(), entry);
 
-        assertEquals("TestBeeld", get(RangedTVGroup.instance(), RangedTVGroup.programQuery(Slot.atHalfPast(3))));
+        assertEquals("TestBeeld", get(Slot.atHalfPast(3)));
     }
 
     @Test
     public void testAddSimpleEntry() {
         Query<Simple, Dag> query = new ValueQuery<>(SimpleTVGroup.DAY);
 
-        Dag original = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query);
+        Dag original = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query).get();
         assertEquals(Dag.MAANDAG, original);
 
         assertThatThrownBy(() ->
                 environment.getWritableBusinessParameters().addEntry(SimpleTVGroup.instance(), SimpleTVGroup.entry(Dag.WOENSDAG, Slot.atHour(7)))
         ).isInstanceOf(IllegalStateException.class);
 
-        Dag modified = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query);
+        Dag modified = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query).get();
         assertEquals(Dag.MAANDAG, modified);
     }
 
     @Test
     public void testAddIncompleteEntry() {
-        assertNull(get(MappedTVGroup.instance(), MappedTVGroup.programQuery(Dag.DINSDAG)));
+        assertThat(get(MappedTVGroup.instance(), MappedTVGroup.programQuery(Dag.DINSDAG))).isEmpty();
 
         Map<String, String> map = MappedTVGroup.entry(Dag.DINSDAG, "Panorama").toMap();
         map.remove(MappedTVGroup.PROGRAM.getName());
@@ -200,7 +200,7 @@ public class MinimalWriteTest {
     @Test
     public void testAddDuplicateMapKey() {
         {
-            String program = environment.getBusinessParameters().get(MappedTVGroup.instance(), MappedTVGroup.programQuery(Dag.ZONDAG));
+            String program = environment.getBusinessParameters().get(MappedTVGroup.instance(), MappedTVGroup.programQuery(Dag.ZONDAG)).get();
             assertEquals("Morgen Maandag", program);
         }
 
@@ -211,7 +211,7 @@ public class MinimalWriteTest {
                 .hasMessageContaining("day=ZONDAG");
 
         {
-            String program = environment.getBusinessParameters().get(MappedTVGroup.instance(), MappedTVGroup.programQuery(Dag.ZONDAG));
+            String program = environment.getBusinessParameters().get(MappedTVGroup.instance(), MappedTVGroup.programQuery(Dag.ZONDAG)).get();
             assertEquals("Morgen Maandag", program);
         }
     }
@@ -304,7 +304,7 @@ public class MinimalWriteTest {
             assertEquals("Het Nieuws", get(Slot.atHour(7)));
             assertEquals("Samson", get(Slot.atHour(8)));
             assertEquals("Het Journaal", get(Slot.atHour(12)));
-            assertNull(get(Slot.atHour(13)));
+            assertNoEntry(Slot.atHour(13));
         }
 
     }
@@ -383,7 +383,7 @@ public class MinimalWriteTest {
     public void testWriteNullValue() {
         Query<Simple, Dag> query = new ValueQuery<>(SimpleTVGroup.DAY);
 
-        Dag original = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query);
+        Dag original = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query).get();
         assertEquals(Dag.MAANDAG, original);
 
         assertThatThrownBy(() ->
@@ -391,21 +391,29 @@ public class MinimalWriteTest {
         ).isInstanceOf(IllegalArgumentException.class)
          .satisfies(exc -> LOG.error(exc.getMessage()));
 
-        Dag modified = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query);
+        Dag modified = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query).get();
         assertEquals(Dag.MAANDAG, modified);
     }
 
+    private void assertNoEntry(Dag dag){
+        assertThat(get(MappedTVGroup.instance(), MappedTVGroup.programQuery(dag))).isEmpty();
+    }
+    private void assertNoEntry(Slot slot){
+        assertThat(get(RangedTVGroup.instance(), RangedTVGroup.programQuery(slot))).isEmpty();
+    }
+    private void assertNoEntry(Dag dag, Slot slot){
+        assertThat(get(MappedRangedTVGroup.instance(), MappedRangedTVGroup.programQuery(dag, slot))).isEmpty();
+    }
 
     private String get(Dag dag){
-        return get(MappedTVGroup.instance(), MappedTVGroup.programQuery(dag));
+        return get(MappedTVGroup.instance(), MappedTVGroup.programQuery(dag)).get();
     }
-
     private String get(Slot slot) {
-        return get(RangedTVGroup.instance(), RangedTVGroup.programQuery(slot));
+        return get(RangedTVGroup.instance(), RangedTVGroup.programQuery(slot)).get();
     }
-    private String get(Dag dag, Slot slot) { return get(MappedRangedTVGroup.instance(), MappedRangedTVGroup.programQuery(dag, slot)); }
+    private String get(Dag dag, Slot slot) { return get(MappedRangedTVGroup.instance(), MappedRangedTVGroup.programQuery(dag, slot)).get(); }
 
-    private <ET extends EntryType, T> T get(ParameterGroup<ET> group, Query<ET, T> query) {
+    private <ET extends EntryType, T> Optional<T> get(ParameterGroup<ET> group, Query<ET, T> query) {
         return environment.getBusinessParameters().get(group, query);
     }
 

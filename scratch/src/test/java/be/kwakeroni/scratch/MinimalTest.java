@@ -7,6 +7,7 @@ import be.kwakeroni.parameters.basic.client.query.MappedQuery;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.scratch.tv.*;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -16,7 +17,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class MinimalTest {
 
-    Environment environment = new Environment();
+    @ClassRule
+    public static Environment environment = new Environment();
 
     @Test
     public void testSimpleValueQuery(){

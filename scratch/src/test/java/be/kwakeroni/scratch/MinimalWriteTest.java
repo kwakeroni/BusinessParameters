@@ -20,7 +20,10 @@ import be.kwakeroni.scratch.tv.RangedTVGroup;
 import be.kwakeroni.scratch.tv.SimpleTVGroup;
 import be.kwakeroni.scratch.tv.Slot;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +40,10 @@ public class MinimalWriteTest {
 
     private Logger LOG = LoggerFactory.getLogger(MinimalWriteTest.class);
 
-    Environment environment;
-
-    @Before
-    public void setUpEnvironment() {
-        this.environment = new Environment();
-    }
+    @ClassRule
+    public static Environment environment = new Environment();
+    @Rule
+    public TestRule resetter = environment.reset();
 
     @Test
     public void testWriteSimpleValue() {

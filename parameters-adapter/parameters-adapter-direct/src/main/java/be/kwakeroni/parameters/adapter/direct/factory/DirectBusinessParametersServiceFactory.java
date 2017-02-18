@@ -1,14 +1,14 @@
-package be.kwakeroni.parameters.client.direct.factory;
+package be.kwakeroni.parameters.adapter.direct.factory;
 
+import be.kwakeroni.parameters.adapter.direct.BackendRegistry;
+import be.kwakeroni.parameters.adapter.direct.DirectBusinessParametersClient;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
+import be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory;
 import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.WritableBusinessParameters;
 import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
 import be.kwakeroni.parameters.client.api.factory.ClientWireFormatterFactory;
-import be.kwakeroni.parameters.client.direct.BackendRegistry;
-import be.kwakeroni.parameters.client.direct.DirectBusinessParametersConnector;
-import be.kwakeroni.parameters.client.direct.WireFormatterRegistry;
 
 import java.util.ServiceLoader;
 
@@ -24,24 +24,29 @@ public class DirectBusinessParametersServiceFactory implements BusinessParameter
 
     @Override
     public WritableBusinessParameters getWritableInstance() {
-        WireFormatterRegistry registry = new WireFormatterRegistry();
-        registerFormatters(registry);
-        BackendRegistry backends = new BackendRegistry();
+        DefaultClientWireFormatterContext clientRegistry = new DefaultClientWireFormatterContext();
+        registerClientFormatters(clientRegistry);
+        DefaultBackendWireFormatterContext backendRegistry = new DefaultBackendWireFormatterContext();
+        registerBackendFormatters(backendRegistry);
+        BackendRegistry backends = new BackendRegistry(backendRegistry);
         registerBackends(backends);
-        return new DirectBusinessParametersConnector(registry, backends);
+        return new DirectBusinessParametersClient(clientRegistry, backends);
     }
 
-    private void registerFormatters(WireFormatterRegistry registry) {
+    private void registerClientFormatters(DefaultClientWireFormatterContext registry) {
         ServiceLoader<ClientWireFormatterFactory> loader = ServiceLoader.load(ClientWireFormatterFactory.class);
-        for (ClientWireFormatterFactory factory : loader) {
-            factory.registerInstance(registry::register);
-        }
+        loader.forEach(registry::register);
+    }
+
+    private void registerBackendFormatters(DefaultBackendWireFormatterContext registry) {
+        ServiceLoader<BackendWireFormatterFactory> loader = ServiceLoader.load(BackendWireFormatterFactory.class);
+        loader.forEach(registry::register);
     }
 
     private void registerBackends(BackendRegistry registry) {
         ServiceLoader<BusinessParametersBackendFactory> loader = ServiceLoader.load(BusinessParametersBackendFactory.class);
         for (BusinessParametersBackendFactory factory : loader) {
-            BusinessParametersBackend backend = factory.getInstance();
+            BusinessParametersBackend<?> backend = factory.getInstance();
             registry.register(backend);
         }
     }

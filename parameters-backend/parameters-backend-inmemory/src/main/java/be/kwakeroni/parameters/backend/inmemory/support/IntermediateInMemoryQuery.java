@@ -34,13 +34,13 @@ public class IntermediateInMemoryQuery<T> implements InMemoryQuery<T> {
     }
 
     @Override
-    public Object externalizeResult(T result, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
-        return subQuery.externalizeResult(result, context);
+    public T internalizeValue(Object value, BackendWireFormatterContext context) {
+        return subQuery.internalizeValue(value, context);
     }
 
     @Override
-    public T internalizeValue(Object value, BackendWireFormatterContext<? super InMemoryQuery<?>> context) {
-        return subQuery.internalizeValue(value, context);
+    public Object externalizeValue(T value, BackendWireFormatterContext wireFormatterContext) {
+        return subQuery.externalizeValue(value, wireFormatterContext);
     }
 
     public static <T> IntermediateInMemoryQuery<T> filter(Predicate<? super EntryData> filter, InMemoryQuery<T> subQuery) {

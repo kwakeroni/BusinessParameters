@@ -310,7 +310,7 @@ public class MinimalWriteTest {
     }
 
     @Test
-    public void testAddEntryForRangeInAnotherMapKey(){
+    public void testAddEntryForRangeInAnotherMapKey() {
         assertEquals("Samson", get(Dag.ZATERDAG, Slot.atHour(10)));
 
         environment.getWritableBusinessParameters().addEntry(MappedRangedTVGroup.instance(),
@@ -322,7 +322,7 @@ public class MinimalWriteTest {
     }
 
     @Test
-    public void testAddEntryForOtherRangeInSameMapKey(){
+    public void testAddEntryForOtherRangeInSameMapKey() {
         assertEquals("Morgen Maandag", get(Dag.ZONDAG, Slot.atHour(21)));
 
         environment.getWritableBusinessParameters().addEntry(MappedRangedTVGroup.instance(),
@@ -334,14 +334,14 @@ public class MinimalWriteTest {
     }
 
     @Test
-    public void testModifyRangeToOverlappingRange(){
+    public void testModifyRangeToOverlappingRange() {
         assertEquals("Samson", get(Dag.ZATERDAG, Slot.atHour(10)));
         assertEquals("Koers", get(Dag.ZATERDAG, Slot.atHour(16)));
 
         assertThatThrownBy(() ->
-        environment.getWritableBusinessParameters().set(MappedRangedTVGroup.instance(),
-                MappedRangedTVGroup.valueQuery(Dag.ZATERDAG, Slot.atHour(16), MappedRangedTVGroup.SLOT),
-                Range.of(Slot.atHour(11), Slot.atHour(18)))
+                environment.getWritableBusinessParameters().set(MappedRangedTVGroup.instance(),
+                        MappedRangedTVGroup.valueQuery(Dag.ZATERDAG, Slot.atHour(16), MappedRangedTVGroup.SLOT),
+                        Range.of(Slot.atHour(11), Slot.atHour(18)))
         ).isInstanceOf(IllegalStateException.class)
                 .satisfies(exc -> LOG.error(exc.getMessage()));
 
@@ -351,7 +351,7 @@ public class MinimalWriteTest {
     }
 
     @Test
-    public void testModifyKeyToOverlappingRange(){
+    public void testModifyKeyToOverlappingRange() {
         assertEquals("Morgen Maandag", get(Dag.ZONDAG, Slot.atHour(21)));
         assertEquals("Gisteren Zondag", get(Dag.MAANDAG, Slot.atHour(21)));
 
@@ -368,12 +368,12 @@ public class MinimalWriteTest {
     }
 
     @Test
-    public void testModifyKeyToNonOverlappingRange(){
+    public void testModifyKeyToNonOverlappingRange() {
         assertEquals("Morgen Maandag", get(Dag.ZONDAG, Slot.atHour(21)));
 
-                environment.getWritableBusinessParameters().set(MappedRangedTVGroup.instance(),
-                        MappedRangedTVGroup.valueQuery(Dag.ZONDAG, Slot.atHour(21), MappedRangedTVGroup.DAY),
-                        Dag.ZATERDAG);
+        environment.getWritableBusinessParameters().set(MappedRangedTVGroup.instance(),
+                MappedRangedTVGroup.valueQuery(Dag.ZONDAG, Slot.atHour(21), MappedRangedTVGroup.DAY),
+                Dag.ZATERDAG);
 
         assertEquals("Morgen Maandag", get(Dag.ZATERDAG, Slot.atHour(21)));
 
@@ -387,9 +387,9 @@ public class MinimalWriteTest {
         assertEquals(Dag.MAANDAG, original);
 
         assertThatThrownBy(() ->
-            environment.getWritableBusinessParameters().set(SimpleTVGroup.instance(), query, null)
+                environment.getWritableBusinessParameters().set(SimpleTVGroup.instance(), query, null)
         ).isInstanceOf(IllegalArgumentException.class)
-         .satisfies(exc -> LOG.error(exc.getMessage()));
+                .satisfies(exc -> LOG.error(exc.getMessage()));
 
         Dag modified = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query).get();
         assertEquals(Dag.MAANDAG, modified);

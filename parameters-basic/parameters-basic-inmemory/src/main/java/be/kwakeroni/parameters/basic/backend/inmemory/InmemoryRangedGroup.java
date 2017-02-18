@@ -1,9 +1,11 @@
 package be.kwakeroni.parameters.basic.backend.inmemory;
 
 import be.kwakeroni.parameters.backend.api.BackendGroup;
+import be.kwakeroni.parameters.backend.api.query.BackendQuery;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
-import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.support.FilteredGroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.IntermediateInMemoryQuery;
 import be.kwakeroni.parameters.basic.backend.query.RangedBackendGroup;
@@ -28,6 +30,11 @@ public class InmemoryRangedGroup implements RangedBackendGroup<InMemoryQuery<?>,
     }
 
     @Override
+    public BackendQuery<? extends InMemoryQuery<?>, ?> internalize(Object query, BackendWireFormatterContext context) {
+        return context.internalize(this, query);
+    }
+
+    @Override
     public InMemoryQuery<?> getEntryQuery(String value, InMemoryQuery<?> subQuery) {
         return IntermediateInMemoryQuery.filter(entryWithRangeContaining(value), subQuery);
     }
@@ -38,7 +45,7 @@ public class InmemoryRangedGroup implements RangedBackendGroup<InMemoryQuery<?>,
         };
     }
 
-    private Range<String> getRange(EntryData entry){
+    private Range<String> getRange(EntryData entry) {
         return this.rangeType.fromString(entry.getValue(rangeParameterName));
     }
 
@@ -58,12 +65,12 @@ public class InmemoryRangedGroup implements RangedBackendGroup<InMemoryQuery<?>,
 
         try {
             this.subGroup.validateNewEntry(entry, new FilteredGroupData(storage, data -> data.filter(entryWithOverlap(range))));
-        } catch (IllegalStateException exc){
+        } catch (IllegalStateException exc) {
             throw new IllegalStateException(exc.getMessage() + " with range " + this.rangeParameterName + "=" + range);
         }
     }
 
-    private Predicate<EntryData> entryWithOverlap(Range<String> range){
+    private Predicate<EntryData> entryWithOverlap(Range<String> range) {
         return entry -> {
             return range.overlaps(getRange(entry));
         };

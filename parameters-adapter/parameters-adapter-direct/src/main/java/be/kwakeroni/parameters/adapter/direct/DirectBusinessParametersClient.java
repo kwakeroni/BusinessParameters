@@ -9,6 +9,8 @@ import be.kwakeroni.parameters.client.api.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
@@ -25,11 +27,11 @@ public class DirectBusinessParametersClient implements WritableBusinessParameter
     }
 
     @Override
-    public <ET extends EntryType, T> T get(ParameterGroup<ET> group, Query<ET, T> query) {
+    public <ET extends EntryType, T> Optional<T> get(ParameterGroup<ET> group, Query<ET, T> query) {
         DirectBackendAdapter backend = getBackend(group);
         Object external = externalize(query);
         Object resultObject = executeQuery(backend, group.getName(), external);
-        T result = internalize(resultObject, query);
+        Optional<T> result = internalize(resultObject, query);
         return result;
     }
 
@@ -74,7 +76,7 @@ public class DirectBusinessParametersClient implements WritableBusinessParameter
         backend.set(groupName, externalQuery, externalValue);
     }
 
-    private <T> T internalize(Object result, Query<?, T> query) {
+    private <T> Optional<T> internalize(Object result, Query<?, T> query) {
         LOG.debug("Internalizing result: {}", query);
         return query.internalizeResult(result, this.formatters);
     }

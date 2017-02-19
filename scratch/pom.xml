@@ -91,6 +91,10 @@
             <artifactId>parameters-backend-inmemory</artifactId>
         </dependency>
         <dependency>
+            <groupId>be.kwakeroni.parameters.backend</groupId>
+            <artifactId>parameters-backend-elasticsearch</artifactId>
+        </dependency>
+        <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-inmemory</artifactId>
         </dependency>

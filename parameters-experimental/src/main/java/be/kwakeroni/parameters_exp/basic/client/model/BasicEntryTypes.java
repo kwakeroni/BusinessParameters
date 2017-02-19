@@ -9,6 +9,7 @@ import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters_exp.basic.client.query.BasicQueries;
 import be.kwakeroni.parameters_exp.client.api.entry.EntryTypeBuilder;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import static be.kwakeroni.parameters_exp.basic.client.query.BasicQueries.entryAt;
@@ -54,7 +55,7 @@ public class BasicEntryTypes {
     public static <Target extends EntryType> EntryTypeBuilder<Target, Simple> in(BusinessParameterGroup<Target> group) {
         return (findingEntry) -> new Simple() {
             //            @Override
-            public <T> T get(Query<Simple, T> findResult) {
+            public <T> Optional<T> get(Query<Simple, T> findResult) {
                 return group.get(findingEntry.andThen(findResult));
             }
 

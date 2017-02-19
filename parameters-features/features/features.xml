@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="businessparameters"
+          xmlns="http://karaf.apache.org/xmlns/features/v1.4.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.4.0 http://karaf.apache.org/xsd/karaf-features-1.4.0.xsd">
+
+    <feature name="businessparameters-client-support" version="${project.version}">
+        <bundle>mvn:be.kwakeroni.parameters.client/parameters-client-api/${project.version}</bundle>
+        <bundle>mvn:be.kwakeroni.parameters.types/parameters-types-api/${project.version}</bundle>
+        <bundle>mvn:be.kwakeroni.parameters.types/parameters-types-support/${project.version}</bundle>
+        <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-client/${project.version}</bundle>
+    </feature>
+
+    <feature name="businessparameters-adapter-direct" version="${project.version}">
+        <feature>businessparameters-client-support</feature>
+        <feature>businessparameters-backend-support</feature>
+        <bundle>mvn:be.kwakeroni.parameters.adapter/parameters-adapter-direct/${project.version}</bundle>
+        <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-wireformat-raw/${project.version}</bundle>
+    </feature>
+
+    <feature name="businessparameters-backend-support" version="${project.version}">
+        <bundle>mvn:be.kwakeroni.parameters.backend/parameters-backend-api/${project.version}</bundle>
+        <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-backend/${project.version}</bundle>
+    </feature>
+    <feature name="businessparameters-backend-inmemory" version="${project.version}">
+        <feature>businessparameters-backend-support</feature>
+        <feature>businessparameters-basic-inmemory</feature>
+        <bundle>mvn:be.kwakeroni.parameters.backend/parameters-backend-inmemory/${project.version}</bundle>
+    </feature>
+
+    <feature name="businessparameters-basic-inmemory" version="${project.version}">
+        <feature>businessparameters-backend-support</feature>
+        <bundle>mvn:be.kwakeroni.parameters.types/parameters-types-api/${project.version}</bundle>
+        <bundle>mvn:be.kwakeroni.parameters.types/parameters-types-support/${project.version}</bundle>
+        <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-common/${project.version}</bundle>
+        <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-inmemory/${project.version}</bundle>
+    </feature>
+
+</features>

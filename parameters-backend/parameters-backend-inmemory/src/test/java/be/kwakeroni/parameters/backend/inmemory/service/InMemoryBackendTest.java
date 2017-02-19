@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.backend.inmemory.service;
 
-import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.api.BackendGroup;
+import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
@@ -16,8 +17,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
 
 
@@ -29,80 +28,80 @@ public class InMemoryBackendTest {
 
     private InMemoryBackend backend;
     @Mock
-    private BackendWireFormatterContext<InMemoryQuery<?>> context;
-    @Mock
     private GroupData group1Data;
-    private String group1 = "group1";
+    @Mock
+    private BackendGroup<InMemoryQuery<?>, ?, ?> group1;
+    private String group1Name = "group1";
     @Mock
     private Stream<EntryData> group1Stream;
     @Mock
     private GroupData group2Data;
-    private String group2 = "group2";
     @Mock
-    private Object externalQuery;
+    private BackendGroup<InMemoryQuery<?>, ?, ?> group2;
+    private String group2Name = "group2";
     @Mock
-    private InMemoryQuery<Object> internalQuery;
+    private BackendQuery<InMemoryQuery<?>, Object> backendQuery;
     @Mock
-    private Object externalValue;
+    private InMemoryQuery<Object> inMemoryQuery;
     @Mock
-    private Object internalValue;
+    private Object value;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private EntryModification entryModification;
 
     @Before
     public void setUpData() {
-        backend = new InMemoryBackend(context);
-        backend.addGroupData(group1, group1Data);
-        backend.addGroupData(group2, group2Data);
+        backend = new InMemoryBackend();
+        backend.addGroupData(group1Name, group1Data);
+        backend.addGroupData(group2Name, group2Data);
 
-        doReturn(internalQuery).when(context).internalize(any(), same(externalQuery));
-        doReturn(externalValue).when(internalQuery).externalizeResult(same(internalValue), same(context));
-        doReturn(internalValue).when(internalQuery).internalizeValue(same(externalValue), same(context));
+        doReturn(group1Name).when(group1).getName();
+//        doReturn(group2Name).when(group2).getName();
         doReturn(group1Stream).when(group1Data).getEntries();
+        doReturn(inMemoryQuery).when(backendQuery).raw();
     }
 
     @Test
     public void testGet() throws Exception {
-        doReturn(Optional.of(internalValue)).when(internalQuery).apply(group1Stream);
+        doReturn(Optional.of(value)).when(inMemoryQuery).apply(group1Stream);
 
-        Object result = backend.get(group1, externalQuery);
+        Object result = backend.select(group1, backendQuery);
 
-        assertThat(result).isSameAs(externalValue);
+        assertThat(result).isSameAs(value);
 
         verifyZeroInteractions(group2Data);
     }
 
     @Test
     public void testGetReturnsNullWhenNoResult() throws Exception {
-        doReturn(Optional.empty()).when(internalQuery).apply(group1Stream);
+        doReturn(Optional.empty()).when(inMemoryQuery).apply(group1Stream);
 
-        Object result = backend.get(group1, externalQuery);
+        Object result = backend.select(group1, backendQuery);
 
         assertThat(result).isNull();
     }
 
     @Test
     public void testGetFailsWhenQueryReturnsNull() throws Exception {
-        doReturn(null).when(internalQuery).apply(group1Stream);
+        doReturn(null).when(inMemoryQuery).apply(group1Stream);
 
-        assertThatThrownBy(() -> backend.get(group1, externalQuery))
+        assertThatThrownBy(() -> backend.select(group1, backendQuery))
                 .isInstanceOf(NullPointerException.class);
     }
 
     @Test
     public void testSet() throws Exception {
-        when(internalQuery.getEntryModification(internalValue, group1Stream)).thenReturn(entryModification);
+        when(inMemoryQuery.getEntryModification(value, group1Stream)).thenReturn(entryModification);
 
-        backend.set(group1, externalQuery, externalValue);
+        backend.update(group1, backendQuery, value);
 
-        verify(internalQuery).getEntryModification(internalValue, group1Stream);
+        verify(inMemoryQuery).getEntryModification(value, group1Stream);
         verify(group1Data).modifyEntry(entryModification.getEntry(), entryModification.getModifier());
         verifyZeroInteractions(group2Data);
     }
 
     @Test
     public void testGetGroupNames() throws Exception {
-        assertThat(backend.getGroupNames()).containsExactlyInAnyOrder(group1, group2);
+        assertThat(backend.getGroupNames()).containsExactlyInAnyOrder(group1Name, group2Name);
     }
 
 }

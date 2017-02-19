@@ -9,6 +9,7 @@ import be.kwakeroni.parameters.client.api.query.Query;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -36,8 +37,9 @@ public class EntryQuery implements Query<Simple, Entry> {
     }
 
     @Override
-    public Entry internalizeResult(Object result, ClientWireFormatterContext context) {
-        return context.getWireFormatter(BasicClientWireFormatter.class).wireToClientEntry(result, this, context);
+    public Optional<Entry> internalizeResult(Object result, ClientWireFormatterContext context) {
+        Entry entry = context.getWireFormatter(BasicClientWireFormatter.class).wireToClientEntry(result, this, context);
+        return Optional.ofNullable(entry);
     }
 
     @Override

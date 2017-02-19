@@ -1,9 +1,11 @@
 package be.kwakeroni.parameters.basic.backend.inmemory;
 
 import be.kwakeroni.parameters.backend.api.BackendGroup;
+import be.kwakeroni.parameters.backend.api.query.BackendQuery;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
-import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.support.FilteredGroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.IntermediateInMemoryQuery;
 import be.kwakeroni.parameters.basic.backend.query.MappedBackendGroup;
@@ -24,6 +26,12 @@ public class InmemoryMappedGroup implements MappedBackendGroup<InMemoryQuery<?>,
         this.keyParameterName = keyParameterName;
         this.equalizer = equalizer;
         this.subGroup = subGroup;
+    }
+
+
+    @Override
+    public BackendQuery<? extends InMemoryQuery<?>, ?> internalize(Object query, BackendWireFormatterContext context) {
+        return context.internalize(this, query);
     }
 
     @Override
@@ -51,7 +59,7 @@ public class InmemoryMappedGroup implements MappedBackendGroup<InMemoryQuery<?>,
 
         try {
             this.subGroup.validateNewEntry(entry, new FilteredGroupData(storage, data -> data.filter(entryWithKey(key))));
-        } catch (IllegalStateException exc){
+        } catch (IllegalStateException exc) {
             throw new IllegalStateException(exc.getMessage() + " with key: " + this.keyParameterName + "=" + key);
         }
 

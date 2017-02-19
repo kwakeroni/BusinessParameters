@@ -3,12 +3,12 @@ package be.kwakeroni.parameters.basic.wireformat.raw;
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
-import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.basic.client.query.BasicClientWireFormatter;
 import be.kwakeroni.parameters.basic.client.query.EntryQuery;
 import be.kwakeroni.parameters.basic.client.query.MappedQuery;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
+import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBacken
     }
 
     @Override
-    public <Q> Optional<Q> tryInternalize(BackendGroup<Q, ?, ?> group, Object query, BackendWireFormatterContext<Q> context) {
+    public <Q> Optional<Q> tryInternalize(BackendGroup<Q, ?, ?> group, Object query, BackendWireFormatterContext context) {
 
         if (query instanceof ValueQuery) {
             ValueQuery<?> valueQuery = (ValueQuery<?>) query;

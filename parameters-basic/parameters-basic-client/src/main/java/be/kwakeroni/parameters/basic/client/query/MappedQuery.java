@@ -7,6 +7,7 @@ import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.types.api.ParameterType;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -51,7 +52,7 @@ public class MappedQuery<K, ET extends EntryType, T> implements Query<Mapped<K, 
     }
 
     @Override
-    public T internalizeResult(Object result, ClientWireFormatterContext context) {
+    public Optional<T> internalizeResult(Object result, ClientWireFormatterContext context) {
         return this.subQuery.internalizeResult(result, context);
     }
 

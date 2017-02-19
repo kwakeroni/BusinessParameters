@@ -6,6 +6,7 @@ import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import be.kwakeroni.parameters.client.api.query.Query;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class ValueQuery<T> implements Query<Simple, T> {
 
@@ -30,8 +31,9 @@ public class ValueQuery<T> implements Query<Simple, T> {
     }
 
     @Override
-    public T internalizeResult(Object result, ClientWireFormatterContext context) {
-        return context.getWireFormatter(BasicClientWireFormatter.class).wireToClientValue(result, this, context);
+    public Optional<T> internalizeResult(Object result, ClientWireFormatterContext context) {
+        T value = context.getWireFormatter(BasicClientWireFormatter.class).wireToClientValue(result, this, context);
+        return Optional.ofNullable(value);
     }
 
     @Override

@@ -20,10 +20,12 @@ public class ElasticSearchBackendServiceFactory implements BusinessParametersBac
 
     @Override
     public BusinessParametersBackend<ElasticSearchQuery<?>> getInstance() {
-        return new ElasticSearchBackend(loadConfig());
+        return INSTANCE;
+        // @todo remove singleton
+//        return new ElasticSearchBackend(loadConfig());
     }
 
-    private Configuration loadConfig(){
+    private static Configuration loadConfig(){
         InputStream config = Configuration.class.getResourceAsStream(CONFIG_FILE);
 
         if (config == null){
@@ -38,5 +40,11 @@ public class ElasticSearchBackendServiceFactory implements BusinessParametersBac
         }
 
         return new Configuration(properties);
+    }
+
+    private static final ElasticSearchBackend INSTANCE = new ElasticSearchBackend(loadConfig());
+
+    public static ElasticSearchBackend getSingletonInstance() {
+        return INSTANCE;
     }
 }

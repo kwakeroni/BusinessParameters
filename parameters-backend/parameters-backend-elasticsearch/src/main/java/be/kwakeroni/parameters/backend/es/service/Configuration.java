@@ -26,4 +26,15 @@ public class Configuration {
         return properties;
     }
 
+    public String get(ConfigProperty property){
+        return this.properties.getProperty(property.getPropertyName());
+    }
+
+    public String getServerUrl(){
+        return get(ConfigProperty.SERVER_URL);
+    }
+
+    public String getIndexPath(){
+        return get(ConfigProperty.INDEX_PATH);
+    }
 }

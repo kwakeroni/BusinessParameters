@@ -51,9 +51,12 @@ public class ElasticSearchTestNode implements AutoCloseable {
         }
     }
 
-    private void waitUntil(Supplier<Boolean> condition) throws InterruptedException {
+    public void waitUntil(Supplier<Boolean> condition) throws InterruptedException {
+        waitUntil(condition, 1000);
+    }
+        public void waitUntil(Supplier<Boolean> condition, int delay) throws InterruptedException {
         while(! Boolean.TRUE.equals(condition.get())){
-            Thread.sleep(1000);
+            Thread.sleep(delay);
         }
     }
 
@@ -99,7 +102,7 @@ public class ElasticSearchTestNode implements AutoCloseable {
 
         Node node = new Node(
                 InternalSettingsPreparer.prepareEnvironment(settings, (Terminal)null),
-                Arrays.asList(/*Netty4Plugin.class*/)){};
+                Arrays.asList(Netty4Plugin.class)){};
         System.out.println("Starting node");
         node.start();
         System.out.println("Node running");

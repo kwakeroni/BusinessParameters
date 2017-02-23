@@ -70,6 +70,6 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
     }
 
     private static final String NAME = "tv.mapped";
-    private static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, new InmemorySimpleGroup(NAME, false, DAY.getName(), PROGRAM.getName()));
+    private static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, new InmemorySimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
 
 }

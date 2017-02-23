@@ -25,18 +25,15 @@ import java.util.function.Function;
 public class ElasticSearchTest {
 
     @ClassRule
-    public static Environment environment = new Environment();
+    public static Environment environment = new Environment(ElasticSearchTestData::new);
 
     @Test
     public void test() throws Exception {
         System.out.println("Started test");
-//        environment.elasticSearch.waitUntilStarted();
 
         dump("/_cat/indices?v");
 
-//        environment.elasticSearch.stopWhen(() ->
-//            JOptionPane.showConfirmDialog(null, "Click OK to stop server", "ElasticSearch server runnning...", JOptionPane.OK_OPTION) == JOptionPane.OK_OPTION
-//        );
+        JOptionPane.showConfirmDialog(null, "Click OK to stop server", "ElasticSearch server runnning...", JOptionPane.OK_OPTION);
     }
 
     private String resolve(String base, String path){

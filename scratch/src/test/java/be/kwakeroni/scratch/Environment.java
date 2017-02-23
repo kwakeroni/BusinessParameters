@@ -3,6 +3,8 @@ package be.kwakeroni.scratch;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.WritableBusinessParameters;
 import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
+import be.kwakeroni.parameters.client.api.model.ParameterGroup;
+import org.junit.Assume;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -40,11 +42,10 @@ public class Environment implements TestRule, AutoCloseable {
 
     public Environment() {
         this(InMemoryTestData::new);
-
     }
 
     public Environment(Supplier<TestData> testData) {
-        this.testData = new InMemoryTestData();
+        this.testData = testData.get();
         BusinessParametersFactory factory = load(BusinessParametersFactory.class);
         this.parameters = factory.getWritableInstance();
     }
@@ -62,6 +63,10 @@ public class Environment implements TestRule, AutoCloseable {
         return this.parameters;
     }
 
+    public void runTestForGroup(ParameterGroup<?> group) {
+        Assume.assumeTrue(this.testData.hasDataForGroup(group.getName()));
+    }
+
     private <S> S load(Class<S> serviceType) {
         ServiceLoader<S> loader = ServiceLoader.load(serviceType);
         Iterator<S> services = loader.iterator();
@@ -75,7 +80,7 @@ public class Environment implements TestRule, AutoCloseable {
         return service;
     }
 
-    public TestRule reset(){
+    public TestRule reset() {
         return (base, description) -> new Statement() {
             @Override
             public void evaluate() throws Throwable {

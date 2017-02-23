@@ -63,6 +63,6 @@ public class RangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>> {
     }
 
     private static final String NAME = "tv.ranged";
-    private static final InmemoryRangedGroup INMEMORY_GROUP = new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), new InmemorySimpleGroup(NAME, false, SLOT.getName(), PROGRAM.getName()));
+    private static final InmemoryRangedGroup INMEMORY_GROUP = new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), new InmemorySimpleGroup(NAME, SLOT.getName(), PROGRAM.getName()));
 
 }

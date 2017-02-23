@@ -7,6 +7,7 @@ import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
  */
 public interface TestData extends AutoCloseable {
 
+    public boolean hasDataForGroup(String name);
     public void reset();
 
 }

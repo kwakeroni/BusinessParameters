@@ -9,6 +9,6 @@ import java.util.stream.Stream;
  */
 public interface ElasticSearchData {
 
-    Stream<JSONObject> query(JSONObject query);
+    Stream<JSONObject> query(ElasticSearchCriteria query, int pageSize);
 
 }

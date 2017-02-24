@@ -6,6 +6,7 @@ import be.kwakeroni.parameters.backend.es.factory.ElasticSearchBackendServiceFac
 import be.kwakeroni.parameters.backend.es.service.ElasticSearchBackend;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.scratch.tv.Dag;
+import be.kwakeroni.scratch.tv.MappedTVGroup;
 import be.kwakeroni.scratch.tv.SimpleTVGroup;
 import be.kwakeroni.scratch.tv.Slot;
 import com.sun.jersey.api.client.Client;
@@ -51,14 +52,28 @@ public class ElasticSearchTestData implements TestData {
         LOG.info("Inserting test data...");
 
         register(SimpleTVGroup.ELASTICSEARCH_GROUP);
-
         insert(SimpleTVGroup.instance().getName(), SimpleTVGroup.getEntryData(Dag.MAANDAG, Slot.atHour(20)));
-        String uuid = insert(SimpleTVGroup.instance().getName()+".test", SimpleTVGroup.getEntryData(Dag.MAANDAG, Slot.atHour(20)));
+
+        register(MappedTVGroup.ELASTICSEARCH_GROUP);
+        insert(MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZATERDAG, "Samson"));
+        String uuid = insert(MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZONDAG, "Morgen Maandag"));
+
+//        setGroupData(RangedTVGroup.instance().getName(),
+//                RangedTVGroup.getData(Slot.atHour(8), Slot.atHour(12), "Samson",
+//                        Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag"));
+//
+//        setGroupData(MappedRangedTVGroup.instance().getName(),
+//                MappedRangedTVGroup.getData(
+//                        MappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag"),
+//                        MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson"),
+//                        MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers"),
+//                        MappedRangedTVGroup.entryData(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag")
+//                ));
 
         LOG.info("Waiting for test data to become available...");
 
         try {
-            this.elasticSearch.waitUntil(() -> get(SimpleTVGroup.instance().getName()+".test", uuid) != null, 5000);
+            this.elasticSearch.waitUntil(() -> get(MappedTVGroup.instance().getName(), uuid) != null, 5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -69,18 +84,18 @@ public class ElasticSearchTestData implements TestData {
         return groups.contains(name);
     }
 
-    private void register(BackendGroup<ElasticSearchQuery<?>, ?, ?> group){
+    private void register(BackendGroup<ElasticSearchQuery<?>, ?, ?> group) {
         backend.registerGroup(group);
         this.groups.add(group.getName());
     }
 
-    private String get(String group, String uuid){
+    private String get(String group, String uuid) {
         String url = String.format("/parameters/%s/%s", group, uuid);
         ClientResponse response = callES(url, WebResource::get);
         int status = response.getStatus();
-        if (status == 204 || status == 404){
+        if (status == 204 || status == 404) {
             return null;
-        } else if (status < 400){
+        } else if (status < 400) {
             return response.getEntity(String.class);
         } else {
             throw new RuntimeException(status + " - " + response.getEntity(String.class));
@@ -88,21 +103,21 @@ public class ElasticSearchTestData implements TestData {
 
     }
 
-    private String insert(String group, EntryData entryData){
+    private String insert(String group, EntryData entryData) {
         String uuid = UUID.randomUUID().toString();
         String url = String.format("/parameters/%s/%s", group, uuid);
         callES(url, toJson(entryData), WebResource::put);
         return uuid;
     }
 
-    private void callES(String path, String body, CallWithBody call){
+    private void callES(String path, String body, CallWithBody call) {
         String url = resolve("http://127.0.0.1:9200", path);
         LOG.info("{} : {}\r\n{}", url, call, body);
         ClientResponse response = call.call(client.resource(url), body);
         LOG.info("[{}] {}\r\n{}", response.getStatus(), url, response.getEntity(String.class));
     }
 
-    private ClientResponse callES(String path, CallWithoutBody call){
+    private ClientResponse callES(String path, CallWithoutBody call) {
         String url = resolve("http://127.0.0.1:9200", path);
         LOG.info("{} : {}", url, call);
         ClientResponse response = call.call(client.resource(url));
@@ -112,18 +127,18 @@ public class ElasticSearchTestData implements TestData {
         return response;
     }
 
-    private String resolve(String base, String path){
-        return base + ((path.startsWith("/"))? "" : "/") + path + "?pretty";
+    private String resolve(String base, String path) {
+        return base + ((path.startsWith("/")) ? "" : "/") + path + "?pretty";
     }
 
-    private String toJson(EntryData entry){
+    private String toJson(EntryData entry) {
         return new JSONObject(entry.asMap()).toString(4);
     }
 
     private static interface CallWithoutBody {
         <T> T call(WebResource resource, Class<T> type);
 
-        default ClientResponse call(WebResource resource){
+        default ClientResponse call(WebResource resource) {
             return call(resource, ClientResponse.class);
         }
     }
@@ -131,7 +146,7 @@ public class ElasticSearchTestData implements TestData {
     private static interface CallWithBody {
         <T> T call(WebResource resource, Class<T> type, String body);
 
-        default ClientResponse call(WebResource resource, String body){
+        default ClientResponse call(WebResource resource, String body) {
             return call(resource, ClientResponse.class, body);
         }
     }

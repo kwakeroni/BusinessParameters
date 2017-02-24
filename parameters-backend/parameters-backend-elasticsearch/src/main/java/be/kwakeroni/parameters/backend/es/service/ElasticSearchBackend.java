@@ -3,6 +3,7 @@ package be.kwakeroni.parameters.backend.es.service;
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import org.json.JSONObject;
@@ -60,13 +61,11 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     public <V> V select(BackendGroup<ElasticSearchQuery<?>, ?, ?> group, BackendQuery<? extends ElasticSearchQuery<?>, V> query) {
         ElasticSearchData data = new ElasticSearchData() {
             @Override
-            public Stream<JSONObject> query(JSONObject query) {
-                return client.query(query);
+            public Stream<JSONObject> query(ElasticSearchCriteria criteria, int pageSize) {
+                return client.query(criteria.toJSONObject(), pageSize);
             }
         };
-        return ((ElasticSearchQuery<V>) query.raw()).apply(data,
-                new JSONObject().put("match",
-                        new JSONObject().put("_type", group.getName()))).orElse(null);
+        return ((ElasticSearchQuery<V>) query.raw()).apply(data, new DefaultElasticSearchCriteria(group.getName())).orElse(null);
     }
 
     @Override

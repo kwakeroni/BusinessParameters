@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.basic.backend.es;
 
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
@@ -25,8 +26,8 @@ class EntryElasticSearchQuery implements ElasticSearchQuery<Map<String, String>>
     }
 
     @Override
-    public Optional<Map<String, String>> apply(ElasticSearchData data, JSONObject query) {
-        return data.query(query)
+    public Optional<Map<String, String>> apply(ElasticSearchData data, ElasticSearchCriteria criteria) {
+        return data.query(criteria, 2)
                 .reduce(ElasticSearchSimpleGroup.atMostOne())
                 .map(this::toStringMap);
     }

@@ -20,7 +20,7 @@ class ElasticSearchClient {
     private WebResource index;
     private WebResource search;
 
-    ElasticSearchClient(Configuration configuration){
+    ElasticSearchClient(Configuration configuration) {
         this.client = new Client();
 
         String indexPath = normalizeRelativePath(configuration.getIndexPath());
@@ -30,13 +30,13 @@ class ElasticSearchClient {
         this.search = this.client.resource(url + "/_search");
     }
 
-    Stream<JSONObject> getAggregation(String name, JSONObject terms){
+    Stream<JSONObject> getAggregation(String name, JSONObject terms) {
         JSONObject request = new JSONObject();
         request.put("size", 0);
         request.put("aggs",
                 new JSONObject().put(name,
-                    new JSONObject().put("terms",
-                        terms)));
+                        new JSONObject().put("terms",
+                                terms)));
 //        request.put("from", page * pageSize);
 
         ClientResponse response = search.post(ClientResponse.class, request.toString());
@@ -48,15 +48,15 @@ class ElasticSearchClient {
 
     }
 
-    Stream<JSONObject> query(JSONObject query){
-        JSONObject first = query(query, 0, 10);
+    Stream<JSONObject> query(JSONObject query, int pageSize) {
+        JSONObject first = query(query, 0, pageSize);
         long totalHits = first.getJSONObject("hits").getLong("total");
         // 0->0, 1->1, 10->1, 11->2, 19->, 20->2, 21->3
 
-        if (totalHits == 0){
+        if (totalHits == 0) {
             return Stream.empty();
         } else {
-            long pages = 1 + (totalHits - 1) / 10;
+            long pages = 1 + (totalHits - 1) / pageSize;
             if (pages == 1) {
                 return hits(first);
             } else {
@@ -64,7 +64,7 @@ class ElasticSearchClient {
                         hits(first),
                         LongStream
                                 .range(1, pages)
-                                .mapToObj(i -> query(query, i*10, 10))
+                                .mapToObj(i -> query(query, i * pageSize, pageSize))
                                 .flatMap(this::hits)
                 );
             }
@@ -72,14 +72,14 @@ class ElasticSearchClient {
 
     }
 
-    Stream<JSONObject> hits(JSONObject searchResults){
+    Stream<JSONObject> hits(JSONObject searchResults) {
         JSONArray hits = searchResults.getJSONObject("hits").getJSONArray("hits");
         return IntStream.range(0, hits.length())
                 .mapToObj(hits::getJSONObject)
                 .map(jo -> jo.getJSONObject("_source"));
     }
 
-    JSONObject query(JSONObject query, long page, int pageSize){
+    JSONObject query(JSONObject query, long page, int pageSize) {
         JSONObject request = new JSONObject();
         request.put("query", query);
         request.put("size", pageSize);
@@ -91,43 +91,43 @@ class ElasticSearchClient {
         return new JSONObject(entity);
     }
 
-    JSONObject _search(String query){
+    JSONObject _search(String query) {
         ClientResponse response = search.post(ClientResponse.class, query);
         String entity = extractEntity(response, String.class);
         return new JSONObject(entity);
     }
 
     // Normalize to form /path
-    private String normalizeRelativePath(String path){
-        if (path.endsWith("/")){
-            path = path.substring(0, path.length()-1);
+    private String normalizeRelativePath(String path) {
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
         }
-        if (! path.startsWith("/")){
+        if (!path.startsWith("/")) {
             path = "/" + path;
         }
         return path;
     }
 
-    private <T> T extractEntity(ClientResponse response, Class<T> type){
-        if(isError(response)){
+    private <T> T extractEntity(ClientResponse response, Class<T> type) {
+        if (isError(response)) {
             throw toException(response);
         }
 
         return response.getEntity(type);
     }
 
-    private boolean isError(ClientResponse response){
+    private boolean isError(ClientResponse response) {
         Response.Status.Family family = response.getStatusInfo().getFamily();
         return family == Response.Status.Family.CLIENT_ERROR
                 || family == Response.Status.Family.SERVER_ERROR;
     }
 
-    private RuntimeException toException(ClientResponse response){
+    private RuntimeException toException(ClientResponse response) {
         throw new RuntimeException(
                 String.format("[%s] %s: %s",
-                response.getStatus(),
-                response.getStatusInfo().getReasonPhrase(),
-                response.getEntity(String.class)
-        ));
+                        response.getStatus(),
+                        response.getStatusInfo().getReasonPhrase(),
+                        response.getEntity(String.class)
+                ));
     }
 }

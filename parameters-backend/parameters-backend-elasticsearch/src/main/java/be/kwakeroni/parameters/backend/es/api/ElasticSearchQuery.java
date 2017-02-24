@@ -15,5 +15,5 @@ public interface ElasticSearchQuery<T> extends BackendQuery<ElasticSearchQuery<T
         return this;
     }
 
-    Optional<T> apply(ElasticSearchData data, JSONObject query);
+    Optional<T> apply(ElasticSearchData data, ElasticSearchCriteria criteria);
 }

@@ -1,10 +1,10 @@
 package be.kwakeroni.parameters.basic.backend.es;
 
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
-import org.json.JSONObject;
 
 import java.util.Optional;
 
@@ -20,8 +20,8 @@ class ValueElasticSearchQuery implements ElasticSearchQuery<String> {
     }
 
     @Override
-    public Optional<String> apply(ElasticSearchData data, JSONObject query) {
-        return data.query(query)
+    public Optional<String> apply(ElasticSearchData data, ElasticSearchCriteria criteria) {
+        return data.query(criteria, 2)
                 .reduce(ElasticSearchSimpleGroup.atMostOne())
                 .map(jo -> jo.getString(this.parameterName));
     }

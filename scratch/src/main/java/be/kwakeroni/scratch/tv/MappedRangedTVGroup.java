@@ -71,7 +71,7 @@ public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Sl
 
 
     private static final String NAME = "tv.mapped-ranged";
-    private static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals,
+    private static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(),
             new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type),
                     new InmemorySimpleGroup(NAME, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
 

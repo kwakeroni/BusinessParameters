@@ -3,6 +3,9 @@ package be.kwakeroni.scratch.tv;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
+import be.kwakeroni.parameters.basic.backend.es.ElasticSearchMappedGroup;
+import be.kwakeroni.parameters.basic.backend.es.ElasticSearchPostFilterRangedGroup;
+import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemoryRangedGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
@@ -40,7 +43,7 @@ public class RangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>> {
     }
 
     // For test purposes
-    private static EntryData entryData(Slot from, Slot to, String program) {
+    public static EntryData entryData(Slot from, Slot to, String program) {
         return DefaultEntryData.of(
                 SLOT.getName(), Ranges.toRangeString(from, to, Slot::toString),
                 PROGRAM.getName(), program
@@ -64,5 +67,8 @@ public class RangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>> {
 
     private static final String NAME = "tv.ranged";
     private static final InmemoryRangedGroup INMEMORY_GROUP = new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), new InmemorySimpleGroup(NAME, SLOT.getName(), PROGRAM.getName()));
+    public static final ElasticSearchPostFilterRangedGroup ELASTICSEARCH_GROUP_WITH_POSTFILTER =
+            new ElasticSearchPostFilterRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type),
+                    new ElasticSearchSimpleGroup(NAME, SLOT.getName(), PROGRAM.getName()));
 
 }

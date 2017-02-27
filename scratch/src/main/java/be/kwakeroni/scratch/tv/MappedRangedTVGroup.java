@@ -1,5 +1,8 @@
 package be.kwakeroni.scratch.tv;
 
+import be.kwakeroni.parameters.basic.backend.es.ElasticSearchMappedGroup;
+import be.kwakeroni.parameters.basic.backend.es.ElasticSearchPostFilterRangedGroup;
+import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.client.query.MappedQuery;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
@@ -74,6 +77,9 @@ public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Sl
     private static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(),
             new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type),
                     new InmemorySimpleGroup(NAME, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
+    public static final ElasticSearchMappedGroup ELASTICSEARCH_POSTFILTER_GROUP = new ElasticSearchMappedGroup(DAY.getName(),
+            new ElasticSearchPostFilterRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type),
+                    new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
 
 
 

@@ -1,20 +1,15 @@
 package be.kwakeroni.parameters.basic.backend.es;
 
 import be.kwakeroni.parameters.backend.api.BackendGroup;
-import be.kwakeroni.parameters.backend.api.query.BackendQuery;
-import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
-import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
 import be.kwakeroni.parameters.basic.backend.query.MappedBackendGroup;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediaryBackendGroupSupport;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediateBackendQuerySupport;
-import org.json.JSONObject;
 
 import java.util.Optional;
-import java.util.function.BiPredicate;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -42,7 +37,7 @@ public class ElasticSearchMappedGroup
 
     private final class ElasticSearchMappedQuery<T>
             extends IntermediateBackendQuerySupport<ElasticSearchQuery<T>, T>
-            implements ElasticSearchQuery<T>{
+            implements ElasticSearchQuery<T> {
 
         private final String keyValue;
 

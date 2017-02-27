@@ -6,7 +6,9 @@ import be.kwakeroni.parameters.backend.es.factory.ElasticSearchBackendServiceFac
 import be.kwakeroni.parameters.backend.es.service.ElasticSearchBackend;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.scratch.tv.Dag;
+import be.kwakeroni.scratch.tv.MappedRangedTVGroup;
 import be.kwakeroni.scratch.tv.MappedTVGroup;
+import be.kwakeroni.scratch.tv.RangedTVGroup;
 import be.kwakeroni.scratch.tv.SimpleTVGroup;
 import be.kwakeroni.scratch.tv.Slot;
 import com.sun.jersey.api.client.Client;
@@ -56,24 +58,25 @@ public class ElasticSearchTestData implements TestData {
 
         register(MappedTVGroup.ELASTICSEARCH_GROUP);
         insert(MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZATERDAG, "Samson"));
-        String uuid = insert(MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZONDAG, "Morgen Maandag"));
+        insert(MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZONDAG, "Morgen Maandag"));
 
-//        setGroupData(RangedTVGroup.instance().getName(),
-//                RangedTVGroup.getData(Slot.atHour(8), Slot.atHour(12), "Samson",
-//                        Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag"));
-//
-//        setGroupData(MappedRangedTVGroup.instance().getName(),
-//                MappedRangedTVGroup.getData(
-//                        MappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag"),
-//                        MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson"),
-//                        MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers"),
-//                        MappedRangedTVGroup.entryData(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag")
-//                ));
+        register(RangedTVGroup.ELASTICSEARCH_GROUP_WITH_POSTFILTER);
+        insert(RangedTVGroup.instance().getName(),
+                RangedTVGroup.entryData(Slot.atHour(8), Slot.atHour(12), "Samson"),
+                RangedTVGroup.entryData(Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag"));
+
+        register(MappedRangedTVGroup.ELASTICSEARCH_POSTFILTER_GROUP);
+        String uuid = insert(MappedRangedTVGroup.instance().getName(),
+                MappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag"),
+                MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson"),
+                MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers"),
+                MappedRangedTVGroup.entryData(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag")
+        );
 
         LOG.info("Waiting for test data to become available...");
 
         try {
-            this.elasticSearch.waitUntil(() -> get(MappedTVGroup.instance().getName(), uuid) != null, 5000);
+            this.elasticSearch.waitUntil(() -> get(MappedRangedTVGroup.instance().getName(), uuid) != null, 5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -101,6 +104,14 @@ public class ElasticSearchTestData implements TestData {
             throw new RuntimeException(status + " - " + response.getEntity(String.class));
         }
 
+    }
+
+    private String insert(String group, EntryData... entryDatas) {
+        String uuid = null;
+        for (EntryData entryData : entryDatas) {
+            uuid = insert(group, entryData);
+        }
+        return uuid;
     }
 
     private String insert(String group, EntryData entryData) {

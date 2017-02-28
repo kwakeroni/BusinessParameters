@@ -1,7 +1,11 @@
 package be.kwakeroni.scratch.tv;
 
+import be.kwakeroni.parameters.backend.api.BackendGroup;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchDataType;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchMappedGroup;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchPostFilterRangedGroup;
+import be.kwakeroni.parameters.basic.backend.es.ElasticSearchQueryBasedRangedGroup;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.client.query.MappedQuery;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
@@ -22,6 +26,9 @@ import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.basic.client.model.Ranged;
 import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.client.api.query.Query;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static be.kwakeroni.parameters.types.support.ParameterTypes.*;
 
@@ -54,7 +61,19 @@ public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Sl
                 PROGRAM.getName(), program
         );
     }
-
+    public static Map<String, ?> entryData(Dag day, Slot from, Slot to, String program, boolean addRangeLimits) {
+        if (addRangeLimits){
+            Map<String, Object> map = new HashMap<>(5);
+            map.put(DAY.getName(), day.toString());
+            map.put(SLOT.getName(), Ranges.toRangeString(from, to, Slot::toString));
+            map.put(ElasticSearchQueryBasedRangedGroup.getFromParameter(SLOT.getName()), from.toInt());
+            map.put(ElasticSearchQueryBasedRangedGroup.getToParameter(SLOT.getName()), to.toInt());
+            map.put(PROGRAM.getName(), program);
+            return map;
+        } else {
+            return entryData(day, from, to, program).asMap();
+        }
+    }
     // For test purposes
     public static final GroupData getData(EntryData... data){
                 return new DefaultGroupData(INMEMORY_GROUP, data);
@@ -77,10 +96,16 @@ public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Sl
     private static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(),
             new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type),
                     new InmemorySimpleGroup(NAME, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
-    public static final ElasticSearchMappedGroup ELASTICSEARCH_POSTFILTER_GROUP = new ElasticSearchMappedGroup(DAY.getName(),
+    private static final ElasticSearchMappedGroup ELASTICSEARCH_GROUP_WITH_POSTFILTER = new ElasticSearchMappedGroup(DAY.getName(),
             new ElasticSearchPostFilterRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type),
                     new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
+    private static final ElasticSearchMappedGroup ELASTICSEARCH_GROUP_WITH_QUERY = new ElasticSearchMappedGroup(DAY.getName(),
+            new ElasticSearchQueryBasedRangedGroup(SLOT.getName(),
+                    ElasticSearchDataType.INTEGER, string -> Slot.fromString(string).toInt(), new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
 
+    public static BackendGroup<ElasticSearchQuery<?>, ?, ?> elasticSearchGroup(boolean withRangeLimits){
+        return (withRangeLimits)? ELASTICSEARCH_GROUP_WITH_QUERY : ELASTICSEARCH_GROUP_WITH_POSTFILTER;
+    }
 
 
 }

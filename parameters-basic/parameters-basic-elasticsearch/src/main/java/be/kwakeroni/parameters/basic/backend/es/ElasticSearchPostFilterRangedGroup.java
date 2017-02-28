@@ -52,7 +52,7 @@ public class ElasticSearchPostFilterRangedGroup
         throw new UnsupportedOperationException();
     }
 
-    private final class ElasticSearchPostFilterQuery<T>
+    private static final class ElasticSearchPostFilterQuery<T>
             extends IntermediateBackendQuerySupport<ElasticSearchQuery<T>, T>
             implements ElasticSearchQuery<T> {
 

@@ -5,6 +5,8 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
 import java.util.stream.IntStream;
@@ -15,6 +17,8 @@ import java.util.stream.Stream;
  * (C) 2017 Maarten Van Puymbroeck
  */
 class ElasticSearchClient {
+
+    private static Logger LOG = LoggerFactory.getLogger(ElasticSearchClient.class);
 
     private Client client;
     private WebResource index;
@@ -85,8 +89,9 @@ class ElasticSearchClient {
         request.put("size", pageSize);
         request.put("from", page * pageSize);
 
-
-        ClientResponse response = search.post(ClientResponse.class, request.toString());
+        String requestString = request.toString();
+        LOG.debug("Sending ES query: {}", requestString);
+        ClientResponse response = search.post(ClientResponse.class, requestString);
         String entity = extractEntity(response, String.class);
         return new JSONObject(entity);
     }

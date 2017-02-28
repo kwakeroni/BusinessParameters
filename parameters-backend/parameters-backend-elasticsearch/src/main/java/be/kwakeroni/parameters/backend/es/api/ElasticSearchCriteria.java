@@ -8,6 +8,7 @@ import org.json.JSONObject;
 public interface ElasticSearchCriteria {
 
     public void addParameterMatch(String parameter, String value);
+    public void addParameterComparison(String parameter, String operator, Object value);
 
     public JSONObject toJSONObject();
 

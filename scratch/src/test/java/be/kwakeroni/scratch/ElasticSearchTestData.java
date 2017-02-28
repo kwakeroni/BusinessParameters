@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -60,17 +61,19 @@ public class ElasticSearchTestData implements TestData {
         insert(MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZATERDAG, "Samson"));
         insert(MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZONDAG, "Morgen Maandag"));
 
-        register(RangedTVGroup.ELASTICSEARCH_GROUP_WITH_POSTFILTER);
-        insert(RangedTVGroup.instance().getName(),
-                RangedTVGroup.entryData(Slot.atHour(8), Slot.atHour(12), "Samson"),
-                RangedTVGroup.entryData(Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag"));
+        boolean addRangeLimits = true;
 
-        register(MappedRangedTVGroup.ELASTICSEARCH_POSTFILTER_GROUP);
+        register(RangedTVGroup.elasticSearchGroup(addRangeLimits));
+        insert(RangedTVGroup.instance().getName(),
+                RangedTVGroup.entryData(Slot.atHour(8), Slot.atHour(12), "Samson", addRangeLimits),
+                RangedTVGroup.entryData(Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag", addRangeLimits));
+
+        register(MappedRangedTVGroup.elasticSearchGroup(addRangeLimits));
         String uuid = insert(MappedRangedTVGroup.instance().getName(),
-                MappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag"),
-                MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson"),
-                MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers"),
-                MappedRangedTVGroup.entryData(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag")
+                MappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag", addRangeLimits),
+                MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson", addRangeLimits),
+                MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers", addRangeLimits),
+                MappedRangedTVGroup.entryData(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag", addRangeLimits)
         );
 
         LOG.info("Waiting for test data to become available...");
@@ -109,12 +112,20 @@ public class ElasticSearchTestData implements TestData {
     private String insert(String group, EntryData... entryDatas) {
         String uuid = null;
         for (EntryData entryData : entryDatas) {
+            uuid = insert(group, entryData.asMap());
+        }
+        return uuid;
+    }
+
+    private String insert(String group, Map<String, ?>... entryDatas) {
+        String uuid = null;
+        for (Map<String, ?> entryData : entryDatas) {
             uuid = insert(group, entryData);
         }
         return uuid;
     }
 
-    private String insert(String group, EntryData entryData) {
+    private String insert(String group, Map<String, ?> entryData) {
         String uuid = UUID.randomUUID().toString();
         String url = String.format("/parameters/%s/%s", group, uuid);
         callES(url, toJson(entryData), WebResource::put);
@@ -143,7 +154,10 @@ public class ElasticSearchTestData implements TestData {
     }
 
     private String toJson(EntryData entry) {
-        return new JSONObject(entry.asMap()).toString(4);
+        return toJson(entry.asMap());
+    }
+    private String toJson(Map<String, ?> entry) {
+        return new JSONObject(entry).toString(4);
     }
 
     private static interface CallWithoutBody {

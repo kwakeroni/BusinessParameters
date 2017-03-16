@@ -3,6 +3,7 @@ package be.kwakeroni.scratch;
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.backend.es.factory.ElasticSearchBackendServiceFactory;
 import be.kwakeroni.parameters.backend.es.service.ElasticSearchBackend;
@@ -113,7 +114,7 @@ public class ElasticSearchTestData implements TestData {
         return groups.contains(name);
     }
 
-    private void register(BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> group) {
+    private void register(ElasticSearchGroup group) {
         backend.registerGroup(group);
         this.groups.add(group.getName());
     }

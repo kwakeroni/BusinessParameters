@@ -5,6 +5,7 @@ import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchDataType;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.backend.es.api.EntryModification;
 import be.kwakeroni.parameters.basic.backend.query.RangedBackendGroup;
@@ -26,8 +27,8 @@ import java.util.function.Predicate;
  * (C) 2017 Maarten Van Puymbroeck
  */
 public class ElasticSearchQueryBasedRangedGroup
-        extends IntermediaryBackendGroupSupport<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry>
-        implements RangedBackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> {
+        extends IntermediaryBackendGroupSupport<ElasticSearchQuery<?>, ElasticSearchGroup, ElasticSearchData, ElasticSearchEntry>
+        implements ElasticSearchGroup, RangedBackendGroup<ElasticSearchQuery<?>, ElasticSearchGroup, ElasticSearchData, ElasticSearchEntry> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchQueryBasedRangedGroup.class);
 
@@ -35,7 +36,7 @@ public class ElasticSearchQueryBasedRangedGroup
     private final ElasticSearchDataType<?> dataType;
     private final Function<String, ?> converter;
 
-    public <T> ElasticSearchQueryBasedRangedGroup(String rangeParameterName, ElasticSearchDataType<T> dataType, Function<String, T> converter, BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> subGroup) {
+    public <T> ElasticSearchQueryBasedRangedGroup(String rangeParameterName, ElasticSearchDataType<T> dataType, Function<String, T> converter, ElasticSearchGroup subGroup) {
         super(subGroup);
         this.rangeParameterName = rangeParameterName;
         this.dataType = dataType;

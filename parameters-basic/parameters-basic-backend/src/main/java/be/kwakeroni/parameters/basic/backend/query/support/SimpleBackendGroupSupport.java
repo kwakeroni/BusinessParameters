@@ -53,8 +53,7 @@ public abstract class SimpleBackendGroupSupport<Q extends BackendQuery<? extends
         return context.internalize(this, query);
     }
 
-    @Override
-    public E prepareAndValidateNewEntry(E entry, S storage) {
+    protected E validateNewEntry(E entry, S storage) {
         // Verify entries _can_ be added
 //        if (fixedEntries){
 //            throw new UnsupportedOperationException("Cannot add entries to group: " + this.getName());

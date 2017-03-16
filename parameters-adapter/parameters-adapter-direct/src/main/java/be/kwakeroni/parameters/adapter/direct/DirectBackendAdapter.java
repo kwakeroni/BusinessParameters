@@ -15,19 +15,19 @@ import java.util.UUID;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-class DirectBackendAdapter {
+class DirectBackendAdapter<Q, BG extends BackendGroup<Q,?,?>> {
 
     Logger LOG = LoggerFactory.getLogger(DirectBackendAdapter.class);
 
-    private BusinessParametersBackend<?,?,?> backend;
+    private BusinessParametersBackend<Q, BG> backend;
     private BackendWireFormatterContext wireFormatterContext;
 
-    DirectBackendAdapter(BusinessParametersBackend<?,?,?> backend, BackendWireFormatterContext wireFormatterContext) {
+    DirectBackendAdapter(BusinessParametersBackend<Q, BG> backend, BackendWireFormatterContext wireFormatterContext) {
         this.backend = backend;
         this.wireFormatterContext = wireFormatterContext;
     }
 
-    public BusinessParametersBackend<?,?,?> getBackend(){
+    public BusinessParametersBackend<?,?> getBackend(){
         return this.backend;
     }
 
@@ -35,39 +35,32 @@ class DirectBackendAdapter {
         return backend.getGroupNames();
     }
 
-    public Object get(String group, Object queryObject) {
+    public Object get(String groupName, Object queryObject) {
 
         try (
                 MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
-                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", group)) {
-            LOG.debug("Query on {}: {}", group, queryObject);
+                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", groupName)) {
+            LOG.debug("Query on {}: {}", groupName, queryObject);
 
-            Object result = get(this.backend, group, queryObject);
+            BG group = backend.getGroup(groupName);
+            BackendQuery<? extends Q, ?> query = internalizeQuery(queryObject, group);
+            Object result = getExternalResult(query, group);
 
             LOG.debug("Returning result: {}", result);
             return result;
         }
     }
 
-    private <Q,S,E> Object get(BusinessParametersBackend<Q,S,E> backend, String groupName, Object queryObject) {
-        BackendGroup<Q,S,E> group = backend.getGroup(groupName);
-        BackendQuery<? extends Q, ?> query = internalizeQuery(queryObject, group);
-        return getExternalResult(query, group, backend);
-    }
-
-    public void set(String group, Object queryObject, Object value) {
+    public void set(String groupName, Object queryObject, Object value) {
         try (
                 MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
-                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", group)) {
-            LOG.debug("Write on {}: {} <- {}", group, queryObject, value);
-            set(this.backend, group, queryObject, value);
-        }
-    }
+                MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", groupName)) {
+            LOG.debug("Write on {}: {} <- {}", groupName, queryObject, value);
 
-    private <Q,S,E> void set(BusinessParametersBackend<Q,S,E> backend, String groupName, Object queryObject, Object value) {
-        BackendGroup<Q, S, E> group = backend.getGroup(groupName);
-        BackendQuery<? extends Q, ?> query = internalizeQuery(queryObject, group);
-        setInternalResult(query, group, value, backend);
+            BG group = this.backend.getGroup(groupName);
+            BackendQuery<? extends Q, ?> query = internalizeQuery(queryObject, group);
+            setInternalResult(query, group, value);
+        }
     }
 
 
@@ -77,29 +70,25 @@ class DirectBackendAdapter {
                 MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", groupName)) {
 
             LOG.debug("Add entry on {}: {} <- {}", groupName, entry);
-            addEntry(this.backend, groupName, entry);
+            BG group = backend.getGroup(groupName);
+            backend.insert(group, entry);
         }
 
     }
 
-    private <Q, S, E> void addEntry(BusinessParametersBackend<Q,S,E> backend, String groupName, Map<String, String> entry) {
-        BackendGroup<Q, S, E> group = backend.getGroup(groupName);
-        backend.insert(group, entry);
-    }
-
-    private <Q> BackendQuery<? extends Q, ?> internalizeQuery(Object query, BackendGroup<Q, ?, ?> group) {
+    private BackendQuery<? extends Q, ?> internalizeQuery(Object query, BackendGroup<Q, ?, ?> group) {
         LOG.debug("Internalizing query: {}", query);
         return group.internalize(query, wireFormatterContext);
     }
 
-    private <Q, S, E, V> Object getExternalResult(BackendQuery<? extends Q, V> query, BackendGroup<Q, S, E> group, BusinessParametersBackend<Q,S,E> backend) {
+    private <V> Object getExternalResult(BackendQuery<? extends Q, V> query, BG group) {
         LOG.debug("Executing query: {}", query);
         V result = backend.select(group, query);
         LOG.debug("Externalizing query result: {}", result);
         return query.externalizeValue(result, this.wireFormatterContext);
     }
 
-    private <Q, S, E, V> void setInternalResult(BackendQuery<? extends Q, V> query, BackendGroup<Q, S, E> group, Object valueObject, BusinessParametersBackend<Q,S,E> backend) {
+    private <V> void setInternalResult(BackendQuery<? extends Q, V> query, BG group, Object valueObject) {
         LOG.debug("Internalizing value to be written: {}", valueObject);
 
         V value = query.internalizeValue(valueObject, this.wireFormatterContext);

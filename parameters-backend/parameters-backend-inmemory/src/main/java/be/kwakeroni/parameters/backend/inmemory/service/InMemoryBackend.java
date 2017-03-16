@@ -19,7 +19,7 @@ import java.util.Optional;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<?>, GroupData, EntryData> {
+public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<?>, BackendGroup<InMemoryQuery<?>, GroupData, EntryData>> {
 
     Logger LOG = LoggerFactory.getLogger(InMemoryBackend.class);
 

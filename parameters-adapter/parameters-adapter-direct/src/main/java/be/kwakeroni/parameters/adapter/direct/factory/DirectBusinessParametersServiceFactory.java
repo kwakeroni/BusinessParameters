@@ -46,7 +46,7 @@ public class DirectBusinessParametersServiceFactory implements BusinessParameter
     private void registerBackends(BackendRegistry registry) {
         ServiceLoader<BusinessParametersBackendFactory> loader = ServiceLoader.load(BusinessParametersBackendFactory.class);
         for (BusinessParametersBackendFactory factory : loader) {
-            BusinessParametersBackend<?,?,?> backend = factory.getInstance();
+            BusinessParametersBackend<?,?> backend = factory.getInstance();
             registry.register(backend);
         }
     }

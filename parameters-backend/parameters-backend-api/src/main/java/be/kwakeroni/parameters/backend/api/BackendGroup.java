@@ -14,8 +14,6 @@ public interface BackendGroup<Q, S, E> {
 
     public String getName();
 
-    public E prepareAndValidateNewEntry(E entry, S storage);
-
     public BackendQuery<? extends Q, ?> internalize(Object query, BackendWireFormatterContext context);
 
 }

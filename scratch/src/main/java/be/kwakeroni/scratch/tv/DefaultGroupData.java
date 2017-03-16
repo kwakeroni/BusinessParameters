@@ -37,7 +37,7 @@ class DefaultGroupData implements GroupData {
 
     @Override
     public void addEntry(EntryData data) {
-        group.validateNewEntry(data, this);
+        data = group.prepareAndValidateNewEntry(data, this);
         this.data.add(data);
     }
 
@@ -45,7 +45,7 @@ class DefaultGroupData implements GroupData {
     public void modifyEntry(EntryData data, Consumer<EntryData> modifier) {
         EntryData copy = DefaultEntryData.of(data.asMap());
         modifier.accept(copy);
-        group.validateNewEntry(copy, new FilteredGroupData(this, stream -> stream.filter(entry -> entry!=data)));
+        EntryData modified = group.prepareAndValidateNewEntry(copy, new FilteredGroupData(this, stream -> stream.filter(entry -> entry!=data)));
         modifier.accept(data);
     }
 }

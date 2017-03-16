@@ -19,7 +19,7 @@ import java.util.Optional;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<?>> {
+public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<?>, GroupData, EntryData> {
 
     Logger LOG = LoggerFactory.getLogger(InMemoryBackend.class);
 
@@ -44,12 +44,12 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     }
 
     @Override
-    public BackendGroup<InMemoryQuery<?>, ?, ?> getGroup(String name) {
+    public BackendGroup<InMemoryQuery<?>, GroupData, EntryData> getGroup(String name) {
         return getGroupData(name).getGroup();
     }
 
     @Override
-    public <V> V select(BackendGroup<InMemoryQuery<?>, ?, ?> group, BackendQuery<? extends InMemoryQuery<?>, V> query) {
+    public <V> V select(BackendGroup<InMemoryQuery<?>, GroupData, EntryData> group, BackendQuery<? extends InMemoryQuery<?>, V> query) {
         return getValue(query, getGroupData(group.getName()));
     }
 
@@ -58,7 +58,7 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     }
 
     @Override
-    public <V> void update(BackendGroup<InMemoryQuery<?>, ?, ?> group, BackendQuery<? extends InMemoryQuery<?>, V> query, V value) {
+    public <V> void update(BackendGroup<InMemoryQuery<?>, GroupData, EntryData> group, BackendQuery<? extends InMemoryQuery<?>, V> query, V value) {
         GroupData groupData = getGroupData(group.getName());
         setValue(value, query, groupData);
     }
@@ -69,7 +69,7 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     }
 
     @Override
-    public void insert(BackendGroup<InMemoryQuery<?>, ?, ?> group, Map<String, String> entry) {
+    public void insert(BackendGroup<InMemoryQuery<?>, GroupData, EntryData> group, Map<String, String> entry) {
         GroupData groupData = getGroupData(group.getName());
         EntryData entryData = DefaultEntryData.of(entry);
         groupData.addEntry(entryData);

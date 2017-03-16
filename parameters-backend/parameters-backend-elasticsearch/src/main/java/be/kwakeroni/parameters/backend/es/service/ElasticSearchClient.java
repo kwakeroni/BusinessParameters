@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.backend.es.service;
 
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -12,6 +13,8 @@ import javax.ws.rs.core.Response;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -52,7 +55,7 @@ class ElasticSearchClient {
 
     }
 
-    Stream<JSONObject> query(JSONObject query, int pageSize) {
+    Stream<ElasticSearchEntry> query(JSONObject query, int pageSize) {
         JSONObject first = query(query, 0, pageSize);
         long totalHits = first.getJSONObject("hits").getLong("total");
         // 0->0, 1->1, 10->1, 11->2, 19->, 20->2, 21->3
@@ -62,15 +65,15 @@ class ElasticSearchClient {
         } else {
             long pages = 1 + (totalHits - 1) / pageSize;
             if (pages == 1) {
-                return hits(first);
+                return hits(first).map(DefaultElasticSearchEntry::new);
             } else {
                 return Stream.concat(
                         hits(first),
                         LongStream
                                 .range(1, pages)
-                                .mapToObj(i -> query(query, i * pageSize, pageSize))
+                                .mapToObj(i -> query(query, i, pageSize))
                                 .flatMap(this::hits)
-                );
+                ).map(DefaultElasticSearchEntry::new);
             }
         }
 
@@ -79,8 +82,7 @@ class ElasticSearchClient {
     Stream<JSONObject> hits(JSONObject searchResults) {
         JSONArray hits = searchResults.getJSONObject("hits").getJSONArray("hits");
         return IntStream.range(0, hits.length())
-                .mapToObj(hits::getJSONObject)
-                .map(jo -> jo.getJSONObject("_source"));
+                .mapToObj(hits::getJSONObject);
     }
 
     JSONObject query(JSONObject query, long page, int pageSize) {
@@ -93,7 +95,12 @@ class ElasticSearchClient {
         LOG.debug("Sending ES query: {}", requestString);
         ClientResponse response = search.post(ClientResponse.class, requestString);
         String entity = extractEntity(response, String.class);
-        return new JSONObject(entity);
+
+        JSONObject result = new JSONObject(entity);
+
+        LOG.debug("ES result: {}", result.toString(2));
+
+        return result;
     }
 
     JSONObject _search(String query) {
@@ -101,6 +108,31 @@ class ElasticSearchClient {
         String entity = extractEntity(response, String.class);
         return new JSONObject(entity);
     }
+
+    void insert(String group, ElasticSearchEntry entry){
+        JSONObject data = new JSONObject(entry.toRawMap());
+        insert(group, data);
+    }
+    private void insert(String group, JSONObject data) {
+        String dataString = data.toString();
+        LOG.debug("Sending ES insert to {}: {}", group, dataString);
+        ClientResponse response = index.path(group).post(ClientResponse.class, dataString);
+        Object o = extractEntity(response, String.class);
+    }
+
+    void update(String group, ElasticSearchEntry entry){
+        String id = entry.getId();
+        JSONObject data = new JSONObject(entry.toRawMap());
+        update(group, id, data);
+    }
+
+    private void update(String group, String id, JSONObject data) {
+        String dataString = data.toString();
+        LOG.debug("Sending ES update to {}: {}", group+"/"+id, dataString);
+        ClientResponse response = index.path(group+"/"+id).put(ClientResponse.class, dataString);
+        Object o = extractEntity(response, String.class);
+    }
+
 
     // Normalize to form /path
     private String normalizeRelativePath(String path) {
@@ -135,4 +167,5 @@ class ElasticSearchClient {
                         response.getEntity(String.class)
                 ));
     }
+
 }

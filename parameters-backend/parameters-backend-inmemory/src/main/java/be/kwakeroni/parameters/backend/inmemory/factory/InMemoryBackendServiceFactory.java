@@ -13,7 +13,7 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
     private static final InMemoryBackend INSTANCE = new InMemoryBackend();
 
     @Override
-    public BusinessParametersBackend<InMemoryQuery<?>> getInstance() {
+    public BusinessParametersBackend<InMemoryQuery<?>, ?, ?> getInstance() {
         return INSTANCE;
     }
 

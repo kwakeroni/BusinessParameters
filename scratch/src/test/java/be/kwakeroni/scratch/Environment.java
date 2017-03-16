@@ -3,7 +3,10 @@ package be.kwakeroni.scratch;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.WritableBusinessParameters;
 import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
+import be.kwakeroni.parameters.client.api.model.Entry;
+import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
+import be.kwakeroni.parameters.client.api.query.Query;
 import org.junit.Assume;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -11,6 +14,7 @@ import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
@@ -47,7 +51,33 @@ public class Environment implements TestRule, AutoCloseable {
     public Environment(Supplier<TestData> testData) {
         this.testData = testData.get();
         BusinessParametersFactory factory = load(BusinessParametersFactory.class);
-        this.parameters = factory.getWritableInstance();
+        WritableBusinessParameters local = factory.getWritableInstance();
+        this.parameters = new WritableBusinessParameters() {
+            @Override
+            public <ET extends EntryType, T> void set(ParameterGroup<ET> group, Query<ET, T> query, T value) {
+                local.set(group, query, value);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException exc){
+
+                }
+            }
+
+            @Override
+            public void addEntry(ParameterGroup<?> group, Entry entry) {
+                local.addEntry(group, entry);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException exc){
+
+                }
+            }
+
+            @Override
+            public <ET extends EntryType, T> Optional<T> get(ParameterGroup<ET> group, Query<ET, T> query) {
+                return local.get(group, query);
+            }
+        };
     }
 
     @Override
@@ -85,6 +115,7 @@ public class Environment implements TestRule, AutoCloseable {
             @Override
             public void evaluate() throws Throwable {
                 Environment.this.testData.reset();
+                base.evaluate();
             }
         };
     }

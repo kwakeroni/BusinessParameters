@@ -7,6 +7,21 @@ import java.util.Map;
  */
 public interface ElasticSearchEntry {
 
-    public Map<String, String> toMap();
+    public String getId();
 
+    public String getParameter(String parameter);
+
+    public void setParameter(String parameter, String value);
+
+    public boolean hasParameter(String parameter);
+
+    public void clearParameter(String parameter);
+
+    public Map<String, String> toParameterMap();
+
+    public ElasticSearchEntry copy();
+
+    public void setMetaParameter(String parameter, Object value);
+
+    public Map<String, Object> toRawMap();
 }

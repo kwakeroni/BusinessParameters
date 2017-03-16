@@ -77,6 +77,7 @@ public class MinimalTest {
     @Test
     public void testMappedRangedValueQuery(){
         environment.runTestForGroup(MappedRangedTVGroup.instance());
+
         assertEquals("Samson", getMappedRangedProgram(Dag.ZATERDAG, Slot.atHalfPast(11)));
         assertEquals("Koers", getMappedRangedProgram(Dag.ZATERDAG, Slot.atHour(14)));
         assertEquals("Morgen Maandag", getMappedRangedProgram(Dag.ZONDAG, Slot.atHour(21)));

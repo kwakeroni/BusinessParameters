@@ -14,7 +14,7 @@ public abstract class IntermediateBackendQuerySupport<Q extends BackendQuery<Q, 
         this.subQuery = subQuery;
     }
 
-    protected BackendQuery<Q, V> getSubQuery() {
+    protected Q getSubQuery() {
         return subQuery;
     }
 

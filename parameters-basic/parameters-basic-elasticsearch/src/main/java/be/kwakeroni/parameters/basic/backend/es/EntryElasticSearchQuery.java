@@ -1,18 +1,14 @@
 package be.kwakeroni.parameters.basic.backend.es;
 
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
+import be.kwakeroni.parameters.backend.es.api.EntryModification;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
-import org.json.JSONObject;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.*;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -26,17 +22,12 @@ class EntryElasticSearchQuery implements ElasticSearchQuery<Map<String, String>>
     }
 
     @Override
-    public Optional<Map<String, String>> apply(ElasticSearchData data, ElasticSearchCriteria criteria) {
-        return data.query(criteria, 2)
+    public Optional<Map<String, String>> apply(ElasticSearchData data) {
+        return data.findAll(2)
                 .reduce(ElasticSearchSimpleGroup.atMostOne())
-                .map(this::toStringMap);
+                .map(ElasticSearchEntry::toParameterMap);
     }
 
-    private Map<String, String> toStringMap(JSONObject jo) {
-        return jo.keySet()
-                .stream()
-                .collect(collectingAndThen(toMap(identity(), jo::getString), Collections::unmodifiableMap));
-    }
 
     @Override
     public Object externalizeValue(Map<String, String> entry, BackendWireFormatterContext wireFormatterContext) {
@@ -46,5 +37,19 @@ class EntryElasticSearchQuery implements ElasticSearchQuery<Map<String, String>>
     @Override
     public Map<String, String> internalizeValue(Object entry, BackendWireFormatterContext wireFormatterContext) {
         return wireFormatterContext.getWireFormatter(BasicBackendWireFormatter.class).wireToBackendEntry(entry);
+    }
+
+    @Override
+    public EntryModification getEntryModification(Map<String, String> value, ElasticSearchData data) {
+        return getEntryFrom(data)
+                .map(EntryModification.modifiedBy(e -> {
+                    value.forEach(e::setParameter);
+                }))
+                .orElseThrow(() -> new IllegalArgumentException("Not found entry to change"));
+    }
+
+    private Optional<ElasticSearchEntry> getEntryFrom(ElasticSearchData data) {
+        return data.findAll(2)
+                .reduce(ElasticSearchSimpleGroup.atMostOne());
     }
 }

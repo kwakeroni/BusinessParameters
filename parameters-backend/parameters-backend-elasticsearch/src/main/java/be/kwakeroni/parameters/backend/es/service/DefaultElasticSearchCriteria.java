@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -17,10 +18,16 @@ class DefaultElasticSearchCriteria implements ElasticSearchCriteria{
 
     private String group;
     private List<Criterion> parameterMatches = Collections.emptyList();
+    private List<Criterion> parameterNotMatches = Collections.emptyList();
     private List<Criterion> parameterFilters = Collections.emptyList();
 
-    public DefaultElasticSearchCriteria(String group) {
-        this.group = group;
+    public DefaultElasticSearchCriteria() {
+    }
+
+    @Override
+    public void inGroup(String groupName) {
+        if (group != null) throw new IllegalStateException("Group already specified in search criteria: " + group);
+        this.group = groupName;
     }
 
     @Override
@@ -32,6 +39,14 @@ class DefaultElasticSearchCriteria implements ElasticSearchCriteria{
     }
 
     @Override
+    public void addParameterNotMatch(String parameter, String value) {
+        if (this.parameterNotMatches.isEmpty()){
+            this.parameterNotMatches = new ArrayList<>(1);
+        }
+        this.parameterNotMatches.add(new Match(parameter, value));
+    }
+
+    @Override
     public void addParameterComparison(String parameter, String operator, Object value) {
         if (this.parameterFilters.isEmpty()){
             this.parameterFilters = new ArrayList<>(1);
@@ -40,25 +55,87 @@ class DefaultElasticSearchCriteria implements ElasticSearchCriteria{
     }
 
     @Override
-    public JSONObject toJSONObject() {
-        if ((parameterMatches == null || parameterMatches.isEmpty())
-            && (parameterFilters == null || parameterFilters.isEmpty())) {
-            return Match.match("_type", group);
-        } else {
-            JSONArray matches = new JSONArray();
-            JSONArray filters = new JSONArray();
-
-            matches.put(Match.match("_type", group));
-
-            this.parameterMatches.forEach(match -> matches.put(match.toJSONObject()));
-            this.parameterFilters.forEach(filter -> filters.put(filter.toJSONObject()));
-
-
-            return new JSONObject().put("bool", new JSONObject()
-                .put("must", matches)
-                .put("filter", filters)
-            );
+    public void addComplexFilter(JSONObject filter) {
+        if (this.parameterFilters.isEmpty()){
+            this.parameterFilters = new ArrayList<>(1);
         }
+        this.parameterFilters.add(() -> filter);
+    }
+
+    @Override
+    public JSONObject toJSONObject() {
+        if (group == null) throw new IllegalStateException("Group not specified in search criteria");
+
+        JSONObject filter;
+        if ((parameterMatches == null || parameterMatches.isEmpty())
+            && (parameterFilters == null || parameterFilters.isEmpty())
+                && (parameterNotMatches == null || parameterNotMatches.isEmpty())) {
+            filter = Match.match("_type", group);
+        } else {
+
+            JSONObject q = new JSONObject();
+            {
+                JSONArray matches = new JSONArray();
+                matches.put(Match.match("_type", group));
+                this.parameterMatches.forEach(match -> matches.put(match.toJSONObject()));
+                q.put("must", matches);
+            }
+
+            if (isNotEmpty(this.parameterNotMatches)){
+                JSONArray notMatches = new JSONArray();
+                this.parameterNotMatches.forEach(notMatch -> notMatches.put(notMatch.toJSONObject()));
+                q.put("must_not", notMatches);
+            }
+            if (isNotEmpty(this.parameterFilters)){
+                JSONArray filters = new JSONArray();
+                this.parameterFilters.forEach(f -> filters.put(f.toJSONObject()));
+                q.put("filter", filters);
+            }
+
+            filter = new JSONObject().put("bool", q);
+        }
+
+            return
+                    new JSONObject().put("constant_score",
+                            new JSONObject().put("filter", filter
+                                ));
+
+
+//            "query" : {
+//                "constant_score" : {
+//                    "filter" : {
+//                        "bool" : {
+//                            "should" : [
+//                            { "term" : {"price" : 20}},
+//                            { "term" : {"productID" : "XHDK-A-1293-#fJ3"}}
+//                            ],
+//                            "must_not" : {
+//                                "term" : {"price" : 30}
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        "query" : {
+//            "constant_score" : {
+//                "filter" : {
+//                    "bool" : {
+//                        "should" : [
+//                        { "term" : {"productID" : "KDKE-B-9947-#kL5"}},
+//                        { "bool" : {
+//                            "must" : [
+//                            { "term" : {"productID" : "JODL-X-1937-#pV7"}},
+//                            { "term" : {"price" : 30}}
+//                            ]
+//                        }}
+//                        ]
+//                    }
+//                }
+//            }
+    }
+
+    private boolean isNotEmpty(Collection<?> coll){
+        return coll != null && ! coll.isEmpty();
     }
 
     private static interface Criterion {

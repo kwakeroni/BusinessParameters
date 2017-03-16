@@ -60,11 +60,11 @@ public class InmemoryRangedGroup implements RangedBackendGroup<InMemoryQuery<?>,
     }
 
     @Override
-    public void validateNewEntry(EntryData entry, GroupData storage) {
+    public EntryData prepareAndValidateNewEntry(EntryData entry, GroupData storage) {
         Range<String> range = getRange(entry);
 
         try {
-            this.subGroup.validateNewEntry(entry, new FilteredGroupData(storage, data -> data.filter(entryWithOverlap(range))));
+            return this.subGroup.prepareAndValidateNewEntry(entry, new FilteredGroupData(storage, data -> data.filter(entryWithOverlap(range))));
         } catch (IllegalStateException exc) {
             throw new IllegalStateException(exc.getMessage() + " with range " + this.rangeParameterName + "=" + range);
         }

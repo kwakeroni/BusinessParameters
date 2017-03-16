@@ -42,11 +42,11 @@ public class InmemoryMappedGroup
     }
 
     @Override
-    public void validateNewEntry(EntryData entry, GroupData storage) {
+    public EntryData prepareAndValidateNewEntry(EntryData entry, GroupData storage) {
         String key = entry.getValue(this.keyParameterName);
 
         try {
-            getSubGroup().validateNewEntry(entry, new FilteredGroupData(storage, data -> data.filter(entryWithKey(key))));
+            return getSubGroup().prepareAndValidateNewEntry(entry, new FilteredGroupData(storage, data -> data.filter(entryWithKey(key))));
         } catch (IllegalStateException exc) {
             throw new IllegalStateException(exc.getMessage() + " with key: " + this.keyParameterName + "=" + key);
         }

@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.basic.backend.es;
 
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.basic.backend.query.support.SimpleBackendGroupSupport;
@@ -10,7 +11,7 @@ import java.util.Set;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class ElasticSearchSimpleGroup extends SimpleBackendGroupSupport<ElasticSearchQuery<?>, Object, ElasticSearchEntry> {
+public class ElasticSearchSimpleGroup extends SimpleBackendGroupSupport<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> {
 
     public ElasticSearchSimpleGroup(String name, String... parameters) {
         super(name, parameters);
@@ -21,13 +22,13 @@ public class ElasticSearchSimpleGroup extends SimpleBackendGroupSupport<ElasticS
     }
 
     @Override
-    protected boolean hasAnyEntry(Object storage) {
-        throw new UnsupportedOperationException();
+    protected boolean hasAnyEntry(ElasticSearchData storage) {
+        return storage.findAll(1).findAny().isPresent();
     }
 
     @Override
     protected Map<String, String> asMap(ElasticSearchEntry entry) {
-        return entry.toMap();
+        return entry.toParameterMap();
     }
 
     @Override

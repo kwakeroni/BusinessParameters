@@ -1,12 +1,16 @@
 package be.kwakeroni.parameters.basic.backend.es;
 
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
+import be.kwakeroni.parameters.backend.es.api.EntryModification;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
+import org.json.JSONObject;
 
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -20,10 +24,21 @@ class ValueElasticSearchQuery implements ElasticSearchQuery<String> {
     }
 
     @Override
-    public Optional<String> apply(ElasticSearchData data, ElasticSearchCriteria criteria) {
-        return data.query(criteria, 2)
-                .reduce(ElasticSearchSimpleGroup.atMostOne())
-                .map(jo -> jo.getString(this.parameterName));
+    public Optional<String> apply(ElasticSearchData data) {
+        return getEntryFrom(data)
+                .map(jo -> jo.getParameter(this.parameterName));
+    }
+
+    @Override
+    public EntryModification getEntryModification(String value, ElasticSearchData data) {
+        return getEntryFrom(data)
+                .map(EntryModification.modifiedBy(e -> e.setParameter(parameterName, value)))
+                .orElseThrow(() -> new IllegalArgumentException("Not found entry to change"));
+    }
+
+    private Optional<ElasticSearchEntry> getEntryFrom(ElasticSearchData data) {
+        return data.findAll(2)
+                .reduce(ElasticSearchSimpleGroup.atMostOne());
     }
 
     @Override

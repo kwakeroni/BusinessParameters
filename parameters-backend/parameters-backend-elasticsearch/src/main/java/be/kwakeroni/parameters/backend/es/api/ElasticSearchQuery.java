@@ -1,7 +1,6 @@
 package be.kwakeroni.parameters.backend.es.api;
 
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
-import org.json.JSONObject;
 
 import java.util.Optional;
 
@@ -15,5 +14,7 @@ public interface ElasticSearchQuery<T> extends BackendQuery<ElasticSearchQuery<T
         return this;
     }
 
-    Optional<T> apply(ElasticSearchData data, ElasticSearchCriteria criteria);
+    Optional<T> apply(ElasticSearchData data);
+
+    EntryModification getEntryModification(T value, ElasticSearchData data);
 }

@@ -54,7 +54,7 @@ public abstract class SimpleBackendGroupSupport<Q extends BackendQuery<? extends
     }
 
     @Override
-    public void validateNewEntry(E entry, S storage) {
+    public E prepareAndValidateNewEntry(E entry, S storage) {
         // Verify entries _can_ be added
 //        if (fixedEntries){
 //            throw new UnsupportedOperationException("Cannot add entries to group: " + this.getName());
@@ -82,6 +82,7 @@ public abstract class SimpleBackendGroupSupport<Q extends BackendQuery<? extends
             }
         });
 
+        return entry;
     }
 
     private boolean parametersMatch(Collection<String> expected, Collection<String> actual) {

@@ -19,7 +19,7 @@ public class ElasticSearchBackendServiceFactory implements BusinessParametersBac
     public static final String CONFIG_FILE = "/parameters-backend-elasticsearch.properties";
 
     @Override
-    public BusinessParametersBackend<ElasticSearchQuery<?>, ?> getInstance() {
+    public BusinessParametersBackend<ElasticSearchQuery<?>> getInstance() {
         return INSTANCE;
         // @todo remove singleton
 //        return new ElasticSearchBackend(loadConfig());

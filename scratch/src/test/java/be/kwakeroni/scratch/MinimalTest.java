@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-@RunWith(Parameterized.class)
+//@RunWith(Parameterized.class)
 public class MinimalTest {
 
     @ClassRule

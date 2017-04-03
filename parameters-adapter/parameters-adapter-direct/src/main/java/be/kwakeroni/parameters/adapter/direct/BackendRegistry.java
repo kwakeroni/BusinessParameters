@@ -15,21 +15,21 @@ import java.util.Map;
 public class BackendRegistry {
 
     private final Map<String, DirectBackendAdapter> backendsByGroupName = new HashMap<>();
-    private final Collection<BusinessParametersBackend<?,?>> backends = new ArrayList<>();
+    private final Collection<BusinessParametersBackend<?>> backends = new ArrayList<>();
     private final BackendWireFormatterContext wireFormatterContext;
 
     public BackendRegistry(BackendWireFormatterContext wireFormatterContext) {
         this.wireFormatterContext = wireFormatterContext;
     }
 
-    public void register(BusinessParametersBackend<?,?> backend) {
+    public void register(BusinessParametersBackend<?> backend) {
         if (!backends.contains(backend)) {
             backends.add(backend);
         }
         registerGroups(new DirectBackendAdapter(backend, wireFormatterContext));
     }
 
-    public void unregister(BusinessParametersBackend<?,?> backend){
+    public void unregister(BusinessParametersBackend<?> backend){
         backends.remove(backend);
         Iterator<Map.Entry<String, DirectBackendAdapter>> iter = backendsByGroupName.entrySet().iterator();
         while (iter.hasNext()){
@@ -84,7 +84,7 @@ public class BackendRegistry {
     }
 
     private DirectBackendAdapter findBackendForGroup(String groupName) {
-        for (BusinessParametersBackend<?,?> backend : this.backends) {
+        for (BusinessParametersBackend<?> backend : this.backends) {
             Collection<String> backendGroups = backend.getGroupNames();
             if (backendGroups.contains(groupName)) {
                 DirectBackendAdapter adapter = new DirectBackendAdapter(backend, wireFormatterContext);

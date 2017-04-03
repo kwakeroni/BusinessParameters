@@ -3,6 +3,7 @@ package be.kwakeroni.parameters.backend.inmemory.service;
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
@@ -19,7 +20,7 @@ import java.util.Optional;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<?>, BackendGroup<InMemoryQuery<?>>> {
+public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<?>> {
 
     Logger LOG = LoggerFactory.getLogger(InMemoryBackend.class);
 
@@ -44,13 +45,13 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     }
 
     @Override
-    public BackendGroup<InMemoryQuery<?>> getGroup(String name) {
-        return getGroupData(name).getGroup();
+    public BackendQuery<? extends InMemoryQuery<?>, ?> internalizeQuery(String groupName, Object queryObject, BackendWireFormatterContext context) {
+        return getGroupData(groupName).getGroup().internalize(queryObject, context);
     }
 
     @Override
-    public <V> V select(BackendGroup<InMemoryQuery<?>> group, BackendQuery<? extends InMemoryQuery<?>, V> query) {
-        return getValue(query, getGroupData(group.getName()));
+    public <V> V select(String group, BackendQuery<? extends InMemoryQuery<?>, V> query) {
+        return getValue(query, getGroupData(group));
     }
 
     private <T> T getValue(BackendQuery<? extends InMemoryQuery<?>, T> query, GroupData groupData) {
@@ -58,8 +59,8 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     }
 
     @Override
-    public <V> void update(BackendGroup<InMemoryQuery<?>> group, BackendQuery<? extends InMemoryQuery<?>, V> query, V value) {
-        GroupData groupData = getGroupData(group.getName());
+    public <V> void update(String group, BackendQuery<? extends InMemoryQuery<?>, V> query, V value) {
+        GroupData groupData = getGroupData(group);
         setValue(value, query, groupData);
     }
 
@@ -68,9 +69,8 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
         groupData.modifyEntry(modification.getEntry(), modification.getModifier());
     }
 
-    @Override
-    public void insert(BackendGroup<InMemoryQuery<?>> group, Map<String, String> entry) {
-        GroupData groupData = getGroupData(group.getName());
+    public void insert(String group, Map<String, String> entry) {
+        GroupData groupData = getGroupData(group);
         EntryData entryData = DefaultEntryData.of(entry);
         groupData.addEntry(entryData);
 

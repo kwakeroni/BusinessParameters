@@ -23,8 +23,8 @@ import java.util.stream.Stream;
  * (C) 2017 Maarten Van Puymbroeck
  */
 public class ElasticSearchPostFilterRangedGroup
-        extends IntermediaryBackendGroupSupport<ElasticSearchQuery<?>, ElasticSearchGroup, ElasticSearchData, ElasticSearchEntry>
-        implements ElasticSearchGroup, RangedBackendGroup<ElasticSearchQuery<?>, ElasticSearchGroup, ElasticSearchData, ElasticSearchEntry> {
+        extends IntermediaryBackendGroupSupport<ElasticSearchQuery<?>, ElasticSearchGroup>
+        implements ElasticSearchGroup, RangedBackendGroup<ElasticSearchQuery<?>, ElasticSearchGroup> {
 
     private final String rangeParameterName;
     private final ParameterType<Range<String>> rangeType;

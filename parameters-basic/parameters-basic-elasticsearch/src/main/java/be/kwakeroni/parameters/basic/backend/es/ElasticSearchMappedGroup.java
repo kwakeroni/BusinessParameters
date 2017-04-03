@@ -18,8 +18,8 @@ import java.util.function.Consumer;
  * (C) 2017 Maarten Van Puymbroeck
  */
 public class ElasticSearchMappedGroup
-        extends IntermediaryBackendGroupSupport<ElasticSearchQuery<?>, ElasticSearchGroup, ElasticSearchData, ElasticSearchEntry>
-        implements ElasticSearchGroup, MappedBackendGroup<ElasticSearchQuery<?>, ElasticSearchGroup, ElasticSearchData, ElasticSearchEntry> {
+        extends IntermediaryBackendGroupSupport<ElasticSearchQuery<?>, ElasticSearchGroup>
+        implements ElasticSearchGroup, MappedBackendGroup<ElasticSearchQuery<?>, ElasticSearchGroup> {
 
     private final String keyParameterName;
 

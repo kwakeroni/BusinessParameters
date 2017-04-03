@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class InmemoryRangedGroup implements InMemoryGroup, RangedBackendGroup<InMemoryQuery<?>, InMemoryGroup, GroupData, EntryData> {
+public class InmemoryRangedGroup implements InMemoryGroup, RangedBackendGroup<InMemoryQuery<?>, InMemoryGroup> {
 
     private final String rangeParameterName;
     private final ParameterType<Range<String>> rangeType;

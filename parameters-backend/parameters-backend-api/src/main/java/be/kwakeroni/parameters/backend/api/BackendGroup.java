@@ -6,9 +6,9 @@ import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public interface BackendGroup<Q, S, E> {
+public interface BackendGroup<Q> {
 
-    public default <ES extends BackendGroup<Q, ?, ?>> ES as(Class<? super ES> type) {
+    public default <ES extends BackendGroup<Q>> ES as(Class<? super ES> type) {
         return (ES) type.cast(this);
     }
 

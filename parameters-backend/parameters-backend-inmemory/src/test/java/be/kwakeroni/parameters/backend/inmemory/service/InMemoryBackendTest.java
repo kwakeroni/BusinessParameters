@@ -30,14 +30,14 @@ public class InMemoryBackendTest {
     @Mock
     private GroupData group1Data;
     @Mock
-    private BackendGroup<InMemoryQuery<?>, GroupData, EntryData> group1;
+    private BackendGroup<InMemoryQuery<?>> group1;
     private String group1Name = "group1";
     @Mock
     private Stream<EntryData> group1Stream;
     @Mock
     private GroupData group2Data;
     @Mock
-    private BackendGroup<InMemoryQuery<?>, ?, ?> group2;
+    private BackendGroup<InMemoryQuery<?>> group2;
     private String group2Name = "group2";
     @Mock
     private BackendQuery<InMemoryQuery<?>, Object> backendQuery;

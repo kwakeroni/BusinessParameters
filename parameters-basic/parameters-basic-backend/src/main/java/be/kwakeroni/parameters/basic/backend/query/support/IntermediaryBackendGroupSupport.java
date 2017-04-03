@@ -7,7 +7,7 @@ import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public abstract class IntermediaryBackendGroupSupport<Q extends BackendQuery<? extends Q, ?>, BG extends BackendGroup<Q, ?, ?>,S, E> implements BackendGroup<Q, S, E> {
+public abstract class IntermediaryBackendGroupSupport<Q extends BackendQuery<? extends Q, ?>, BG extends BackendGroup<Q>> implements BackendGroup<Q> {
 
     private final BG subGroup;
 

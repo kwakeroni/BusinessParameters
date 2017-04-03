@@ -8,17 +8,38 @@ import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.scratch.tv.*;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
+@RunWith(Parameterized.class)
 public class MinimalTest {
 
     @ClassRule
     public static Environment environment = new Environment(ElasticSearchTestData::new);
+
+//    @Rule
+//    public Environment environment;
+//
+//    public MinimalTest(Supplier<TestData> testDataSupplier, String name){
+//        this.environment = new Environment(testDataSupplier);
+//    }
+//
+//    @Parameterized.Parameters(name = "{1}")
+//    public static Object[][] data() {
+//        return new Object[][]{
+//                new Object[]{ (Supplier<TestData>) InMemoryTestData::new, "InMemory" },
+//                new Object[]{ (Supplier<TestData>) ElasticSearchTestData::new, "ElasticSearch"}
+//        };
+//    }
 
     @Test
     public void testSimpleValueQuery(){

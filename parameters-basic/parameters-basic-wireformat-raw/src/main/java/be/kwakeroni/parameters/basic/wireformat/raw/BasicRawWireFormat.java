@@ -44,7 +44,7 @@ public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBacken
     }
 
     @Override
-    public <Q> Optional<Q> tryInternalize(BackendGroup<Q, ?, ?> group, Object query, BackendWireFormatterContext context) {
+    public <Q> Optional<Q> tryInternalize(BackendGroup<Q> group, Object query, BackendWireFormatterContext context) {
 
         if (query instanceof ValueQuery) {
             ValueQuery<?> valueQuery = (ValueQuery<?>) query;

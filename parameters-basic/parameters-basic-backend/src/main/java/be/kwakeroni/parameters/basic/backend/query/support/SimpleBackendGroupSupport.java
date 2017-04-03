@@ -17,7 +17,7 @@ import java.util.function.BinaryOperator;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public abstract class SimpleBackendGroupSupport<Q extends BackendQuery<? extends Q, ?>, S, E> implements SimpleBackendGroup<Q, S, E> {
+public abstract class SimpleBackendGroupSupport<Q extends BackendQuery<? extends Q, ?>, S, E> implements SimpleBackendGroup<Q> {
 
     private final String name;
     private final Set<String> parameters;

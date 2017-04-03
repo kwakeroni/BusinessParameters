@@ -17,8 +17,8 @@ import java.util.function.Predicate;
  * (C) 2017 Maarten Van Puymbroeck
  */
 public class InmemoryMappedGroup
-        extends IntermediaryBackendGroupSupport<InMemoryQuery<?>, InMemoryGroup, GroupData, EntryData>
-        implements InMemoryGroup, MappedBackendGroup<InMemoryQuery<?>, InMemoryGroup, GroupData, EntryData> {
+        extends IntermediaryBackendGroupSupport<InMemoryQuery<?>, InMemoryGroup>
+        implements InMemoryGroup, MappedBackendGroup<InMemoryQuery<?>, InMemoryGroup> {
 
     private final String keyParameterName;
     private final BiPredicate<String, String> equalizer;

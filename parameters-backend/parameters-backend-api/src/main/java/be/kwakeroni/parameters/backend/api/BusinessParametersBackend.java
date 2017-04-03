@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public interface BusinessParametersBackend<Q, BG extends BackendGroup<Q, ?, ?>> {
+public interface BusinessParametersBackend<Q, BG extends BackendGroup<Q>> {
 
     public Collection<String> getGroupNames();
 

@@ -15,7 +15,7 @@ import java.util.UUID;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-class DirectBackendAdapter<Q, BG extends BackendGroup<Q,?,?>> {
+class DirectBackendAdapter<Q, BG extends BackendGroup<Q>> {
 
     Logger LOG = LoggerFactory.getLogger(DirectBackendAdapter.class);
 
@@ -76,7 +76,7 @@ class DirectBackendAdapter<Q, BG extends BackendGroup<Q,?,?>> {
 
     }
 
-    private BackendQuery<? extends Q, ?> internalizeQuery(Object query, BackendGroup<Q, ?, ?> group) {
+    private BackendQuery<? extends Q, ?> internalizeQuery(Object query, BackendGroup<Q> group) {
         LOG.debug("Internalizing query: {}", query);
         return group.internalize(query, wireFormatterContext);
     }

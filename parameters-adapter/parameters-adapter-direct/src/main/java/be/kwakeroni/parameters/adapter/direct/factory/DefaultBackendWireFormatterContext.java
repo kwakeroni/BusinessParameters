@@ -36,7 +36,7 @@ public class DefaultBackendWireFormatterContext implements BackendWireFormatterC
     }
 
     @Override
-    public <Q> Q internalize(BackendGroup<Q, ?, ?> group, Object query) {
+    public <Q> Q internalize(BackendGroup<Q> group, Object query) {
         if (this.formatters.isEmpty()) {
             throw new IllegalStateException("No formatters registered");
         }

@@ -32,7 +32,7 @@ class DefaultGroupData implements GroupData {
     }
 
     @Override
-    public BackendGroup<InMemoryQuery<?>, GroupData, EntryData> getGroup() {
+    public BackendGroup<InMemoryQuery<?>> getGroup() {
         return group;
     }
 

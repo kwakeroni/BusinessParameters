@@ -27,8 +27,8 @@ import java.util.function.Predicate;
  * (C) 2017 Maarten Van Puymbroeck
  */
 public class ElasticSearchQueryBasedRangedGroup
-        extends IntermediaryBackendGroupSupport<ElasticSearchQuery<?>, ElasticSearchGroup, ElasticSearchData, ElasticSearchEntry>
-        implements ElasticSearchGroup, RangedBackendGroup<ElasticSearchQuery<?>, ElasticSearchGroup, ElasticSearchData, ElasticSearchEntry> {
+        extends IntermediaryBackendGroupSupport<ElasticSearchQuery<?>, ElasticSearchGroup>
+        implements ElasticSearchGroup, RangedBackendGroup<ElasticSearchQuery<?>, ElasticSearchGroup> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchQueryBasedRangedGroup.class);
 

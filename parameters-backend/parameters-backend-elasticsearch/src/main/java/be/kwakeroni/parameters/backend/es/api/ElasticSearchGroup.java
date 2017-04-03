@@ -5,7 +5,7 @@ import be.kwakeroni.parameters.backend.api.BackendGroup;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public interface ElasticSearchGroup extends BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> {
+public interface ElasticSearchGroup extends BackendGroup<ElasticSearchQuery<?>> {
 
     public ElasticSearchEntry prepareAndValidateNewEntry(ElasticSearchEntry entry, ElasticSearchData storage);
 

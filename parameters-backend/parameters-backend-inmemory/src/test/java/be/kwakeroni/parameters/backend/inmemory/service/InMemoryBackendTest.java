@@ -54,7 +54,7 @@ public class InMemoryBackendTest {
         backend.addGroupData(group1Name, group1Data);
         backend.addGroupData(group2Name, group2Data);
 
-        doReturn(group1Name).when(group1).getName();
+//        doReturn(group1Name).when(group1).getName();
 //        doReturn(group2Name).when(group2).getName();
         doReturn(group1Stream).when(group1Data).getEntries();
         doReturn(inMemoryQuery).when(backendQuery).raw();

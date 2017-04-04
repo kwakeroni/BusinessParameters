@@ -1,19 +1,10 @@
 package be.kwakeroni.scratch;
 
-import be.kwakeroni.parameters.backend.api.BackendGroup;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.backend.es.factory.ElasticSearchBackendServiceFactory;
 import be.kwakeroni.parameters.backend.es.service.ElasticSearchBackend;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
-import be.kwakeroni.scratch.tv.Dag;
-import be.kwakeroni.scratch.tv.MappedRangedTVGroup;
-import be.kwakeroni.scratch.tv.MappedTVGroup;
-import be.kwakeroni.scratch.tv.RangedTVGroup;
-import be.kwakeroni.scratch.tv.SimpleTVGroup;
-import be.kwakeroni.scratch.tv.Slot;
+import be.kwakeroni.scratch.tv.*;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -21,11 +12,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -53,30 +40,37 @@ public class ElasticSearchTestData implements TestData {
 
     @Override
     public void reset() {
+        try {
+            callES("/parameters", WebResource::put);
+        } catch (Exception exc) {
+        }
         this.groups.forEach(this.backend::unregisterGroup);
         this.groups.clear();
         try {
             callES("/parameters", WebResource::delete);
-        } catch (Exception exc){ }
+        } catch (Exception exc) {
+        }
 
         LOG.info("Inserting test data...");
 
+        Map<String, List<String>> uuids = new HashMap<>();
+
         register(SimpleTVGroup.ELASTICSEARCH_GROUP);
-        insert(SimpleTVGroup.instance().getName(), SimpleTVGroup.getEntryData(Dag.MAANDAG, Slot.atHour(20)));
+        addInsert(uuids, SimpleTVGroup.instance().getName(), SimpleTVGroup.getEntryData(Dag.MAANDAG, Slot.atHour(20)));
 
         register(MappedTVGroup.ELASTICSEARCH_GROUP);
-        insert(MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZATERDAG, "Samson"));
-        insert(MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZONDAG, "Morgen Maandag"));
+        addInsert(uuids, MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZATERDAG, "Samson"));
+        addInsert(uuids, MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZONDAG, "Morgen Maandag"));
 
         boolean addRangeLimits = true;
 
         register(RangedTVGroup.elasticSearchGroup(addRangeLimits));
-        insert(RangedTVGroup.instance().getName(),
+        addInsert(uuids, RangedTVGroup.instance().getName(),
                 RangedTVGroup.entryData(Slot.atHour(8), Slot.atHour(12), "Samson", addRangeLimits),
                 RangedTVGroup.entryData(Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag", addRangeLimits));
 
         register(MappedRangedTVGroup.elasticSearchGroup(addRangeLimits));
-        List<String> uuids = insert(MappedRangedTVGroup.instance().getName(),
+        addInsert(uuids, MappedRangedTVGroup.instance().getName(),
                 MappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag", addRangeLimits),
                 MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson", addRangeLimits),
                 MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers", addRangeLimits),
@@ -96,12 +90,25 @@ public class ElasticSearchTestData implements TestData {
 
     }
 
-    private boolean isEmpty(List<String> uuids){
+    private boolean isEmpty(Map<String, List<String>> uuids) {
+        return uuids.keySet()
+                .stream()
+                .filter(group -> !isEmpty(group, uuids))
+                .findAny()
+                .map(s -> Boolean.FALSE)
+                .orElse(Boolean.TRUE);
+    }
+
+    private boolean isEmpty(String group, Map<String, List<String>> uuids) {
+        return isEmpty(group, uuids.getOrDefault(group, Collections.emptyList()));
+    }
+
+    private boolean isEmpty(String group, List<String> uuids) {
 
         Iterator<String> iter = uuids.iterator();
-        while (iter.hasNext()){
-            Object o = get(MappedRangedTVGroup.instance().getName(), iter.next());
-            if (o != null){
+        while (iter.hasNext()) {
+            Object o = get(group, iter.next());
+            if (o != null) {
                 iter.remove();
             }
         }
@@ -121,7 +128,12 @@ public class ElasticSearchTestData implements TestData {
 
     private String get(String group, String uuid) {
         String url = String.format("/parameters/%s/%s", group, uuid);
-        ClientResponse response = callES(url, WebResource::get);
+        ClientResponse response = null;
+        try {
+            response = callES(url, WebResource::get);
+        } catch (ResponseException e) {
+            response = e.getResponse();
+        }
         int status = response.getStatus();
         if (status == 204 || status == 404) {
             return null;
@@ -133,9 +145,9 @@ public class ElasticSearchTestData implements TestData {
 
     }
 
-    private String findAll(String group){
+    private String findAll(String group) {
         String url = "/parameters/_search";
-        String body="{\"size\":20,\"query\":{\"bool\":{\"must\":[{\"match\":{\"_type\":\""+group+"\"}}]}},\"from\":0}";
+        String body = "{\"size\":20,\"query\":{\"bool\":{\"must\":[{\"match\":{\"_type\":\"" + group + "\"}}]}},\"from\":0}";
         ClientResponse response = callES(url, body, WebResource::post);
         int status = response.getStatus();
         if (status == 204 || status == 404) {
@@ -148,12 +160,20 @@ public class ElasticSearchTestData implements TestData {
 
     }
 
-    private String insert(String group, EntryData... entryDatas) {
-        String uuid = null;
+    private void addInsert(Map<String, List<String>> accu, String group, EntryData... entryDatas) {
+        accu.computeIfAbsent(group, key -> new ArrayList<>()).addAll(insert(group, entryDatas));
+    }
+
+    private List<String> insert(String group, EntryData... entryDatas) {
+        List<String> uuids = new ArrayList<>();
         for (EntryData entryData : entryDatas) {
-            uuid = insert(group, entryData.asMap());
+            uuids.add(insert(group, entryData.asMap()));
         }
-        return uuid;
+        return uuids;
+    }
+
+    private void addInsert(Map<String, List<String>> accu, String group, Map<String, ?>... entryDatas) {
+        accu.computeIfAbsent(group, key -> new ArrayList<>()).addAll(insert(group, entryDatas));
     }
 
     private List<String> insert(String group, Map<String, ?>... entryDatas) {
@@ -180,21 +200,21 @@ public class ElasticSearchTestData implements TestData {
         byte[] bytes = response.getEntity(byte[].class);
         response.setEntityInputStream(new ByteArrayInputStream(bytes));
         LOG.info("[{}] {}\r\n{}", response.getStatus(), url, new String(bytes));
-        if (response.getStatus() >= 400){
+        if (response.getStatus() >= 400) {
             throw new RuntimeException(String.format("Error calling ES: [%s] %s", response.getStatus(), new String(bytes)));
         }
         return response;
     }
 
-    private ClientResponse callES(String path, CallWithoutBody call) {
+    private ClientResponse callES(String path, CallWithoutBody call) throws ResponseException {
         String url = resolve("http://127.0.0.1:9200", path);
         LOG.info("{} : {}", url, call);
         ClientResponse response = call.call(client.resource(url));
         byte[] bytes = response.getEntity(byte[].class);
         response.setEntityInputStream(new ByteArrayInputStream(bytes));
         LOG.info("[{}] {}\r\n{}", response.getStatus(), url, new String(bytes));
-        if (response.getStatus() >= 400){
-            throw new RuntimeException(String.format("Error calling ES: [%s] %s", response.getStatus(), new String(bytes)));
+        if (response.getStatus() >= 400) {
+            throw new ResponseException(response, bytes);
         }
         return response;
     }
@@ -206,12 +226,17 @@ public class ElasticSearchTestData implements TestData {
     private String toJson(EntryData entry) {
         return toJson(entry.asMap());
     }
+
     private String toJson(Map<String, ?> entry) {
         return new JSONObject(entry).toString(4);
     }
 
+    private ClientResponse get(String url) {
+        return client.resource(resolve("http://127.0.0.1:9200", url)).get(ClientResponse.class);
+    }
+
     private static interface CallWithoutBody {
-        <T> T call(WebResource resource, Class<T> type) ;
+        <T> T call(WebResource resource, Class<T> type);
 
         default ClientResponse call(WebResource resource) {
             return call(resource, ClientResponse.class);
@@ -221,11 +246,23 @@ public class ElasticSearchTestData implements TestData {
     private static interface CallWithBody {
         <T> T call(WebResource resource, Class<T> type, String body);
 
-        default ClientResponse call(WebResource resource, String body){
+        default ClientResponse call(WebResource resource, String body) {
             return call(resource, ClientResponse.class, body);
         }
     }
 
+    private static class ResponseException extends Exception {
+        private final ClientResponse response;
+
+        public ResponseException(ClientResponse response, byte[] bytes) {
+            super(String.format("Error calling ES: [%s] %s", response.getStatus(), new String(bytes)));
+            this.response = response;
+        }
+
+        public ClientResponse getResponse() {
+            return response;
+        }
+    }
 }
 // INFO  - http://127.0.0.1:9200/13591bee-a2f9-431c-ab27-3572bf5aeb4f?pretty
 //  http://127.0.0.1:9200/parameters/tv.simple/13591bee-a2f9-431c-ab27-3572bf5aeb4f?pretty

@@ -8,7 +8,6 @@ import org.elasticsearch.node.internal.InternalSettingsPreparer;
 import org.elasticsearch.transport.Netty4Plugin;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -21,11 +20,11 @@ public class ElasticSearchTestNode implements AutoCloseable {
     private Thread thread;
     private AtomicBoolean started = new AtomicBoolean(false);
 
-    private ElasticSearchTestNode(){
+    private ElasticSearchTestNode() {
         thread = new Thread(this::run, "ElasticSearchTestNode Container Thread");
     }
 
-    public static ElasticSearchTestNode start(){
+    public static ElasticSearchTestNode start() {
         ElasticSearchTestNode node = new ElasticSearchTestNode();
         node.thread.start();
         return node;
@@ -54,38 +53,39 @@ public class ElasticSearchTestNode implements AutoCloseable {
     public void waitUntil(Supplier<Boolean> condition) throws InterruptedException {
         waitUntil(condition, 1000);
     }
-        public void waitUntil(Supplier<Boolean> condition, int delay) throws InterruptedException {
-        while(! Boolean.TRUE.equals(condition.get())){
+
+    public void waitUntil(Supplier<Boolean> condition, int delay) throws InterruptedException {
+        while (!Boolean.TRUE.equals(condition.get())) {
             Thread.sleep(delay);
         }
     }
 
     public void stop() throws InterruptedException {
         if (thread != null) {
-        thread.interrupt();
-        System.out.println("Interrupting thread");
-        thread.join();
-        System.out.println("Thread joined");
+            thread.interrupt();
+            System.out.println("Interrupting thread");
+            thread.join();
+            System.out.println("Thread joined");
             thread = null;
         }
     }
 
     @Override
     public void close() throws Exception {
-            stop();
+        stop();
     }
 
-    private void run(){
+    private void run() {
         try (Node node = startNode()) {
             while (!Thread.interrupted()) {
                 Thread.sleep(1000);
             }
             System.out.println("Thread interrupted()");
-        } catch (InterruptedException exc){
+        } catch (InterruptedException exc) {
             System.out.println("Thread interrupted");
-        } catch (RuntimeException exc){
+        } catch (RuntimeException exc) {
             throw exc;
-        } catch (Exception exc){
+        } catch (Exception exc) {
             throw new RuntimeException(exc);
         } finally {
             ElasticSearchTestNode.this.started.set(false);
@@ -95,14 +95,15 @@ public class ElasticSearchTestNode implements AutoCloseable {
     private Node startNode() throws Exception {
         Settings settings = Settings.builder()
 //                .put("path.home", "c:\\Projects\\elasticsearch-5.2.1")
-                .put("path.home", "./.es")
+                .put("path.home", "./target/.es")
                 .put(NetworkModule.TRANSPORT_TYPE_KEY, NetworkModule.LOCAL_TRANSPORT)
                 .put(NetworkModule.HTTP_TYPE_KEY, "netty4")
                 .build();
 
         Node node = new Node(
-                InternalSettingsPreparer.prepareEnvironment(settings, (Terminal)null),
-                Arrays.asList(Netty4Plugin.class)){};
+                InternalSettingsPreparer.prepareEnvironment(settings, (Terminal) null),
+                Arrays.asList(Netty4Plugin.class)) {
+        };
         System.out.println("Starting node");
         node.start();
         System.out.println("Node running");

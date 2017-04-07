@@ -2,6 +2,7 @@ package be.kwakeroni.parameters.basic.backend.inmemory;
 
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.basic.backend.query.support.SimpleBackendGroupSupport;
 
@@ -11,7 +12,8 @@ import java.util.Set;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class InmemorySimpleGroup extends SimpleBackendGroupSupport<InMemoryQuery<?>, GroupData, EntryData> {
+public class InmemorySimpleGroup extends SimpleBackendGroupSupport<InMemoryQuery<?>, GroupData, EntryData>
+                                implements InMemoryGroup {
 
     public InmemorySimpleGroup(String name, String... parameters) {
         super(name, parameters);
@@ -41,4 +43,8 @@ public class InmemorySimpleGroup extends SimpleBackendGroupSupport<InMemoryQuery
         return entry.asMap();
     }
 
+    @Override
+    public EntryData validateNewEntry(EntryData entry, GroupData storage) {
+        return super.validateNewEntry(entry, storage);
+    }
 }

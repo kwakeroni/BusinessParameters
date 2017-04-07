@@ -4,6 +4,7 @@ import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchDataType;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchMappedGroup;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchPostFilterRangedGroup;
@@ -106,7 +107,7 @@ public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Sl
             new ElasticSearchQueryBasedRangedGroup(SLOT.getName(),
                     ElasticSearchDataType.INTEGER, string -> Slot.fromString(string).toInt(), new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
 
-    public static BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> elasticSearchGroup(boolean withRangeLimits){
+    public static ElasticSearchGroup elasticSearchGroup(boolean withRangeLimits){
         return (withRangeLimits)? ELASTICSEARCH_GROUP_WITH_QUERY : ELASTICSEARCH_GROUP_WITH_POSTFILTER;
     }
 

@@ -3,9 +3,11 @@ package be.kwakeroni.parameters.backend.es.service;
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.backend.es.api.EntryModification;
 import org.json.JSONObject;
@@ -22,19 +24,19 @@ import java.util.stream.Stream;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> {
+public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSearchQuery<?>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchBackend.class);
 
     private final ElasticSearchClient client;
-    private final Map<String, BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry>> groups;
+    private final Map<String, ElasticSearchGroup> groups;
 
     public ElasticSearchBackend(Configuration configuration) {
         this.client = new ElasticSearchClient(configuration);
         this.groups = new HashMap<>();
     }
 
-    public void registerGroup(BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> group) {
+    public void registerGroup(ElasticSearchGroup group) {
         this.groups.merge(group.getName(), group,
                 (g1, g2) -> {
                     throw new IllegalStateException("Registered two groups for name " + g1.getName());
@@ -59,9 +61,13 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> getGroup(String name) {
+    private ElasticSearchGroup getGroup(String name){
         return groups.get(name);
+    }
+
+    @Override
+    public BackendQuery<? extends ElasticSearchQuery<?>, ?> internalizeQuery(String groupName, Object queryObject, BackendWireFormatterContext context) {
+        return groups.get(groupName).internalize(queryObject, context);
     }
 
     private ElasticSearchData data = new ElasticSearchData() {
@@ -78,30 +84,30 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     }
 
     @Override
-    public <V> V select(BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> group, BackendQuery<? extends ElasticSearchQuery<?>, V> query) {
-        return ((ElasticSearchQuery<V>) query.raw()).apply(getDataForGroup(group.getName())).orElse(null);
+    public <V> V select(String group, BackendQuery<? extends ElasticSearchQuery<?>, V> query) {
+        return ((ElasticSearchQuery<V>) query.raw()).apply(getDataForGroup(group)).orElse(null);
     }
 
     @Override
-    public <V> void update(BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> group, BackendQuery<? extends ElasticSearchQuery<?>, V> query, V value) {
+    public <V> void update(String group, BackendQuery<? extends ElasticSearchQuery<?>, V> query, V value) {
         doUpdate(group, (ElasticSearchQuery<V>) query.raw(), value);
     }
 
-    private <V> void doUpdate(BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> group, ElasticSearchQuery<V> query, V value){
-        ElasticSearchData groupData = getDataForGroup(group.getName());
+    private <V> void doUpdate(String group, ElasticSearchQuery<V> query, V value){
+        ElasticSearchData groupData = getDataForGroup(group);
         EntryModification modification = query.getEntryModification(value, groupData);
         ElasticSearchEntry original = modification.getOriginalEntry();
         ElasticSearchEntry newEntry = original.copy();
         modification.modify(newEntry);
-        newEntry = group.prepareAndValidateNewEntry(newEntry, groupData.with(criteria -> criteria.addParameterNotMatch("_id", modification.getOriginalEntry().getId())));
-        client.update(group.getName(), newEntry);
+        newEntry = getGroup(group).prepareAndValidateNewEntry(newEntry, groupData.with(criteria -> criteria.addParameterNotMatch("_id", modification.getOriginalEntry().getId())));
+        client.update(group, newEntry);
     }
 
     @Override
-    public void insert(BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> group, Map<String, String> entry) {
-        ElasticSearchData groupData = getDataForGroup(group.getName());
+    public void insert(String group, Map<String, String> entry) {
+        ElasticSearchData groupData = getDataForGroup(group);
         ElasticSearchEntry newEntry = new DefaultElasticSearchEntry(entry);
-        newEntry = group.prepareAndValidateNewEntry(newEntry, groupData);
-        client.insert(group.getName(), newEntry);
+        newEntry = getGroup(group).prepareAndValidateNewEntry(newEntry, groupData);
+        client.insert(group, newEntry);
     }
 }

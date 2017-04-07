@@ -18,6 +18,10 @@ class EntryInMemoryQuery implements InMemoryQuery<Map<String, String>> {
 
     static final EntryInMemoryQuery INSTANCE = new EntryInMemoryQuery();
 
+    private EntryInMemoryQuery(){
+
+    }
+
     @Override
     public Optional<Map<String, String>> apply(Stream<EntryData> stream) {
         return getEntryFrom(stream)

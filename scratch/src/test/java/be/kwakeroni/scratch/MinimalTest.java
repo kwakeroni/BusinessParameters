@@ -7,19 +7,43 @@ import be.kwakeroni.parameters.basic.client.query.MappedQuery;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.scratch.tv.*;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
+//@RunWith(Parameterized.class)
 public class MinimalTest {
 
-    Environment environment = new Environment();
+    @ClassRule
+    public static Environment environment = new Environment(ElasticSearchTestData::new);
+
+//    @Rule
+//    public Environment environment;
+//
+//    public MinimalTest(Supplier<TestData> testDataSupplier, String name){
+//        this.environment = new Environment(testDataSupplier);
+//    }
+//
+//    @Parameterized.Parameters(name = "{1}")
+//    public static Object[][] data() {
+//        return new Object[][]{
+//                new Object[]{ (Supplier<TestData>) InMemoryTestData::new, "InMemory" },
+//                new Object[]{ (Supplier<TestData>) ElasticSearchTestData::new, "ElasticSearch"}
+//        };
+//    }
 
     @Test
     public void testSimpleValueQuery(){
+        environment.runTestForGroup(SimpleTVGroup.instance());
         Dag dag = environment.getBusinessParameters().get(SimpleTVGroup.instance(),
                 new ValueQuery<>(SimpleTVGroup.DAY)).get();
         assertEquals(Dag.MAANDAG, dag);
@@ -27,6 +51,7 @@ public class MinimalTest {
 
     @Test
     public void testSimpleEntryQuery(){
+        environment.runTestForGroup(SimpleTVGroup.instance());
         Entry entry = environment.getBusinessParameters().get(SimpleTVGroup.instance(), new EntryQuery()).get();
         assertEquals(Dag.MAANDAG, entry.getValue(SimpleTVGroup.DAY));
         assertEquals(Slot.atHour(20), entry.getValue(SimpleTVGroup.SLOT));
@@ -34,6 +59,7 @@ public class MinimalTest {
 
     @Test
     public void testMappedValueQuery(){
+        environment.runTestForGroup(MappedTVGroup.instance());
         String program = environment.getBusinessParameters().get(MappedTVGroup.instance(),
                 new MappedQuery<>(Dag.ZATERDAG, Dag.type,
                         new ValueQuery<>(MappedTVGroup.PROGRAM))).get();
@@ -42,6 +68,7 @@ public class MinimalTest {
 
     @Test
     public void testMappedEntryQuery(){
+        environment.runTestForGroup(MappedTVGroup.instance());
         Entry entry = environment.getBusinessParameters().get(MappedTVGroup.instance(),
                 new MappedQuery<>(Dag.ZONDAG, Dag.type,
                         new EntryQuery())).get();
@@ -51,6 +78,7 @@ public class MinimalTest {
 
     @Test
     public void testRangedValueQuery(){
+        environment.runTestForGroup(RangedTVGroup.instance());
         String program = environment.getBusinessParameters().get(RangedTVGroup.instance(),
                 new RangedQuery<>(Slot.atHalfPast(9), Slot.type,
                         new ValueQuery<>(RangedTVGroup.PROGRAM))).get();
@@ -59,6 +87,7 @@ public class MinimalTest {
 
     @Test
     public void testRangedEntryQuery(){
+        environment.runTestForGroup(RangedTVGroup.instance());
         Entry entry = environment.getBusinessParameters().get(RangedTVGroup.instance(),
                 new RangedQuery<>(Slot.atHour(21), Slot.type,
                         new EntryQuery())).get();
@@ -68,6 +97,8 @@ public class MinimalTest {
 
     @Test
     public void testMappedRangedValueQuery(){
+        environment.runTestForGroup(MappedRangedTVGroup.instance());
+
         assertEquals("Samson", getMappedRangedProgram(Dag.ZATERDAG, Slot.atHalfPast(11)));
         assertEquals("Koers", getMappedRangedProgram(Dag.ZATERDAG, Slot.atHour(14)));
         assertEquals("Morgen Maandag", getMappedRangedProgram(Dag.ZONDAG, Slot.atHour(21)));

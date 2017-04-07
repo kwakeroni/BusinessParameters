@@ -3,6 +3,8 @@ package be.kwakeroni.scratch.tv;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
+import be.kwakeroni.parameters.basic.backend.es.ElasticSearchMappedGroup;
+import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemoryMappedGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
 import be.kwakeroni.parameters.basic.client.model.Mapped;
@@ -39,7 +41,7 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
     }
 
     // For test purposes
-    private static EntryData entryData(Dag day, String program) {
+    public static EntryData entryData(Dag day, String program) {
         return DefaultEntryData.of(
                 DAY.getName(), day.toString(),
                 PROGRAM.getName(), program
@@ -70,6 +72,8 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
     }
 
     private static final String NAME = "tv.mapped";
-    private static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, new InmemorySimpleGroup(NAME, false, DAY.getName(), PROGRAM.getName()));
-
+    private static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, new InmemorySimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
+    public static final ElasticSearchMappedGroup ELASTICSEARCH_GROUP =
+            new ElasticSearchMappedGroup(DAY.getName(),
+            new ElasticSearchSimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
 }

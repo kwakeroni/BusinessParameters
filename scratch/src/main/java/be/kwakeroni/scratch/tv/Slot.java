@@ -43,6 +43,8 @@ public class Slot implements Comparable<Slot> {
         return Objects.hash(hour, halfPast);
     }
 
+    public int toInt(){return 10*hour + ((halfPast) ? 5 : 0); }
+
     public String toString() {
         return hour + ((halfPast) ? ".5" : ".0");
     }

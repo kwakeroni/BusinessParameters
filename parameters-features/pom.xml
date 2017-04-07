@@ -57,6 +57,21 @@
                             <classifier>features</classifier>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>install-features-deps</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <phase>install</phase>
+                        <configuration>
+                            <file>target/features/features-deps.xml</file>
+                            <groupId>${project.parent.groupId}</groupId>
+                            <artifactId>${project.parent.artifactId}</artifactId>
+                            <packaging>xml</packaging>
+                            <version>${project.version}</version>
+                            <classifier>features-deps</classifier>
+                        </configuration>
+                    </execution>
               </executions>
             </plugin>
         </plugins>

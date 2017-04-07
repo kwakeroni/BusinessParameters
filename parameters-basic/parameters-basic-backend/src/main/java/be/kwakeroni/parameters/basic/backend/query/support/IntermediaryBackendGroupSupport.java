@@ -7,11 +7,11 @@ import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public abstract class IntermediaryBackendGroupSupport<Q extends BackendQuery<? extends Q, ?>, S, E> implements BackendGroup<Q, S, E> {
+public abstract class IntermediaryBackendGroupSupport<Q extends BackendQuery<? extends Q, ?>, BG extends BackendGroup<Q>> implements BackendGroup<Q> {
 
-    private final BackendGroup<Q, S, E> subGroup;
+    private final BG subGroup;
 
-    public IntermediaryBackendGroupSupport(BackendGroup<Q, S, E> subGroup) {
+    public IntermediaryBackendGroupSupport(BG subGroup) {
         this.subGroup = subGroup;
     }
 
@@ -20,7 +20,7 @@ public abstract class IntermediaryBackendGroupSupport<Q extends BackendQuery<? e
         return context.internalize(this, query);
     }
 
-    public BackendGroup<Q, S, E> getSubGroup() {
+    public BG getSubGroup() {
         return this.subGroup;
     }
 

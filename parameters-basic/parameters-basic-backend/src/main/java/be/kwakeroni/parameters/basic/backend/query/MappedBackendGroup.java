@@ -5,10 +5,10 @@ import be.kwakeroni.parameters.backend.api.BackendGroup;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public interface MappedBackendGroup<Q, S, E> extends BackendGroup<Q, S, E> {
+public interface MappedBackendGroup<Q, BG extends BackendGroup<Q>> extends BackendGroup<Q> {
 
     Q getEntryQuery(String keyValue, Q subQuery);
 
-    BackendGroup<Q, S, E> getSubGroup();
+    BG getSubGroup();
 
 }

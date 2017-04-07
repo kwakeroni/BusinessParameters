@@ -13,6 +13,6 @@ public interface GroupData {
     Stream<EntryData> getEntries();
     void addEntry(EntryData data);
     void modifyEntry(EntryData data, Consumer<EntryData> modifier);
-    BackendGroup<InMemoryQuery<?>, GroupData, EntryData> getGroup();
+    BackendGroup<InMemoryQuery<?>> getGroup();
 
 }

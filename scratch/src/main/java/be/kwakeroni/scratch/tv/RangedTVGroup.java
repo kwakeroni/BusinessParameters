@@ -4,6 +4,7 @@ import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchDataType;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
@@ -89,7 +90,7 @@ public class RangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>> {
 
     private static final String NAME = "tv.ranged";
     private static final InmemoryRangedGroup INMEMORY_GROUP = new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), new InmemorySimpleGroup(NAME, SLOT.getName(), PROGRAM.getName()));
-    private static final BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> ELASTICSEARCH_SUBGROUP = new ElasticSearchSimpleGroup(NAME, SLOT.getName(), PROGRAM.getName());
+    private static final ElasticSearchGroup ELASTICSEARCH_SUBGROUP = new ElasticSearchSimpleGroup(NAME, SLOT.getName(), PROGRAM.getName());
     private static final ElasticSearchPostFilterRangedGroup ELASTICSEARCH_GROUP_WITH_POSTFILTER =
             new ElasticSearchPostFilterRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), ELASTICSEARCH_SUBGROUP);
     private static final ElasticSearchQueryBasedRangedGroup ELASTICSEARCH_GROUP_WITH_QUERY =
@@ -98,7 +99,7 @@ public class RangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>> {
                     string -> Slot.fromString(string).toInt(),
                     ELASTICSEARCH_SUBGROUP);
 
-    public static BackendGroup<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry> elasticSearchGroup(boolean withRangeLimits){
+    public static ElasticSearchGroup elasticSearchGroup(boolean withRangeLimits){
         return (withRangeLimits)? ELASTICSEARCH_GROUP_WITH_QUERY : ELASTICSEARCH_GROUP_WITH_POSTFILTER;
     }
 }

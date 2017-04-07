@@ -1,10 +1,10 @@
 package be.kwakeroni.parameters.basic.backend.inmemory;
 
-import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.support.FilteredGroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.IntermediateInMemoryQuery;
@@ -17,13 +17,13 @@ import java.util.function.Predicate;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class InmemoryRangedGroup implements RangedBackendGroup<InMemoryQuery<?>, GroupData, EntryData> {
+public class InmemoryRangedGroup implements InMemoryGroup, RangedBackendGroup<InMemoryQuery<?>, InMemoryGroup> {
 
     private final String rangeParameterName;
     private final ParameterType<Range<String>> rangeType;
-    private final BackendGroup<InMemoryQuery<?>, GroupData, EntryData> subGroup;
+    private final InMemoryGroup subGroup;
 
-    public InmemoryRangedGroup(String rangeParameterName, ParameterType<Range<String>> rangeType, BackendGroup<InMemoryQuery<?>, GroupData, EntryData> subGroup) {
+    public InmemoryRangedGroup(String rangeParameterName, ParameterType<Range<String>> rangeType, InMemoryGroup subGroup) {
         this.rangeParameterName = rangeParameterName;
         this.rangeType = rangeType;
         this.subGroup = subGroup;
@@ -39,6 +39,7 @@ public class InmemoryRangedGroup implements RangedBackendGroup<InMemoryQuery<?>,
         return IntermediateInMemoryQuery.filter(entryWithRangeContaining(value), subQuery);
     }
 
+
     private Predicate<EntryData> entryWithRangeContaining(String value) {
         return entry -> {
             return getRange(entry).contains(value);
@@ -50,7 +51,7 @@ public class InmemoryRangedGroup implements RangedBackendGroup<InMemoryQuery<?>,
     }
 
     @Override
-    public BackendGroup<InMemoryQuery<?>, GroupData, EntryData> getSubGroup() {
+    public InMemoryGroup getSubGroup() {
         return this.subGroup;
     }
 
@@ -60,11 +61,11 @@ public class InmemoryRangedGroup implements RangedBackendGroup<InMemoryQuery<?>,
     }
 
     @Override
-    public void validateNewEntry(EntryData entry, GroupData storage) {
+    public EntryData validateNewEntry(EntryData entry, GroupData storage) {
         Range<String> range = getRange(entry);
 
         try {
-            this.subGroup.validateNewEntry(entry, new FilteredGroupData(storage, data -> data.filter(entryWithOverlap(range))));
+            return this.subGroup.validateNewEntry(entry, new FilteredGroupData(storage, data -> data.filter(entryWithOverlap(range))));
         } catch (IllegalStateException exc) {
             throw new IllegalStateException(exc.getMessage() + " with range " + this.rangeParameterName + "=" + range);
         }

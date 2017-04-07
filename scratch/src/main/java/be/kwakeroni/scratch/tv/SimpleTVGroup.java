@@ -1,7 +1,9 @@
 package be.kwakeroni.scratch.tv;
 
+import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
+import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.basic.client.model.Simple;
@@ -35,13 +37,18 @@ public class SimpleTVGroup implements ParameterGroup<Simple> {
     public static final GroupData getData(Dag dag, Slot slot) {
         return new DefaultGroupData(
                 INMEMORY_GROUP,
-                DefaultEntryData.of(
-                        DAY.getName(), dag.toString(),
-                        SLOT.getName(), slot.toString()
-                )
+                getEntryData(dag, slot)
         );
     }
-    public static final String NAME = "tv.simple";
-    private static final InmemorySimpleGroup INMEMORY_GROUP = new InmemorySimpleGroup(NAME, true, DAY.getName(), SLOT.getName());
 
+    public static final EntryData getEntryData(Dag dag, Slot slot){
+        return DefaultEntryData.of(
+                DAY.getName(), dag.toString(),
+                SLOT.getName(), slot.toString()
+        );
+    }
+
+    public static final String NAME = "tv.simple";
+    private static final InmemorySimpleGroup INMEMORY_GROUP = new InmemorySimpleGroup(NAME, DAY.getName(), SLOT.getName());
+    public static final ElasticSearchSimpleGroup ELASTICSEARCH_GROUP = new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName());
 }

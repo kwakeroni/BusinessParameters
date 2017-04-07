@@ -20,7 +20,10 @@ import be.kwakeroni.scratch.tv.RangedTVGroup;
 import be.kwakeroni.scratch.tv.SimpleTVGroup;
 import be.kwakeroni.scratch.tv.Slot;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,15 +41,13 @@ public class MinimalWriteTest {
 
     private Logger LOG = LoggerFactory.getLogger(MinimalWriteTest.class);
 
-    Environment environment;
-
-    @Before
-    public void setUpEnvironment() {
-        this.environment = new Environment();
-    }
+    @ClassRule
+    public static Environment environment = new Environment(ElasticSearchTestData::new);
+    @Rule
+    public TestRule resetter = environment.reset();
 
     @Test
-    public void testWriteSimpleValue() {
+    public void testWriteSimpleValue() throws Exception {
         Query<Simple, Dag> query = new ValueQuery<>(SimpleTVGroup.DAY);
 
         Dag original = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query).get();
@@ -59,7 +60,7 @@ public class MinimalWriteTest {
     }
 
     @Test
-    public void testWriteSimpleEntry() {
+    public void testWriteSimpleEntry() throws Exception {
         Query<Simple, Entry> query = new EntryQuery();
 
         Entry entry = environment.getBusinessParameters().get(SimpleTVGroup.instance(), query).get();
@@ -285,6 +286,25 @@ public class MinimalWriteTest {
         {
             assertEquals("Samson", get(Slot.atHour(8)));
             assertEquals("Samson", get(Slot.atHalfPast(11)));
+        }
+    }
+
+    @Test
+    public void testAddFullyContainedOverlappingRange() {
+        {
+            assertEquals("Samson", get(Slot.atHour(8)));
+            assertEquals("Samson", get(Slot.atHalfPast(11)));
+        }
+
+        assertThatThrownBy(() ->
+                environment.getWritableBusinessParameters().addEntry(RangedTVGroup.instance(), RangedTVGroup.entry(Slot.atHour(9), Slot.atHalfPast(10), "De Zevende Dag"))
+        ).isInstanceOf(IllegalStateException.class)
+                .satisfies(throwable -> LOG.error(throwable.toString()))
+                .hasMessageContaining("slot");
+
+        {
+            assertEquals("Samson", get(Slot.atHour(8)));
+            assertEquals("Samson", get(Slot.atHalfPast(10)));
         }
     }
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="businessparameters"
+          xmlns="http://karaf.apache.org/xmlns/features/v1.4.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.4.0 http://karaf.apache.org/xsd/karaf-features-1.4.0.xsd">
+
+    <feature name="businessparameters-basic-elasticsearch-deps" version="${project.version}">
+        <feature>jersey-client</feature>
+        <feature>json</feature>
+    </feature>
+    <feature name="jersey-client" version="1.19.1">
+        <bundle>mvn:com.sun.jersey/jersey-client/1.19.1</bundle>
+        <bundle>mvn:com.sun.jersey/jersey-core/1.19.1</bundle>
+        <bundle>mvn:javax.ws.rs/jsr311-api/1.1.1</bundle>
+    </feature>
+    <feature name="json" version="20160810">
+        <bundle>mvn:org.json/json/20160810</bundle>
+    </feature>
+</features>

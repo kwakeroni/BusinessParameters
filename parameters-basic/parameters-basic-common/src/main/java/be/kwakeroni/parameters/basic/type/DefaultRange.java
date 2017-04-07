@@ -40,9 +40,18 @@ class DefaultRange<V> implements Range<V> {
         return (comparator.compare(otherTo, this.from) > 0 && comparator.compare(otherTo, this.to) < 0)
                 || (comparator.compare(otherFrom, this.from) >= 0 && comparator.compare(otherFrom, this.to) < 0)
                 || (comparator.compare(this.from, otherFrom) >= 0 && comparator.compare(this.from, otherTo) < 0)
-                || (comparator.compare(this.to, otherFrom) > 0 && comparator.compare(this.to, otherTo) < 0);
+                ;//|| (comparator.compare(this.to, otherFrom) > 0 && comparator.compare(this.to, otherTo) < 0);
 
+//          otherTo in ]this.from, this.to[
+//          || otherFrom in [this.from, this.to[
+//          || this.from in [otherFrom, otherTo[
+//          || this.to in ]otherFrom, otherTo[
 
+//        otherTo > this.from && otherTo < this.to
+//        || otherFrom >= this.from && otherFrom < this.to
+//        || this.from >= otherFrom && this.from < otherTo
+//        || this.to > otherFrom && this.to < otherTo
+//
 
     }
 

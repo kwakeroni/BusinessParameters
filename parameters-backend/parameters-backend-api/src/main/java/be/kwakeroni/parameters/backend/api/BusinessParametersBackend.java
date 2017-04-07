@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.backend.api;
 
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 
 import java.util.Collection;
 import java.util.Map;
@@ -12,12 +13,12 @@ public interface BusinessParametersBackend<Q> {
 
     public Collection<String> getGroupNames();
 
-    public BackendGroup<Q, ?, ?> getGroup(String name);
+    public BackendQuery<? extends Q, ?> internalizeQuery(String groupName, Object queryObject, BackendWireFormatterContext context);
 
-    public <V> V select(BackendGroup<Q, ?, ?> group, BackendQuery<? extends Q, V> query);
+    public <V> V select(String groupName, BackendQuery<? extends Q, V> query);
 
-    public <V> void update(BackendGroup<Q, ?, ?> group, BackendQuery<? extends Q, V> query, V value);
+    public <V> void update(String groupName, BackendQuery<? extends Q, V> query, V value);
 
-    public void insert(BackendGroup<Q, ?, ?> group, Map<String, String> entry);
+    public void insert(String groupName, Map<String, String> entry);
 
 }

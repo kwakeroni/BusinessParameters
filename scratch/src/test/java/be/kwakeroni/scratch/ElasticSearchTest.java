@@ -3,25 +3,18 @@ package be.kwakeroni.scratch;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import org.elasticsearch.cli.Terminal;
-import org.elasticsearch.common.network.NetworkModule;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.internal.InternalSettingsPreparer;
-import org.elasticsearch.transport.Netty4Plugin;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import java.io.IOException;
+import javax.swing.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.function.Function;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
+@Ignore
 public class ElasticSearchTest {
 
     @ClassRule
@@ -36,18 +29,20 @@ public class ElasticSearchTest {
         JOptionPane.showConfirmDialog(null, "Click OK to stop server", "ElasticSearch server runnning...", JOptionPane.OK_OPTION);
     }
 
-    private String resolve(String base, String path){
-        return base + ((path.startsWith("/"))? "" : "/") + path;
+    private String resolve(String base, String path) {
+        return base + ((path.startsWith("/")) ? "" : "/") + path;
     }
-    public WebResource call(String path){
+
+    public WebResource call(String path) {
         return new Client().resource(resolve("http://127.0.0.1:9200", path));
     }
-// http://127.0.0.1:9200/_cat/indices?v
-    private String dump(String path){
+
+    // http://127.0.0.1:9200/_cat/indices?v
+    private String dump(String path) {
         return dump(call(path).get(ClientResponse.class));
     }
 
-    private String dump(ClientResponse response){
+    private String dump(ClientResponse response) {
         String str = format(response,
                 "[%s] %s",
                 ClientResponse::getStatus,
@@ -58,10 +53,10 @@ public class ElasticSearchTest {
     }
 
     @SafeVarargs
-    private final <T> String format(T t, String pattern, Function<T, ?>... args){
+    private final <T> String format(T t, String pattern, Function<T, ?>... args) {
         return String.format(pattern,
                 Arrays.stream(args).map(func -> func.apply(t)).toArray()
-                );
+        );
     }
 
 //    c:\Projects\elasticsearch-5.2.1\bin>elasticsearch.bat

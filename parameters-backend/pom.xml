@@ -17,6 +17,7 @@
 
     <modules>
         <module>parameters-backend-api</module>
+        <module>parameters-backend-elasticsearch</module>
         <module>parameters-backend-inmemory</module>
     </modules>
 
@@ -24,6 +25,11 @@
         <dependencies>
             <dependency>
                 <artifactId>parameters-backend-api</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>parameters-backend-elasticsearch</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>

@@ -1,38 +1,88 @@
 package be.kwakeroni.scratch;
 
-import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendServiceFactory;
-import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.WritableBusinessParameters;
 import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
-import be.kwakeroni.scratch.tv.Dag;
-import be.kwakeroni.scratch.tv.MappedRangedTVGroup;
-import be.kwakeroni.scratch.tv.MappedTVGroup;
-import be.kwakeroni.scratch.tv.RangedTVGroup;
-import be.kwakeroni.scratch.tv.SimpleTVGroup;
-import be.kwakeroni.scratch.tv.Slot;
+import be.kwakeroni.parameters.client.api.model.Entry;
+import be.kwakeroni.parameters.client.api.model.EntryType;
+import be.kwakeroni.parameters.client.api.model.ParameterGroup;
+import be.kwakeroni.parameters.client.api.query.Query;
+import org.junit.Assume;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.ServiceLoader;
+import java.util.function.Supplier;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class Environment {
+public class Environment implements TestRule, AutoCloseable {
 
+    private static Logger LOG = org.slf4j.LoggerFactory.getLogger(Environment.class);
 
     public static void main(String[] args) {
         new Environment();
     }
 
-    InMemoryBackend backend;
-    WritableBusinessParameters parameters;
+    @Override
+    public Statement apply(Statement base, Description description) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                try (Environment env = Environment.this) {
+                    base.evaluate();
+                }
+            }
+        };
+    }
+
+    private final TestData testData;
+    protected final WritableBusinessParameters parameters;
 
     public Environment() {
-        this.backend = InMemoryBackendServiceFactory.getSingletonInstance();
-        initData();
+        this(InMemoryTestData::new);
+    }
+
+    public Environment(Supplier<TestData> testData) {
+        this.testData = testData.get();
         BusinessParametersFactory factory = load(BusinessParametersFactory.class);
-        this.parameters = factory.getWritableInstance();
+        WritableBusinessParameters local = factory.getWritableInstance();
+        this.parameters = new WritableBusinessParameters() {
+            @Override
+            public <ET extends EntryType, T> void set(ParameterGroup<ET> group, Query<ET, T> query, T value) {
+                local.set(group, query, value);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException exc){
+
+                }
+            }
+
+            @Override
+            public void addEntry(ParameterGroup<?> group, Entry entry) {
+                local.addEntry(group, entry);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException exc){
+
+                }
+            }
+
+            @Override
+            public <ET extends EntryType, T> Optional<T> get(ParameterGroup<ET> group, Query<ET, T> query) {
+                return local.get(group, query);
+            }
+        };
+    }
+
+    @Override
+    public void close() throws Exception {
+        this.testData.close();
     }
 
     public BusinessParameters getBusinessParameters() {
@@ -41,6 +91,10 @@ public class Environment {
 
     public WritableBusinessParameters getWritableBusinessParameters() {
         return this.parameters;
+    }
+
+    public void runTestForGroup(ParameterGroup<?> group) {
+        Assume.assumeTrue(this.testData.hasDataForGroup(group.getName()));
     }
 
     private <S> S load(Class<S> serviceType) {
@@ -56,22 +110,15 @@ public class Environment {
         return service;
     }
 
-    private void initData() {
-        this.backend.setGroupData(SimpleTVGroup.instance().getName(),
-                SimpleTVGroup.getData(Dag.MAANDAG, Slot.atHour(20)));
-        this.backend.setGroupData(MappedTVGroup.instance().getName(),
-                MappedTVGroup.getData(Dag.ZATERDAG, "Samson",
-                        Dag.ZONDAG, "Morgen Maandag"));
-        this.backend.setGroupData(RangedTVGroup.instance().getName(),
-                RangedTVGroup.getData(Slot.atHour(8), Slot.atHour(12), "Samson",
-                        Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag"));
-        this.backend.setGroupData(MappedRangedTVGroup.instance().getName(),
-                MappedRangedTVGroup.getData(
-                        MappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag"),
-                        MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson"),
-                        MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers"),
-                        MappedRangedTVGroup.entryData(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag")
-                ));
-
+    public TestRule reset() {
+        return (base, description) -> new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                Environment.this.testData.reset();
+                base.evaluate();
+            }
+        };
     }
+
+
 }

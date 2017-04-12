@@ -13,7 +13,7 @@ import java.util.Set;
  * (C) 2016 Maarten Van Puymbroeck
  */
 public class InmemorySimpleGroup extends SimpleBackendGroupSupport<InMemoryQuery<?>, GroupData, EntryData>
-                                implements InMemoryGroup {
+        implements InMemoryGroup {
 
     public InmemorySimpleGroup(String name, String... parameters) {
         super(name, parameters);
@@ -47,4 +47,10 @@ public class InmemorySimpleGroup extends SimpleBackendGroupSupport<InMemoryQuery
     public EntryData validateNewEntry(EntryData entry, GroupData storage) {
         return super.validateNewEntry(entry, storage);
     }
+
+    @Override
+    public String toString() {
+        return "group(InMemory " + getParameterNames() + ")";
+    }
+
 }

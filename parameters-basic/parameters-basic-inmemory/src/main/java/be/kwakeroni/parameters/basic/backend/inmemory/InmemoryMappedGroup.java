@@ -1,6 +1,5 @@
 package be.kwakeroni.parameters.basic.backend.inmemory;
 
-import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
@@ -53,4 +52,10 @@ public class InmemoryMappedGroup
         }
 
     }
+
+    @Override
+    public String toString() {
+        return "mapped(" + this.keyParameterName + " : " + getSubGroup() + ")";
+    }
+
 }

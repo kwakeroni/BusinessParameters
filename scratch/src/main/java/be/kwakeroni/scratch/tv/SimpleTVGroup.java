@@ -5,16 +5,20 @@ import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
-import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.basic.client.support.Entries;
+import be.kwakeroni.parameters.basic.definition.BasicGroupBuilder;
+import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
+import be.kwakeroni.parameters.definition.api.GroupBuilder;
+import be.kwakeroni.parameters.definition.api.GroupBuilderFactoryContext;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class SimpleTVGroup implements ParameterGroup<Simple> {
+public class SimpleTVGroup implements ParameterGroup<Simple>, ParameterGroupDefinition {
 
 
     public static final SimpleTVGroup instance() {
@@ -41,7 +45,7 @@ public class SimpleTVGroup implements ParameterGroup<Simple> {
         );
     }
 
-    public static final EntryData getEntryData(Dag dag, Slot slot){
+    public static final EntryData getEntryData(Dag dag, Slot slot) {
         return DefaultEntryData.of(
                 DAY.getName(), dag.toString(),
                 SLOT.getName(), slot.toString()
@@ -49,6 +53,16 @@ public class SimpleTVGroup implements ParameterGroup<Simple> {
     }
 
     public static final String NAME = "tv.simple";
-    private static final InmemorySimpleGroup INMEMORY_GROUP = new InmemorySimpleGroup(NAME, DAY.getName(), SLOT.getName());
+    public static final InmemorySimpleGroup INMEMORY_GROUP = new InmemorySimpleGroup(NAME, DAY.getName(), SLOT.getName());
     public static final ElasticSearchSimpleGroup ELASTICSEARCH_GROUP = new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName());
+
+    @Override
+    public <G> GroupBuilder<G> createGroup(GroupBuilderFactoryContext<G> context) {
+        BasicGroupBuilder<G> builder = BasicGroupBuilder.from(context);
+
+        return builder.group(NAME)
+                .withParameter(DAY.getName())
+                .withParameter(SLOT.getName());
+
+    }
 }

@@ -4,14 +4,7 @@ import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.basic.backend.query.SimpleBackendGroup;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BinaryOperator;
 
 /**
@@ -23,7 +16,7 @@ public abstract class SimpleBackendGroupSupport<Q extends BackendQuery<? extends
     private final Set<String> parameters;
 
     public SimpleBackendGroupSupport(String name, String... parameters) {
-        this(name, new HashSet<>(Arrays.asList(parameters)));
+        this(name, new LinkedHashSet<>(Arrays.asList(parameters)));
     }
 
     public SimpleBackendGroupSupport(String name, Set<String> parameters) {
@@ -104,4 +97,17 @@ public abstract class SimpleBackendGroupSupport<Q extends BackendQuery<? extends
         };
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleBackendGroupSupport<?, ?, ?> that = (SimpleBackendGroupSupport<?, ?, ?>) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(parameters, that.parameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, parameters);
+    }
 }

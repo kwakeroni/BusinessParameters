@@ -15,6 +15,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>be.kwakeroni.parameters.definition</groupId>
+                <artifactId>parameters-definition</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>be.kwakeroni.parameters.types</groupId>
                 <artifactId>parameters-types</artifactId>
                 <version>${project.version}</version>
@@ -32,6 +39,10 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.definition</groupId>
+            <artifactId>parameters-definition-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.types</groupId>
             <artifactId>parameters-types-api</artifactId>

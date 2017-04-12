@@ -29,4 +29,17 @@ class EnumType<E extends Enum<E>> implements ParameterType<E> {
     public String toString() {
         return "ENUM[" + enumClass.getSimpleName() + "]";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EnumType<?> enumType = (EnumType<?>) o;
+        return Objects.equals(enumClass, enumType.enumClass);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(enumClass);
+    }
 }

@@ -76,4 +76,10 @@ public class InmemoryRangedGroup implements InMemoryGroup, RangedBackendGroup<In
             return range.overlaps(getRange(entry));
         };
     }
+
+    @Override
+    public String toString() {
+        return "ranged(" + this.rangeParameterName + " : " + getSubGroup() + ")";
+    }
+
 }

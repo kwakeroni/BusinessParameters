@@ -1,18 +1,11 @@
 package be.kwakeroni.parameters.basic.backend.es;
 
-import be.kwakeroni.parameters.backend.api.BackendGroup;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
-import be.kwakeroni.parameters.backend.es.api.EntryModification;
+import be.kwakeroni.parameters.backend.es.api.*;
 import be.kwakeroni.parameters.basic.backend.query.RangedBackendGroup;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediaryBackendGroupSupport;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediateBackendQuerySupport;
 import be.kwakeroni.parameters.basic.type.Range;
 import be.kwakeroni.parameters.types.api.ParameterType;
-import org.json.JSONObject;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -43,7 +36,7 @@ public class ElasticSearchPostFilterRangedGroup
         );
     }
 
-    private Function<Stream<ElasticSearchEntry>, Stream<ElasticSearchEntry>> rangeContaining(String value){
+    private Function<Stream<ElasticSearchEntry>, Stream<ElasticSearchEntry>> rangeContaining(String value) {
         return stream -> stream.filter(entryWithRangeContaining(value));
     }
 
@@ -59,11 +52,11 @@ public class ElasticSearchPostFilterRangedGroup
         return this.rangeType.fromString(entry.getParameter(rangeParameterName));
     }
 
-    private Function<Stream<ElasticSearchEntry>, Stream<ElasticSearchEntry>> rangeWithOverlap(Range<String> range){
+    private Function<Stream<ElasticSearchEntry>, Stream<ElasticSearchEntry>> rangeWithOverlap(Range<String> range) {
         return stream -> stream.filter(entryWithRangeOverlap(range));
     }
 
-    private Predicate<ElasticSearchEntry> entryWithRangeOverlap(Range<String> range){
+    private Predicate<ElasticSearchEntry> entryWithRangeOverlap(Range<String> range) {
         return entry -> range.overlaps(getRange(entry));
     }
 
@@ -76,6 +69,11 @@ public class ElasticSearchPostFilterRangedGroup
         } catch (IllegalStateException exc) {
             throw new IllegalStateException(exc.getMessage() + " with range: " + this.rangeParameterName + "=" + range);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ranged-filter(" + this.rangeParameterName + " : " + getSubGroup() + ")";
     }
 
     private static final class ElasticSearchPostFilterQuery<T>

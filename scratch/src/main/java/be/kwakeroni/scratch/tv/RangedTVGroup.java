@@ -16,13 +16,13 @@ import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.client.support.Entries;
 import be.kwakeroni.parameters.basic.definition.BasicGroupBuilder;
+import be.kwakeroni.parameters.basic.definition.RangedGroupBuilder;
 import be.kwakeroni.parameters.basic.type.Range;
 import be.kwakeroni.parameters.basic.type.Ranges;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.definition.api.GroupBuilder;
 import be.kwakeroni.parameters.definition.api.GroupBuilderFactoryContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
@@ -119,24 +119,21 @@ public class RangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>>, Para
     }
 
     @Override
-    public <G> GroupBuilder<G> createGroup(GroupBuilderFactoryContext<G> context) {
+    public <G> G createGroup(GroupBuilderFactoryContext<G> context) {
         BasicGroupBuilder<G> builder = BasicGroupBuilder.from(context);
+        return ranged(builder)
+                .mappingTo(
+                        builder.group(NAME)
+                                .withParameter(SLOT.getName())
+                                .withParameter(PROGRAM.getName()))
+                .build();
+    }
 
+    private <G> RangedGroupBuilder<G> ranged(BasicGroupBuilder<G> builder) {
         if (withRangeLimits) {
-            return builder.ranged()
-                    .withRangeParameter(SLOT.getName(), Slot.type)
-                    .mappingTo(
-                            builder.group(NAME)
-                                    .withParameter(SLOT.getName())
-                                    .withParameter(PROGRAM.getName()));
+            return builder.ranged().withRangeParameter(SLOT.getName(), Slot.type);
         } else {
-            return builder.ranged()
-                    .withComparableRangeParameter(SLOT.getName(), Slot.type)
-                    .mappingTo(
-                            builder.group(NAME)
-                                    .withParameter(SLOT.getName())
-                                    .withParameter(PROGRAM.getName()));
-
+            return builder.ranged().withComparableRangeParameter(SLOT.getName(), Slot.type);
         }
     }
 }

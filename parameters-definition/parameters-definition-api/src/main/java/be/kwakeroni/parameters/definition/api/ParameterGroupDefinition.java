@@ -7,6 +7,6 @@ public interface ParameterGroupDefinition {
 
     public String getName();
 
-    public <G> GroupBuilder<G> createGroup(GroupBuilderFactoryContext<G> context);
+    public <G> G createGroup(GroupBuilderFactoryContext<G> context);
 
 }

@@ -32,48 +32,50 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BuilderTest<G> {
 
     @Parameterized.Parameter(0)
-    public G constant;
+    public String name;
     @Parameterized.Parameter(1)
-    public Supplier<ParameterGroupDefinition> definition;
+    public G constant;
     @Parameterized.Parameter(2)
+    public Supplier<ParameterGroupDefinition> definition;
+    @Parameterized.Parameter(3)
     public GroupBuilderFactoryContext<G> context;
 
 
-    @Parameterized.Parameters
+    @Parameterized.Parameters(name = "{0}")
     public static Object[][] parameters() {
         List<Param> inMemory = Arrays.asList(
-                param(SimpleTVGroup.INMEMORY_GROUP, SimpleTVGroup::new),
-                param(MappedTVGroup.INMEMORY_GROUP, MappedTVGroup::new),
-                param(RangedTVGroup.INMEMORY_GROUP, RangedTVGroup::instance),
-                param(MappedRangedTVGroup.INMEMORY_GROUP, MappedRangedTVGroup::instance)
-        );
-
-        List<Param> esPostFilter = Arrays.asList(
-                param(SimpleTVGroup.ELASTICSEARCH_GROUP, SimpleTVGroup::new),
-                param(MappedTVGroup.ELASTICSEARCH_GROUP, MappedTVGroup::new),
-                param(RangedTVGroup.elasticSearchGroup(false), RangedTVGroup::withoutRangeLimits),
-                param(MappedRangedTVGroup.elasticSearchGroup(false), MappedRangedTVGroup::withoutRangeLimits)
+                param(SimpleTVGroup.class, SimpleTVGroup.INMEMORY_GROUP, SimpleTVGroup::new),
+                param(MappedTVGroup.class, MappedTVGroup.INMEMORY_GROUP, MappedTVGroup::new),
+                param(RangedTVGroup.class, RangedTVGroup.INMEMORY_GROUP, RangedTVGroup::instance),
+                param(MappedRangedTVGroup.class, MappedRangedTVGroup.INMEMORY_GROUP, MappedRangedTVGroup::instance)
         );
 
         List<Param> esQuery = Arrays.asList(
-                param(RangedTVGroup.elasticSearchGroup(true), RangedTVGroup::withRangeLimits),
-                param(MappedRangedTVGroup.elasticSearchGroup(true), MappedRangedTVGroup::withRangeLimits)
+                param(SimpleTVGroup.class, SimpleTVGroup.ELASTICSEARCH_GROUP, SimpleTVGroup::new),
+                param(MappedTVGroup.class, MappedTVGroup.ELASTICSEARCH_GROUP, MappedTVGroup::new),
+                param(RangedTVGroup.class, RangedTVGroup.elasticSearchGroup(true), RangedTVGroup::withRangeLimits),
+                param(MappedRangedTVGroup.class, MappedRangedTVGroup.elasticSearchGroup(true), MappedRangedTVGroup::withRangeLimits)
+        );
+
+        List<Param> esPostFilter = Arrays.asList(
+                param(RangedTVGroup.class, RangedTVGroup.elasticSearchGroup(false), RangedTVGroup::withoutRangeLimits),
+                param(MappedRangedTVGroup.class, MappedRangedTVGroup.elasticSearchGroup(false), MappedRangedTVGroup::withoutRangeLimits)
         );
 
         return Stream.concat(
                 inMemory.stream()
-                        .map(param -> param.toArray(IN_MEMORY_CONTEXT)),
+                        .map(param -> param.toArray("InMemory", IN_MEMORY_CONTEXT)),
                 Stream.concat(
-                        esPostFilter.stream()
-                                .map(param -> param.toArray(ELASTIC_SEARCH_POST_FILTER_CONTEXT)),
                         esQuery.stream()
-                                .map(param -> param.toArray(ELASTIC_SEARCH_QUERY_CONTEXT))
+                                .map(param -> param.toArray("ElasticSearch : Query", ELASTIC_SEARCH_QUERY_CONTEXT)),
+                        esPostFilter.stream()
+                                .map(param -> param.toArray("ElasticSearch : Filter", ELASTIC_SEARCH_POST_FILTER_CONTEXT))
                 )).toArray(Object[][]::new);
     }
 
     @Test
     public void testBuildsGroupAsExpected() {
-        G built = definition.get().createGroup(context).build();
+        G built = definition.get().createGroup(context);
 
         System.out.println(constant);
         System.out.println(built);
@@ -121,21 +123,23 @@ public class BuilderTest<G> {
         }
     };
 
-    private static final Param param(BackendGroup<?> group, Supplier<ParameterGroupDefinition> definition) {
-        return new Param(group, definition);
+    private static <D extends ParameterGroupDefinition> Param param(Class<D> definitionClass, BackendGroup<?> group, Supplier<D> definition) {
+        return new Param(definitionClass, group, definition);
     }
 
     private static class Param {
+        public final Class<?> definitionClass;
         public final BackendGroup<?> group;
-        public final Supplier<ParameterGroupDefinition> definition;
+        public final Supplier<? extends ParameterGroupDefinition> definition;
 
-        public Param(BackendGroup<?> group, Supplier<ParameterGroupDefinition> definition) {
+        public Param(Class<?> definitionClass, BackendGroup<?> group, Supplier<? extends ParameterGroupDefinition> definition) {
+            this.definitionClass = definitionClass;
             this.group = group;
             this.definition = definition;
         }
 
-        public Object[] toArray(GroupBuilderFactoryContext<?> context) {
-            return new Object[]{group, definition, context};
+        public Object[] toArray(String name, GroupBuilderFactoryContext<?> context) {
+            return new Object[]{name + " : " + definitionClass.getSimpleName(), group, definition, context};
         }
     }
 

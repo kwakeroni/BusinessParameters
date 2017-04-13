@@ -18,7 +18,6 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.definition.api.GroupBuilder;
 import be.kwakeroni.parameters.definition.api.GroupBuilderFactoryContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
@@ -83,7 +82,7 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>>, Param
                     new ElasticSearchSimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
 
     @Override
-    public <G> GroupBuilder<G> createGroup(GroupBuilderFactoryContext<G> context) {
+    public <G> G createGroup(GroupBuilderFactoryContext<G> context) {
         BasicGroupBuilder<G> builder = BasicGroupBuilder.from(context);
 
         return builder.mapped()
@@ -91,8 +90,7 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>>, Param
                 .mappingTo(
                         builder.group(NAME)
                                 .withParameter(DAY.getName())
-                                .withParameter(PROGRAM.getName()));
-
-
+                                .withParameter(PROGRAM.getName()))
+                .build();
     }
 }

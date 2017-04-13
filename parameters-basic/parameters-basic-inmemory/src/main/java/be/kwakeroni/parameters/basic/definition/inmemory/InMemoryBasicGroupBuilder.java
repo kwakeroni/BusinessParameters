@@ -12,7 +12,6 @@ import be.kwakeroni.parameters.basic.definition.support.MappedGroupBuilderSuppor
 import be.kwakeroni.parameters.basic.definition.support.RangedGroupBuilderSupport;
 import be.kwakeroni.parameters.basic.definition.support.SimpleGroupBuilderSupport;
 import be.kwakeroni.parameters.basic.type.Ranges;
-import be.kwakeroni.parameters.definition.api.GroupBuilderFactoryContext;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.BasicType;
 
@@ -29,7 +28,7 @@ public class InMemoryBasicGroupBuilder implements BasicGroupBuilder<InMemoryGrou
     public SimpleGroupBuilder<InMemoryGroup> group(String name) {
         class Simple extends SimpleGroupBuilderSupport<InMemoryGroup> {
             @Override
-            public InMemoryGroup createGroup(GroupBuilderFactoryContext<InMemoryGroup> context) {
+            public InMemoryGroup build() {
                 return new InmemorySimpleGroup(name, new LinkedHashSet<>(getParameters()));
             }
         }
@@ -41,8 +40,8 @@ public class InMemoryBasicGroupBuilder implements BasicGroupBuilder<InMemoryGrou
     public MappedGroupBuilder<InMemoryGroup> mapped() {
         class Mapped extends MappedGroupBuilderSupport<InMemoryGroup> {
             @Override
-            public InMemoryGroup createGroup(GroupBuilderFactoryContext<InMemoryGroup> context) {
-                InMemoryGroup subGroup = getSubGroup().createGroup(context);
+            public InMemoryGroup build() {
+                InMemoryGroup subGroup = getSubGroup().build();
                 return new InmemoryMappedGroup(getKeyParameter(), subGroup);
             }
         }
@@ -54,33 +53,33 @@ public class InMemoryBasicGroupBuilder implements BasicGroupBuilder<InMemoryGrou
         class Ranged extends RangedGroupBuilderSupport<InMemoryGroup> {
 
             @Override
-            protected <T extends Comparable<? super T>> InMemoryGroup createGroup(GroupBuilderFactoryContext<InMemoryGroup> context, ParameterType<T> type) {
+            protected <T extends Comparable<? super T>> InMemoryGroup createGroup(ParameterType<T> type) {
                 return new InmemoryRangedGroup(
                         getRangeParameter(),
                         Ranges.stringRangeTypeOf(type),
-                        getSubGroup().createGroup(context)
+                        getSubGroup().build()
                 );
             }
 
             @Override
-            protected <T> InMemoryGroup createGroup(GroupBuilderFactoryContext<InMemoryGroup> context, ParameterType<T> type, Comparator<? super T> comparator) {
+            protected <T> InMemoryGroup createGroup(ParameterType<T> type, Comparator<? super T> comparator) {
                 return new InmemoryRangedGroup(
                         getRangeParameter(),
                         Ranges.stringRangeTypeOf(type, comparator),
-                        getSubGroup().createGroup(context)
+                        getSubGroup().build()
                 );
             }
 
             @Override
-            protected <T, B> InMemoryGroup createGroup(GroupBuilderFactoryContext<InMemoryGroup> context, BasicType<T, B> type) {
+            protected <T, B> InMemoryGroup createGroup(BasicType<T, B> type) {
                 Comparator<T> comparator = Comparator.comparing(type::toBasic, type);
-                return createGroup(context, type, comparator);
+                return createGroup(type, comparator);
             }
 
             @Override
-            protected <T, B> InMemoryGroup createGroup(GroupBuilderFactoryContext<InMemoryGroup> context, ParameterType<T> type, Function<T, B> converter, BasicType<B, B> basicType) {
+            protected <T, B> InMemoryGroup createGroup(ParameterType<T> type, Function<T, B> converter, BasicType<B, B> basicType) {
                 Comparator<T> comparator = Comparator.comparing(converter, basicType);
-                return createGroup(context, type, comparator);
+                return createGroup(type, comparator);
             }
         }
         return new Ranged();

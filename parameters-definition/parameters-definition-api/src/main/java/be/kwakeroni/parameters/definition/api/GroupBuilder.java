@@ -5,6 +5,6 @@ package be.kwakeroni.parameters.definition.api;
  */
 public interface GroupBuilder<G> {
 
-    public G createGroup(GroupBuilderFactoryContext<G> context);
+    public G build();
 
 }

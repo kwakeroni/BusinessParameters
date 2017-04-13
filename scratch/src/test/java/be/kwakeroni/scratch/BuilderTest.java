@@ -73,7 +73,7 @@ public class BuilderTest<G> {
 
     @Test
     public void testBuildsGroupAsExpected() {
-        G built = definition.get().createGroup(context).createGroup(context);
+        G built = definition.get().createGroup(context).build();
 
         System.out.println(constant);
         System.out.println(built);

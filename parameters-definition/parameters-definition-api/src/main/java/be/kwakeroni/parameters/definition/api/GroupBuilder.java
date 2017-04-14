@@ -7,8 +7,10 @@ import java.util.function.Function;
  */
 public interface GroupBuilder<G> {
 
-    public G build();
+    public default G build() {
+        return this.build(Function.identity());
+    }
 
-    public GroupBuilder<G> finalize(Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> finalizer);
+    public G build(Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> finalizer);
 
 }

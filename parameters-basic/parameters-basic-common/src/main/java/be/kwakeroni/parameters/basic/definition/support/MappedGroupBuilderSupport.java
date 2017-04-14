@@ -13,7 +13,6 @@ public abstract class MappedGroupBuilderSupport<G> implements MappedGroupBuilder
 
     private String keyParameter;
     private GroupBuilder<G> subGroup;
-    private Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> finalizer = null;
 
     @Override
     public MappedGroupBuilder<G> withKeyParameter(String name) {
@@ -27,30 +26,22 @@ public abstract class MappedGroupBuilderSupport<G> implements MappedGroupBuilder
         return this;
     }
 
-    @Override
-    public GroupBuilder<G> finalize(Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> theirFinalizer) {
-        this.finalizer = (this.finalizer == null) ? theirFinalizer : this.finalizer.andThen(theirFinalizer);
-        return this;
-    }
-
     protected String getKeyParameter() {
         return keyParameter;
     }
 
-    private GroupBuilder<G> getSubGroup() {
-        return subGroup;
-    }
-
-    protected final G buildSubGroup() {
-        return subGroup.finalize(finalizer()).build();
-    }
-
-    private Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> finalizer() {
-        return (finalizer == null) ? myFinalizer() : myFinalizer().andThen(finalizer);
+    protected G buildSubGroup(Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> theirFinalizer) {
+        return subGroup.build(myFinalizer().andThen(theirFinalizer));
     }
 
     private Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> myFinalizer() {
         return builder -> builder.prependParameter(keyParameter);
     }
 
+    @Override
+    public G build(Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> finalizer) {
+        return build(buildSubGroup(finalizer));
+    }
+
+    protected abstract G build(G subGroup);
 }

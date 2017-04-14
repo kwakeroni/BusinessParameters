@@ -42,8 +42,8 @@ public class ElasticSearchBasicGroupBuilder implements BasicGroupBuilder<Elastic
     public MappedGroupBuilder<ElasticSearchGroup> mapped() {
         class Mapped extends MappedGroupBuilderSupport<ElasticSearchGroup> {
             @Override
-            public ElasticSearchGroup build() {
-                return new ElasticSearchMappedGroup(getKeyParameter(), buildSubGroup());
+            protected ElasticSearchGroup build(ElasticSearchGroup subGroup) {
+                return new ElasticSearchMappedGroup(getKeyParameter(), subGroup);
             }
         }
         return new Mapped();
@@ -54,43 +54,45 @@ public class ElasticSearchBasicGroupBuilder implements BasicGroupBuilder<Elastic
     public RangedGroupBuilder<ElasticSearchGroup> ranged() {
         class Ranged extends RangedGroupBuilderSupport<ElasticSearchGroup> {
             @Override
-            protected <T extends Comparable<? super T>> ElasticSearchGroup createGroup(ParameterType<T> type) {
+            protected <T extends Comparable<? super T>> ElasticSearchGroup createGroup(ElasticSearchGroup subGroup, ParameterType<T> type) {
                 return new ElasticSearchPostFilterRangedGroup(
                         getRangeParameter(),
                         Ranges.stringRangeTypeOf(type),
-                        buildSubGroup()
+                        subGroup
                 );
             }
 
             @Override
-            protected <T> ElasticSearchGroup createGroup(ParameterType<T> type, Comparator<? super T> comparator) {
+            protected <T> ElasticSearchGroup createGroup(ElasticSearchGroup subGroup, ParameterType<T> type, Comparator<? super T> comparator) {
                 return new ElasticSearchPostFilterRangedGroup(
                         getRangeParameter(),
                         Ranges.stringRangeTypeOf(type, comparator),
-                        buildSubGroup()
+                        subGroup
                 );
             }
 
             @Override
-            protected <T, B> ElasticSearchGroup createGroup(BasicType<T, B> type) {
+            protected <T, B> ElasticSearchGroup createGroup(ElasticSearchGroup subGroup, BasicType<T, B> type) {
                 Function<String, B> stringConverter = ((Function<String, T>) type::fromString).andThen(type::toBasic);
 
                 return new ElasticSearchQueryBasedRangedGroup(
                         getRangeParameter(),
                         getElasticSearchType(type),
                         stringConverter,
-                        buildSubGroup());
+                        subGroup
+                );
             }
 
             @Override
-            protected <T, B> ElasticSearchGroup createGroup(ParameterType<T> type, Function<T, B> converter, BasicType<B, B> basicType) {
+            protected <T, B> ElasticSearchGroup createGroup(ElasticSearchGroup subGroup, ParameterType<T> type, Function<T, B> converter, BasicType<B, B> basicType) {
                 Function<String, B> stringConverter = ((Function<String, T>) type::fromString).andThen(converter);
 
                 return new ElasticSearchQueryBasedRangedGroup(
                         getRangeParameter(),
                         getElasticSearchType(basicType),
                         stringConverter,
-                        buildSubGroup());
+                        subGroup
+                );
             }
         }
         return new Ranged();

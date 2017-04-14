@@ -1,7 +1,6 @@
 package be.kwakeroni.parameters.basic.definition.support;
 
 import be.kwakeroni.parameters.basic.definition.SimpleGroupBuilder;
-import be.kwakeroni.parameters.definition.api.GroupBuilder;
 import be.kwakeroni.parameters.definition.api.GroupBuilderFinalizer;
 
 import java.util.ArrayList;
@@ -38,16 +37,8 @@ public abstract class SimpleGroupBuilderSupport<G> implements SimpleGroupBuilder
     }
 
     @Override
-    public GroupBuilder<G> finalize(Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> finalizer) {
-        this.finalizer = (this.finalizer == null) ? finalizer : this.finalizer.andThen(finalizer);
-        return this;
-    }
-
-    @Override
-    public final G build() {
-        if (this.finalizer != null) {
-            this.finalizer.apply(this);
-        }
+    public final G build(Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> finalizer) {
+        finalizer.apply(this);
         return createGroup();
     }
 

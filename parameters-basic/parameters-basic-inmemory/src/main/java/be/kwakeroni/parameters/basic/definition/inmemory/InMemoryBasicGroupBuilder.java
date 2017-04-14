@@ -40,8 +40,8 @@ public class InMemoryBasicGroupBuilder implements BasicGroupBuilder<InMemoryGrou
     public MappedGroupBuilder<InMemoryGroup> mapped() {
         class Mapped extends MappedGroupBuilderSupport<InMemoryGroup> {
             @Override
-            public InMemoryGroup build() {
-                return new InmemoryMappedGroup(getKeyParameter(), buildSubGroup());
+            protected InMemoryGroup build(InMemoryGroup subGroup) {
+                return new InmemoryMappedGroup(getKeyParameter(), subGroup);
             }
         }
         return new Mapped();
@@ -52,33 +52,33 @@ public class InMemoryBasicGroupBuilder implements BasicGroupBuilder<InMemoryGrou
         class Ranged extends RangedGroupBuilderSupport<InMemoryGroup> {
 
             @Override
-            protected <T extends Comparable<? super T>> InMemoryGroup createGroup(ParameterType<T> type) {
+            protected <T extends Comparable<? super T>> InMemoryGroup createGroup(InMemoryGroup subGroup, ParameterType<T> type) {
                 return new InmemoryRangedGroup(
                         getRangeParameter(),
                         Ranges.stringRangeTypeOf(type),
-                        buildSubGroup()
+                        subGroup
                 );
             }
 
             @Override
-            protected <T> InMemoryGroup createGroup(ParameterType<T> type, Comparator<? super T> comparator) {
+            protected <T> InMemoryGroup createGroup(InMemoryGroup subGroup, ParameterType<T> type, Comparator<? super T> comparator) {
                 return new InmemoryRangedGroup(
                         getRangeParameter(),
                         Ranges.stringRangeTypeOf(type, comparator),
-                        buildSubGroup()
+                        subGroup
                 );
             }
 
             @Override
-            protected <T, B> InMemoryGroup createGroup(BasicType<T, B> type) {
+            protected <T, B> InMemoryGroup createGroup(InMemoryGroup subGroup, BasicType<T, B> type) {
                 Comparator<T> comparator = Comparator.comparing(type::toBasic, type);
-                return createGroup(type, comparator);
+                return createGroup(subGroup, type, comparator);
             }
 
             @Override
-            protected <T, B> InMemoryGroup createGroup(ParameterType<T> type, Function<T, B> converter, BasicType<B, B> basicType) {
+            protected <T, B> InMemoryGroup createGroup(InMemoryGroup subGroup, ParameterType<T> type, Function<T, B> converter, BasicType<B, B> basicType) {
                 Comparator<T> comparator = Comparator.comparing(converter, basicType);
-                return createGroup(type, comparator);
+                return createGroup(subGroup, type, comparator);
             }
         }
         return new Ranged();

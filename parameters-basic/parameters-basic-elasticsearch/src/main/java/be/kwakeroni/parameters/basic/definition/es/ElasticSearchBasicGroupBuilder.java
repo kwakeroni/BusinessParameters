@@ -30,7 +30,7 @@ public class ElasticSearchBasicGroupBuilder implements BasicGroupBuilder<Elastic
     public SimpleGroupBuilder<ElasticSearchGroup> group(String name) {
         class Simple extends SimpleGroupBuilderSupport<ElasticSearchGroup> {
             @Override
-            public ElasticSearchGroup build() {
+            public ElasticSearchGroup createGroup() {
                 return new ElasticSearchSimpleGroup(name, new LinkedHashSet<>(getParameters()));
             }
         }
@@ -43,8 +43,7 @@ public class ElasticSearchBasicGroupBuilder implements BasicGroupBuilder<Elastic
         class Mapped extends MappedGroupBuilderSupport<ElasticSearchGroup> {
             @Override
             public ElasticSearchGroup build() {
-                ElasticSearchGroup subGroup = getSubGroup().build();
-                return new ElasticSearchMappedGroup(getKeyParameter(), subGroup);
+                return new ElasticSearchMappedGroup(getKeyParameter(), buildSubGroup());
             }
         }
         return new Mapped();
@@ -59,7 +58,7 @@ public class ElasticSearchBasicGroupBuilder implements BasicGroupBuilder<Elastic
                 return new ElasticSearchPostFilterRangedGroup(
                         getRangeParameter(),
                         Ranges.stringRangeTypeOf(type),
-                        getSubGroup().build()
+                        buildSubGroup()
                 );
             }
 
@@ -68,7 +67,7 @@ public class ElasticSearchBasicGroupBuilder implements BasicGroupBuilder<Elastic
                 return new ElasticSearchPostFilterRangedGroup(
                         getRangeParameter(),
                         Ranges.stringRangeTypeOf(type, comparator),
-                        getSubGroup().build()
+                        buildSubGroup()
                 );
             }
 
@@ -80,7 +79,7 @@ public class ElasticSearchBasicGroupBuilder implements BasicGroupBuilder<Elastic
                         getRangeParameter(),
                         getElasticSearchType(type),
                         stringConverter,
-                        getSubGroup().build());
+                        buildSubGroup());
             }
 
             @Override
@@ -91,7 +90,7 @@ public class ElasticSearchBasicGroupBuilder implements BasicGroupBuilder<Elastic
                         getRangeParameter(),
                         getElasticSearchType(basicType),
                         stringConverter,
-                        getSubGroup().build());
+                        buildSubGroup());
             }
         }
         return new Ranged();

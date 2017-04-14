@@ -28,7 +28,7 @@ public class InMemoryBasicGroupBuilder implements BasicGroupBuilder<InMemoryGrou
     public SimpleGroupBuilder<InMemoryGroup> group(String name) {
         class Simple extends SimpleGroupBuilderSupport<InMemoryGroup> {
             @Override
-            public InMemoryGroup build() {
+            public InMemoryGroup createGroup() {
                 return new InmemorySimpleGroup(name, new LinkedHashSet<>(getParameters()));
             }
         }
@@ -41,8 +41,7 @@ public class InMemoryBasicGroupBuilder implements BasicGroupBuilder<InMemoryGrou
         class Mapped extends MappedGroupBuilderSupport<InMemoryGroup> {
             @Override
             public InMemoryGroup build() {
-                InMemoryGroup subGroup = getSubGroup().build();
-                return new InmemoryMappedGroup(getKeyParameter(), subGroup);
+                return new InmemoryMappedGroup(getKeyParameter(), buildSubGroup());
             }
         }
         return new Mapped();
@@ -57,7 +56,7 @@ public class InMemoryBasicGroupBuilder implements BasicGroupBuilder<InMemoryGrou
                 return new InmemoryRangedGroup(
                         getRangeParameter(),
                         Ranges.stringRangeTypeOf(type),
-                        getSubGroup().build()
+                        buildSubGroup()
                 );
             }
 
@@ -66,7 +65,7 @@ public class InMemoryBasicGroupBuilder implements BasicGroupBuilder<InMemoryGrou
                 return new InmemoryRangedGroup(
                         getRangeParameter(),
                         Ranges.stringRangeTypeOf(type, comparator),
-                        getSubGroup().build()
+                        buildSubGroup()
                 );
             }
 

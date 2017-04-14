@@ -134,8 +134,6 @@ public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Sl
                 .withKeyParameter(DAY.getName())
                 .mappingTo(ranged(builder)
                         .mappingTo(builder.group(NAME)
-                                .withParameter(DAY.getName())
-                                .withParameter(SLOT.getName())
                                 .withParameter(PROGRAM.getName())))
                 .build();
     }

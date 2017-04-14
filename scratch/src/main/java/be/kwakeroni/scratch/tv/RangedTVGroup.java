@@ -124,7 +124,6 @@ public class RangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>>, Para
         return ranged(builder)
                 .mappingTo(
                         builder.group(NAME)
-                                .withParameter(SLOT.getName())
                                 .withParameter(PROGRAM.getName()))
                 .build();
     }

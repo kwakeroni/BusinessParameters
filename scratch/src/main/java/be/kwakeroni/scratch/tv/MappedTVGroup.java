@@ -89,7 +89,6 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>>, Param
                 .withKeyParameter(DAY.getName())
                 .mappingTo(
                         builder.group(NAME)
-                                .withParameter(DAY.getName())
                                 .withParameter(PROGRAM.getName()))
                 .build();
     }

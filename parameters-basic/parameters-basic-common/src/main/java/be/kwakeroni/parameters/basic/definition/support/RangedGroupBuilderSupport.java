@@ -2,6 +2,7 @@ package be.kwakeroni.parameters.basic.definition.support;
 
 import be.kwakeroni.parameters.basic.definition.RangedGroupBuilder;
 import be.kwakeroni.parameters.definition.api.GroupBuilder;
+import be.kwakeroni.parameters.definition.api.GroupBuilderFinalizer;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.BasicType;
 
@@ -17,6 +18,7 @@ public abstract class RangedGroupBuilderSupport<G> implements RangedGroupBuilder
     private String rangeParameter;
     private GroupBuilder<G> subGroup;
     private Supplier<G> factory;
+    private Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> finalizer = null;
 
     @Override
     public <T extends Comparable<? super T>> RangedGroupBuilder<G> withComparableRangeParameter(String name, ParameterType<T> type) {
@@ -52,16 +54,35 @@ public abstract class RangedGroupBuilderSupport<G> implements RangedGroupBuilder
         return this;
     }
 
+
+    @Override
+    public GroupBuilder<G> finalize(Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> theirFinalizer) {
+        this.finalizer = (this.finalizer == null) ? theirFinalizer : this.finalizer.andThen(theirFinalizer);
+        return this;
+    }
+
     protected String getRangeParameter() {
         return rangeParameter;
     }
 
-    protected GroupBuilder<G> getSubGroup() {
+    private GroupBuilder<G> getSubGroup() {
         return subGroup;
     }
 
+    protected final G buildSubGroup() {
+        return subGroup.finalize(finalizer()).build();
+    }
+
+    private Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> finalizer() {
+        return (finalizer == null) ? myFinalizer() : myFinalizer().andThen(finalizer);
+    }
+
+    private Function<GroupBuilderFinalizer<G>, GroupBuilderFinalizer<G>> myFinalizer() {
+        return builder -> builder.prependParameter(rangeParameter);
+    }
+
     @Override
-    public G build() {
+    public final G build() {
         return this.factory.get();
     }
 

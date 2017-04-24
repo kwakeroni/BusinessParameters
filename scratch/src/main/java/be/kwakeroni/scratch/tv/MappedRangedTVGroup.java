@@ -19,7 +19,7 @@ import be.kwakeroni.parameters.basic.client.query.MappedQuery;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.client.support.Entries;
-import be.kwakeroni.parameters.basic.definition.BasicGroupBuilder;
+import be.kwakeroni.parameters.basic.definition.BasicGroup;
 import be.kwakeroni.parameters.basic.definition.RangedGroupBuilder;
 import be.kwakeroni.parameters.basic.type.Range;
 import be.kwakeroni.parameters.basic.type.Ranges;
@@ -27,12 +27,13 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.definition.api.GroupBuilderFactoryContext;
+import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static be.kwakeroni.parameters.basic.definition.BasicGroup.builder;
 import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 
 /**
@@ -128,17 +129,20 @@ public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Sl
     }
 
     @Override
-    public <G> G createGroup(GroupBuilderFactoryContext<G> context) {
-        BasicGroupBuilder<G> builder = BasicGroupBuilder.from(context);
-        return builder.mapped()
+    public <G> G createGroup(GroupFactoryContext<G> context) {
+        return definition().createGroup(context);
+    }
+
+    private final ParameterGroupDefinition definition() {
+        return builder().mapped()
                 .withKeyParameter(DAY.getName())
-                .mappingTo(ranged(builder)
-                        .mappingTo(builder.group(NAME)
+                .mappingTo(ranged(builder())
+                        .mappingTo(builder().group(NAME)
                                 .withParameter(PROGRAM.getName())))
                 .build();
     }
 
-    private <G> RangedGroupBuilder<G> ranged(BasicGroupBuilder<G> builder) {
+    private RangedGroupBuilder ranged(BasicGroup builder) {
         if (withRangeLimits) {
             return builder.ranged().withRangeParameter(SLOT.getName(), Slot.type);
         } else {

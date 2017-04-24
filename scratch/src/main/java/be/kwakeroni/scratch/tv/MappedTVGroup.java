@@ -13,14 +13,14 @@ import be.kwakeroni.parameters.basic.client.query.EntryQuery;
 import be.kwakeroni.parameters.basic.client.query.MappedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.client.support.Entries;
-import be.kwakeroni.parameters.basic.definition.BasicGroupBuilder;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.definition.api.GroupBuilderFactoryContext;
+import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
+import static be.kwakeroni.parameters.basic.definition.BasicGroup.builder;
 import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 
 /**
@@ -82,14 +82,16 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>>, Param
                     new ElasticSearchSimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
 
     @Override
-    public <G> G createGroup(GroupBuilderFactoryContext<G> context) {
-        BasicGroupBuilder<G> builder = BasicGroupBuilder.from(context);
-
-        return builder.mapped()
-                .withKeyParameter(DAY.getName())
-                .mappingTo(
-                        builder.group(NAME)
-                                .withParameter(PROGRAM.getName()))
-                .build();
+    public <G> G createGroup(GroupFactoryContext<G> context) {
+        return DEFINITION.createGroup(context);
     }
+
+    private static final ParameterGroupDefinition DEFINITION = builder()
+            .mapped()
+            .withKeyParameter(DAY.getName())
+            .mappingTo(
+                    builder().group(NAME)
+                            .withParameter(PROGRAM.getName()))
+            .build();
+
 }

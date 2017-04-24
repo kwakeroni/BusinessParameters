@@ -4,11 +4,17 @@ package be.kwakeroni.scratch;
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
-import be.kwakeroni.parameters.basic.definition.BasicGroupBuilder;
-import be.kwakeroni.parameters.basic.definition.es.ElasticSearchBasicGroupBuilder;
-import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryBasicGroupBuilder;
-import be.kwakeroni.parameters.definition.api.GroupBuilderFactory;
-import be.kwakeroni.parameters.definition.api.GroupBuilderFactoryContext;
+import be.kwakeroni.parameters.basic.definition.es.ElasticSearchMappedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.es.ElasticSearchRangedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.es.ElasticSearchSimpleGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.MappedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.RangedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.SimpleGroupFactory;
+import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryMappedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryRangedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.inmemory.InMemorySimpleGroupFactory;
+import be.kwakeroni.parameters.definition.api.factory.GroupFactory;
+import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.scratch.tv.MappedRangedTVGroup;
 import be.kwakeroni.scratch.tv.MappedTVGroup;
@@ -18,8 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -38,7 +43,7 @@ public class BuilderTest<G> {
     @Parameterized.Parameter(2)
     public Supplier<ParameterGroupDefinition> definition;
     @Parameterized.Parameter(3)
-    public GroupBuilderFactoryContext<G> context;
+    public GroupFactoryContext<G> context;
 
 
     @Parameterized.Parameters(name = "{0}")
@@ -67,9 +72,9 @@ public class BuilderTest<G> {
                         .map(param -> param.toArray("InMemory", IN_MEMORY_CONTEXT)),
                 Stream.concat(
                         esQuery.stream()
-                                .map(param -> param.toArray("ElasticSearch : Query", ELASTIC_SEARCH_QUERY_CONTEXT)),
+                                .map(param -> param.toArray("ElasticSearch : Query", ELASTIC_SEARCH_CONTEXT)),
                         esPostFilter.stream()
-                                .map(param -> param.toArray("ElasticSearch : Filter", ELASTIC_SEARCH_POST_FILTER_CONTEXT))
+                                .map(param -> param.toArray("ElasticSearch : Filter", ELASTIC_SEARCH_CONTEXT))
                 )).toArray(Object[][]::new);
     }
 
@@ -83,45 +88,17 @@ public class BuilderTest<G> {
         assertThat(built.toString()).isEqualTo(constant.toString());
     }
 
-    private static GroupBuilderFactoryContext<InMemoryGroup> IN_MEMORY_CONTEXT = new GroupBuilderFactoryContext<InMemoryGroup>() {
+    private static GroupFactoryContext<InMemoryGroup> IN_MEMORY_CONTEXT = contextOf(
+            SimpleGroupFactory.class, new InMemorySimpleGroupFactory(),
+            MappedGroupFactory.class, new InMemoryMappedGroupFactory(),
+            RangedGroupFactory.class, new InMemoryRangedGroupFactory()
+    );
 
-        InMemoryBasicGroupBuilder basicGroupBuilder = new InMemoryBasicGroupBuilder();
-
-        @Override
-        public <GBF extends GroupBuilderFactory<InMemoryGroup>> GBF getBuilder(Class<GBF> type) {
-            if (BasicGroupBuilder.class == (Class<?>) type) {
-                return type.cast(basicGroupBuilder);
-            }
-            return null;
-        }
-    };
-
-    private static GroupBuilderFactoryContext<ElasticSearchGroup> ELASTIC_SEARCH_POST_FILTER_CONTEXT = new GroupBuilderFactoryContext<ElasticSearchGroup>() {
-
-        ElasticSearchBasicGroupBuilder basicGroupBuilder = new ElasticSearchBasicGroupBuilder();
-
-        @Override
-        public <GBF extends GroupBuilderFactory<ElasticSearchGroup>> GBF getBuilder(Class<GBF> type) {
-            if (BasicGroupBuilder.class == (Class<?>) type) {
-                return type.cast(basicGroupBuilder);
-            }
-            return null;
-        }
-    };
-
-
-    private static GroupBuilderFactoryContext<ElasticSearchGroup> ELASTIC_SEARCH_QUERY_CONTEXT = new GroupBuilderFactoryContext<ElasticSearchGroup>() {
-
-        ElasticSearchBasicGroupBuilder basicGroupBuilder = new ElasticSearchBasicGroupBuilder();
-
-        @Override
-        public <GBF extends GroupBuilderFactory<ElasticSearchGroup>> GBF getBuilder(Class<GBF> type) {
-            if (BasicGroupBuilder.class == (Class<?>) type) {
-                return type.cast(basicGroupBuilder);
-            }
-            return null;
-        }
-    };
+    private static GroupFactoryContext<ElasticSearchGroup> ELASTIC_SEARCH_CONTEXT = contextOf(
+            SimpleGroupFactory.class, new ElasticSearchSimpleGroupFactory(),
+            MappedGroupFactory.class, new ElasticSearchMappedGroupFactory(),
+            RangedGroupFactory.class, new ElasticSearchRangedGroupFactory()
+    );
 
     private static <D extends ParameterGroupDefinition> Param param(Class<D> definitionClass, BackendGroup<?> group, Supplier<D> definition) {
         return new Param(definitionClass, group, definition);
@@ -138,9 +115,26 @@ public class BuilderTest<G> {
             this.definition = definition;
         }
 
-        public Object[] toArray(String name, GroupBuilderFactoryContext<?> context) {
+        public Object[] toArray(String name, GroupFactoryContext<?> context) {
             return new Object[]{name + " : " + definitionClass.getSimpleName(), group, definition, context};
         }
     }
 
+    private static <G, G1 extends GroupFactory<G>, G2 extends GroupFactory<G>, G3 extends GroupFactory<G>> GroupFactoryContext<G> contextOf(Class<G1> k1, G1 v1, Class<G2> k2, G2 v2, Class<G3> k3, G3 v3) {
+        Map<Class<?>, ? extends GroupFactory<G>> map = BuilderTest.<Class<?>, GroupFactory<G>>mapOf(k1, v1, k2, v2, k3, v3);
+        return new GroupFactoryContext<G>() {
+            @Override
+            public <GBF extends GroupFactory<G>> GBF getFactory(Class<GBF> type) {
+                return type.cast(map.get(type));
+            }
+        };
+    }
+
+    private static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2, K k3, V v3) {
+        Map<K, V> map = new HashMap<K, V>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        map.put(k3, v3);
+        return Collections.unmodifiableMap(map);
+    }
 }

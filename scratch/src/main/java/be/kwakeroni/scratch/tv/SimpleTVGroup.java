@@ -7,11 +7,11 @@ import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
 import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.basic.client.support.Entries;
-import be.kwakeroni.parameters.basic.definition.BasicGroupBuilder;
+import be.kwakeroni.parameters.basic.definition.BasicGroup;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
-import be.kwakeroni.parameters.definition.api.GroupBuilderFactoryContext;
+import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 /**
@@ -56,13 +56,14 @@ public class SimpleTVGroup implements ParameterGroup<Simple>, ParameterGroupDefi
     public static final ElasticSearchSimpleGroup ELASTICSEARCH_GROUP = new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName());
 
     @Override
-    public <G> G createGroup(GroupBuilderFactoryContext<G> context) {
-        BasicGroupBuilder<G> builder = BasicGroupBuilder.from(context);
-
-        return builder.group(NAME)
-                .withParameter(DAY.getName())
-                .withParameter(SLOT.getName())
-                .build();
-
+    public <G> G createGroup(GroupFactoryContext<G> context) {
+        return DEFINITION.createGroup(context);
     }
+
+    private static final ParameterGroupDefinition DEFINITION = BasicGroup.builder()
+            .group(NAME)
+            .withParameter(DAY.getName())
+            .withParameter(SLOT.getName())
+            .build();
+
 }

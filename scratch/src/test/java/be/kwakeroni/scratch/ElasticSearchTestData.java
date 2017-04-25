@@ -1,5 +1,6 @@
 package be.kwakeroni.scratch;
 
+import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.factory.ElasticSearchBackendServiceFactory;
 import be.kwakeroni.parameters.backend.es.service.ElasticSearchBackend;
@@ -28,14 +29,13 @@ public class ElasticSearchTestData implements TestData {
 
     public ElasticSearchTestData() {
         this.backend = ElasticSearchBackendServiceFactory.getSingletonInstance();
-        this.elasticSearch = ElasticSearchTestNode.start();
-        this.elasticSearch.waitUntilStarted();
+        this.elasticSearch = ElasticSearchTestNode.getRunningInstance();
         reset();
     }
 
     @Override
     public void close() throws Exception {
-        this.elasticSearch.close();
+
     }
 
     @Override
@@ -44,7 +44,8 @@ public class ElasticSearchTestData implements TestData {
             callES("/parameters", WebResource::put);
         } catch (Exception exc) {
         }
-        this.groups.forEach(this.backend::unregisterGroup);
+
+        this.backend.getGroupNames().forEach(this.backend::unregisterGroup);
         this.groups.clear();
         try {
             callES("/parameters", WebResource::delete);
@@ -114,6 +115,20 @@ public class ElasticSearchTestData implements TestData {
         }
 
         return uuids.isEmpty();
+    }
+
+    @Override
+    public void notifyModifiedGroup(String name) {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException exc) {
+
+        }
+    }
+
+    @Override
+    public boolean acceptBackend(BusinessParametersBackendFactory factory) {
+        return factory instanceof ElasticSearchBackendServiceFactory;
     }
 
     @Override

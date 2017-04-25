@@ -11,11 +11,18 @@ import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
 import be.kwakeroni.parameters.client.api.factory.ClientWireFormatterFactory;
 
 import java.util.ServiceLoader;
+import java.util.function.Predicate;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
 public class DirectBusinessParametersServiceFactory implements BusinessParametersFactory {
+
+    private Predicate<? super BusinessParametersBackendFactory> backendFilter = all -> true;
+
+    public void setBackendType(Predicate<? super BusinessParametersBackendFactory> backendFilter) {
+        this.backendFilter = (backendFilter == null) ? all -> true : backendFilter;
+    }
 
     @Override
     public BusinessParameters getInstance() {
@@ -46,8 +53,10 @@ public class DirectBusinessParametersServiceFactory implements BusinessParameter
     private void registerBackends(BackendRegistry registry) {
         ServiceLoader<BusinessParametersBackendFactory> loader = ServiceLoader.load(BusinessParametersBackendFactory.class);
         for (BusinessParametersBackendFactory factory : loader) {
-            BusinessParametersBackend<?> backend = factory.getInstance();
-            registry.register(backend);
+            if (backendFilter.test(factory)) {
+                BusinessParametersBackend<?> backend = factory.getInstance();
+                registry.register(backend);
+            }
         }
     }
 }

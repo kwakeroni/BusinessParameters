@@ -1,14 +1,10 @@
 package be.kwakeroni.scratch;
 
+import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendServiceFactory;
 import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
-import be.kwakeroni.scratch.tv.Dag;
-import be.kwakeroni.scratch.tv.MappedRangedTVGroup;
-import be.kwakeroni.scratch.tv.MappedTVGroup;
-import be.kwakeroni.scratch.tv.RangedTVGroup;
-import be.kwakeroni.scratch.tv.SimpleTVGroup;
-import be.kwakeroni.scratch.tv.Slot;
+import be.kwakeroni.scratch.tv.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +17,7 @@ public class InMemoryTestData implements TestData {
     private final InMemoryBackend backend;
     private final List<String> groups = new ArrayList<>();
 
-    public InMemoryTestData(){
+    public InMemoryTestData() {
         this.backend = InMemoryBackendServiceFactory.getSingletonInstance();
         reset();
     }
@@ -32,13 +28,23 @@ public class InMemoryTestData implements TestData {
     }
 
     @Override
+    public boolean acceptBackend(BusinessParametersBackendFactory factory) {
+        return factory instanceof InMemoryBackendServiceFactory;
+    }
+
+    @Override
     public boolean hasDataForGroup(String name) {
         return this.groups.contains(name);
     }
 
-    private void setGroupData(String groupName, GroupData data){
+    private void setGroupData(String groupName, GroupData data) {
         this.backend.setGroupData(groupName, data);
         this.groups.add(groupName);
+    }
+
+    @Override
+    public void notifyModifiedGroup(String name) {
+
     }
 
     @Override

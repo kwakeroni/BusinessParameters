@@ -1,5 +1,6 @@
 package be.kwakeroni.scratch;
 
+import be.kwakeroni.parameters.adapter.direct.factory.DirectBusinessParametersServiceFactory;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.WritableBusinessParameters;
 import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
@@ -48,29 +49,22 @@ public class Environment implements TestRule, AutoCloseable {
         this(InMemoryTestData::new);
     }
 
-    public Environment(Supplier<TestData> testData) {
-        this.testData = testData.get();
+    public Environment(Supplier<TestData> testDataSupplier) {
+        this.testData = testDataSupplier.get();
         BusinessParametersFactory factory = load(BusinessParametersFactory.class);
+        ((DirectBusinessParametersServiceFactory) factory).setBackendType(this.testData::acceptBackend);
         WritableBusinessParameters local = factory.getWritableInstance();
         this.parameters = new WritableBusinessParameters() {
             @Override
             public <ET extends EntryType, T> void set(ParameterGroup<ET> group, Query<ET, T> query, T value) {
                 local.set(group, query, value);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException exc){
-
-                }
+                testData.notifyModifiedGroup(group.getName());
             }
 
             @Override
             public void addEntry(ParameterGroup<?> group, Entry entry) {
                 local.addEntry(group, entry);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException exc){
-
-                }
+                testData.notifyModifiedGroup(group.getName());
             }
 
             @Override

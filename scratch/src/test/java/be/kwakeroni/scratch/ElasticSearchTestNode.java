@@ -17,12 +17,38 @@ import java.util.function.Supplier;
  */
 public class ElasticSearchTestNode implements AutoCloseable {
 
+    private static ElasticSearchTestNode INSTANCE = null;
+
     private Thread thread;
     private AtomicBoolean started = new AtomicBoolean(false);
 
     private ElasticSearchTestNode() {
         thread = new Thread(this::run, "ElasticSearchTestNode Container Thread");
     }
+
+    public static synchronized ElasticSearchTestNode getRunningInstance() {
+
+        if (INSTANCE == null) {
+            INSTANCE = start();
+            Runtime.getRuntime().addShutdownHook(new Thread(ElasticSearchTestNode::shutdownRunningInstance));
+            INSTANCE.waitUntilStarted();
+        }
+
+        return INSTANCE;
+
+    }
+
+    private static synchronized void shutdownRunningInstance() {
+        System.out.println("Shutting down running ElasticSearchTestNode");
+        if (INSTANCE != null) {
+            try {
+                INSTANCE.stop();
+            } catch (InterruptedException e) {
+            }
+            INSTANCE = null;
+        }
+    }
+
 
     public static ElasticSearchTestNode start() {
         ElasticSearchTestNode node = new ElasticSearchTestNode();

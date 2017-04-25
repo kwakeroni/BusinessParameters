@@ -13,38 +13,47 @@ import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.scratch.tv.Dag;
-import be.kwakeroni.scratch.tv.MappedRangedTVGroup;
-import be.kwakeroni.scratch.tv.MappedTVGroup;
-import be.kwakeroni.scratch.tv.RangedTVGroup;
-import be.kwakeroni.scratch.tv.SimpleTVGroup;
-import be.kwakeroni.scratch.tv.Slot;
-import org.junit.Before;
-import org.junit.ClassRule;
+import be.kwakeroni.scratch.tv.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
+@RunWith(Parameterized.class)
 public class MinimalWriteTest {
 
     private Logger LOG = LoggerFactory.getLogger(MinimalWriteTest.class);
 
-    @ClassRule
-    public static Environment environment = new Environment(ElasticSearchTestData::new);
     @Rule
-    public TestRule resetter = environment.reset();
+    public Environment environment;
+    @Rule
+    public TestRule resetter;
+
+    public MinimalWriteTest(TestMatrix.TestParameter<Supplier<TestData>> testDataSupplier) {
+        this.environment = new Environment(testDataSupplier.value);
+        resetter = this.environment.reset();
+    }
+
+    @Parameterized.Parameters(name = "{0}")
+    public static Object[][] data() {
+        return TestMatrix.backends().toParameterArray();
+    }
+
 
     @Test
     public void testWriteSimpleValue() throws Exception {
@@ -415,23 +424,29 @@ public class MinimalWriteTest {
         assertEquals(Dag.MAANDAG, modified);
     }
 
-    private void assertNoEntry(Dag dag){
+    private void assertNoEntry(Dag dag) {
         assertThat(get(MappedTVGroup.instance(), MappedTVGroup.programQuery(dag))).isEmpty();
     }
-    private void assertNoEntry(Slot slot){
+
+    private void assertNoEntry(Slot slot) {
         assertThat(get(RangedTVGroup.instance(), RangedTVGroup.programQuery(slot))).isEmpty();
     }
-    private void assertNoEntry(Dag dag, Slot slot){
+
+    private void assertNoEntry(Dag dag, Slot slot) {
         assertThat(get(MappedRangedTVGroup.instance(), MappedRangedTVGroup.programQuery(dag, slot))).isEmpty();
     }
 
-    private String get(Dag dag){
+    private String get(Dag dag) {
         return get(MappedTVGroup.instance(), MappedTVGroup.programQuery(dag)).get();
     }
+
     private String get(Slot slot) {
         return get(RangedTVGroup.instance(), RangedTVGroup.programQuery(slot)).get();
     }
-    private String get(Dag dag, Slot slot) { return get(MappedRangedTVGroup.instance(), MappedRangedTVGroup.programQuery(dag, slot)).get(); }
+
+    private String get(Dag dag, Slot slot) {
+        return get(MappedRangedTVGroup.instance(), MappedRangedTVGroup.programQuery(dag, slot)).get();
+    }
 
     private <ET extends EntryType, T> Optional<T> get(ParameterGroup<ET> group, Query<ET, T> query) {
         return environment.getBusinessParameters().get(group, query);

@@ -50,7 +50,7 @@ public class ElasticSearchSimpleGroup extends SimpleBackendGroupSupport<ElasticS
 
     @Override
     public String toString() {
-        return "group(ES " + getParameterNames() + ")";
+        return "simple(ES " + getParameterNames() + ")";
     }
 
 }

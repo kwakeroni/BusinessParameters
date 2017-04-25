@@ -1,9 +1,9 @@
 package be.kwakeroni.parameters.basic.definition;
 
 import be.kwakeroni.parameters.basic.definition.factory.SimpleGroupFactory;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
 import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,11 +16,10 @@ import java.util.function.Function;
  */
 final class DefaultSimpleDefinition implements SimpleGroupFactory.Definition, ParameterGroupDefinition {
 
-    private final String name;
+    private String name;
     private final List<String> parameters = new ArrayList<>();
 
-    private DefaultSimpleDefinition(String name) {
-        this.name = name;
+    private DefaultSimpleDefinition() {
     }
 
     @Override
@@ -38,8 +37,8 @@ final class DefaultSimpleDefinition implements SimpleGroupFactory.Definition, Pa
         return SimpleGroupFactory.from(context).createGroup(this);
     }
 
-    static Builder builder(String name) {
-        return new DefaultSimpleDefinition(name).new Builder();
+    static Builder builder() {
+        return new DefaultSimpleDefinition().new Builder();
     }
 
     private final class Builder implements SimpleDefinitionBuilder, DefinitionBuilderFinalizer {
@@ -63,7 +62,8 @@ final class DefaultSimpleDefinition implements SimpleGroupFactory.Definition, Pa
         }
 
         @Override
-        public ParameterGroupDefinition build(Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> finalizer) {
+        public ParameterGroupDefinition build(String name, Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> finalizer) {
+            DefaultSimpleDefinition.this.name = name;
             finalizer.apply(this);
             return DefaultSimpleDefinition.this;
         }

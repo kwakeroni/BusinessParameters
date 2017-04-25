@@ -1,10 +1,10 @@
 package be.kwakeroni.parameters.basic.definition;
 
 import be.kwakeroni.parameters.basic.definition.factory.RangedGroupFactory;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilder;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
 import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.BasicType;
 
@@ -38,11 +38,11 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
         return new DefaultRangedDefinition().new Builder();
     }
 
-    private final class Builder implements RangedGroupBuilder {
+    private final class Builder implements RangedDefinitionBuilder {
         private DefinitionBuilder subGroup;
 
         @Override
-        public <T extends Comparable<? super T>> RangedGroupBuilder withComparableRangeParameter(String name, ParameterType<T> type) {
+        public <T extends Comparable<? super T>> RangedDefinitionBuilder withComparableRangeParameter(String name, ParameterType<T> type) {
             rangeParameter = name;
             factory = new Factory() {
                 @Override
@@ -54,7 +54,7 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
         }
 
         @Override
-        public <T> RangedGroupBuilder withRangeParameter(String name, ParameterType<T> type, Comparator<? super T> comparator) {
+        public <T> RangedDefinitionBuilder withRangeParameter(String name, ParameterType<T> type, Comparator<? super T> comparator) {
             rangeParameter = name;
             factory = new Factory() {
                 @Override
@@ -66,7 +66,7 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
         }
 
         @Override
-        public <T, B> RangedGroupBuilder withRangeParameter(String name, BasicType<T, B> type) {
+        public <T, B> RangedDefinitionBuilder withRangeParameter(String name, BasicType<T, B> type) {
             rangeParameter = name;
             factory = new Factory() {
                 @Override
@@ -78,7 +78,7 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
         }
 
         @Override
-        public <T, B> RangedGroupBuilder withRangeParameter(String name, ParameterType<T> type, Function<T, B> converter, BasicType<B, B> basicType) {
+        public <T, B> RangedDefinitionBuilder withRangeParameter(String name, ParameterType<T> type, Function<T, B> converter, BasicType<B, B> basicType) {
             rangeParameter = name;
             factory = new Factory() {
                 @Override
@@ -90,14 +90,14 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
         }
 
         @Override
-        public RangedGroupBuilder mappingTo(DefinitionBuilder subGroup) {
+        public RangedDefinitionBuilder mappingTo(DefinitionBuilder subGroup) {
             this.subGroup = subGroup;
             return this;
         }
 
         @Override
-        public ParameterGroupDefinition build(Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> theirFinalizer) {
-            subGroupDefinition = subGroup.build(myFinalizer().andThen(theirFinalizer));
+        public ParameterGroupDefinition build(String name, Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> theirFinalizer) {
+            subGroupDefinition = subGroup.build(name, myFinalizer().andThen(theirFinalizer));
             return DefaultRangedDefinition.this;
         }
 

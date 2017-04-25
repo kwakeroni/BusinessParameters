@@ -17,10 +17,11 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
+import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 
-import static be.kwakeroni.parameters.basic.definition.BasicGroup.builder;
+import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
+import static be.kwakeroni.parameters.basic.definition.BasicGroup.mappedGroup;
 import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 
 /**
@@ -86,12 +87,11 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>>, Param
         return DEFINITION.createGroup(context);
     }
 
-    private static final ParameterGroupDefinition DEFINITION = builder()
-            .mapped()
-            .withKeyParameter(DAY.getName())
-            .mappingTo(
-                    builder().group(NAME)
+    private static final ParameterGroupDefinition DEFINITION =
+            mappedGroup()
+                    .withKeyParameter(DAY.getName())
+                    .mappingTo(group()
                             .withParameter(PROGRAM.getName()))
-            .build();
+                    .build(NAME);
 
 }

@@ -7,12 +7,13 @@ import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
 import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.basic.client.support.Entries;
-import be.kwakeroni.parameters.basic.definition.BasicGroup;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
+import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
+
+import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -60,10 +61,10 @@ public class SimpleTVGroup implements ParameterGroup<Simple>, ParameterGroupDefi
         return DEFINITION.createGroup(context);
     }
 
-    private static final ParameterGroupDefinition DEFINITION = BasicGroup.builder()
-            .group(NAME)
-            .withParameter(DAY.getName())
-            .withParameter(SLOT.getName())
-            .build();
+    private static final ParameterGroupDefinition DEFINITION =
+            group()
+                    .withParameter(DAY.getName())
+                    .withParameter(SLOT.getName())
+                    .build(NAME);
 
 }

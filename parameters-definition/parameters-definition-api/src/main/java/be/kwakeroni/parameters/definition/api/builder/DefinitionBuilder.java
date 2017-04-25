@@ -9,9 +9,9 @@ import java.util.function.Function;
  */
 public interface DefinitionBuilder {
 
-    public default ParameterGroupDefinition build() {
-        return this.build(Function.identity());
+    public default ParameterGroupDefinition build(String name) {
+        return this.build(name, Function.identity());
     }
 
-    public ParameterGroupDefinition build(Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> finalizer);
+    public ParameterGroupDefinition build(String name, Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> finalizer);
 }

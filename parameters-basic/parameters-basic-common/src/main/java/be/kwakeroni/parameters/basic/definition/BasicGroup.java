@@ -5,20 +5,32 @@ package be.kwakeroni.parameters.basic.definition;
  */
 public interface BasicGroup {
 
-    public default SimpleDefinitionBuilder group(String name) {
-        return DefaultSimpleDefinition.builder(name);
+    public default SimpleDefinitionBuilder simple() {
+        return DefaultSimpleDefinition.builder();
     }
 
     public default MappedDefinitionBuilder mapped() {
         return DefaultMappedDefinition.builder();
     }
 
-    public default RangedGroupBuilder ranged() {
+    public default RangedDefinitionBuilder ranged() {
         return DefaultRangedDefinition.builder();
     }
 
     public static BasicGroup builder() {
         return new BasicGroup() {
         };
+    }
+
+    public static MappedDefinitionBuilder mappedGroup() {
+        return builder().mapped();
+    }
+
+    public static RangedDefinitionBuilder rangedGroup() {
+        return builder().ranged();
+    }
+
+    public static SimpleDefinitionBuilder group() {
+        return builder().simple();
     }
 }

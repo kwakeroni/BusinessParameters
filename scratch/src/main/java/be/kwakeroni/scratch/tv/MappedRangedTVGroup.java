@@ -20,20 +20,21 @@ import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.client.support.Entries;
 import be.kwakeroni.parameters.basic.definition.BasicGroup;
-import be.kwakeroni.parameters.basic.definition.RangedGroupBuilder;
+import be.kwakeroni.parameters.basic.definition.RangedDefinitionBuilder;
 import be.kwakeroni.parameters.basic.type.Range;
 import be.kwakeroni.parameters.basic.type.Ranges;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
+import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static be.kwakeroni.parameters.basic.definition.BasicGroup.builder;
+import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
+import static be.kwakeroni.parameters.basic.definition.BasicGroup.mappedGroup;
 import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 
 /**
@@ -134,19 +135,19 @@ public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Sl
     }
 
     private final ParameterGroupDefinition definition() {
-        return builder().mapped()
+        return mappedGroup()
                 .withKeyParameter(DAY.getName())
-                .mappingTo(ranged(builder())
-                        .mappingTo(builder().group(NAME)
+                .mappingTo(rangedGroup()
+                        .mappingTo(group()
                                 .withParameter(PROGRAM.getName())))
-                .build();
+                .build(NAME);
     }
 
-    private RangedGroupBuilder ranged(BasicGroup builder) {
+    private RangedDefinitionBuilder rangedGroup() {
         if (withRangeLimits) {
-            return builder.ranged().withRangeParameter(SLOT.getName(), Slot.type);
+            return BasicGroup.rangedGroup().withRangeParameter(SLOT.getName(), Slot.type);
         } else {
-            return builder.ranged().withComparableRangeParameter(SLOT.getName(), Slot.type);
+            return BasicGroup.rangedGroup().withComparableRangeParameter(SLOT.getName(), Slot.type);
         }
     }
 

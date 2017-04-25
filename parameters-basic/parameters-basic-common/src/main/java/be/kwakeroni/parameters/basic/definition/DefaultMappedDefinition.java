@@ -1,10 +1,10 @@
 package be.kwakeroni.parameters.basic.definition;
 
 import be.kwakeroni.parameters.basic.definition.factory.MappedGroupFactory;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilder;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
 import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import java.util.function.Function;
 
@@ -51,8 +51,8 @@ final class DefaultMappedDefinition implements MappedGroupFactory.Definition, Pa
         }
 
         @Override
-        public ParameterGroupDefinition build(Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> theirFinalizer) {
-            subGroupDefinition = subGroup.build(myFinalizer().andThen(theirFinalizer));
+        public ParameterGroupDefinition build(String name, Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> theirFinalizer) {
+            subGroupDefinition = subGroup.build(name, myFinalizer().andThen(theirFinalizer));
             return DefaultMappedDefinition.this;
         }
 

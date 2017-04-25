@@ -50,7 +50,7 @@ public class InmemorySimpleGroup extends SimpleBackendGroupSupport<InMemoryQuery
 
     @Override
     public String toString() {
-        return "group(InMemory " + getParameterNames() + ")";
+        return "simple(InMemory " + getParameterNames() + ")";
     }
 
 }

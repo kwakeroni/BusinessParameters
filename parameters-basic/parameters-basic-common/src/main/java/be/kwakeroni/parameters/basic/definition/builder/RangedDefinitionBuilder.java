@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.basic.definition;
+package be.kwakeroni.parameters.basic.definition.builder;
 
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilder;
 import be.kwakeroni.parameters.types.api.ParameterType;

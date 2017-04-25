@@ -20,7 +20,7 @@ import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.client.support.Entries;
 import be.kwakeroni.parameters.basic.definition.BasicGroup;
-import be.kwakeroni.parameters.basic.definition.RangedDefinitionBuilder;
+import be.kwakeroni.parameters.basic.definition.builder.RangedDefinitionBuilder;
 import be.kwakeroni.parameters.basic.type.Range;
 import be.kwakeroni.parameters.basic.type.Ranges;
 import be.kwakeroni.parameters.client.api.model.Entry;

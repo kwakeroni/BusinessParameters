@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.basic.definition;
 
+import be.kwakeroni.parameters.basic.definition.builder.SimpleDefinitionBuilder;
 import be.kwakeroni.parameters.basic.definition.factory.SimpleGroupFactory;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;

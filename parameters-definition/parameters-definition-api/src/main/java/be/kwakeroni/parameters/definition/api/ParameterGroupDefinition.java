@@ -7,6 +7,7 @@ import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
  */
 public interface ParameterGroupDefinition {
 
+    public String getName();
     public <G> G createGroup(GroupFactoryContext<G> context);
 
 }

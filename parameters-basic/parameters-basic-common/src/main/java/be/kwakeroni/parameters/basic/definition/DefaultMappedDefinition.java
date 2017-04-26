@@ -22,6 +22,11 @@ final class DefaultMappedDefinition implements MappedGroupFactory.Definition, Pa
     }
 
     @Override
+    public String getName() {
+        return subGroupDefinition.getName();
+    }
+
+    @Override
     public String getKeyParameter() {
         return keyParameter;
     }

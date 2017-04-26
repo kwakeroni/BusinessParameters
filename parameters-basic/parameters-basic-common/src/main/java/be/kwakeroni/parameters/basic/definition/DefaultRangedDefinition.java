@@ -25,6 +25,11 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
         <G> G createGroup(RangedGroupFactory<G> factory, RangedGroupFactory.Definition definition, G subGroup);
     }
 
+    @Override
+    public String getName() {
+        return subGroupDefinition.getName();
+    }
+
     public String getRangeParameter() {
         return rangeParameter;
     }

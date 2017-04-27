@@ -1,14 +1,9 @@
 package be.kwakeroni.scratch.tv;
 
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchDataType;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
-import be.kwakeroni.parameters.basic.backend.es.ElasticSearchMappedGroup;
-import be.kwakeroni.parameters.basic.backend.es.ElasticSearchPostFilterRangedGroup;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchQueryBasedRangedGroup;
-import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemoryMappedGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemoryRangedGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
@@ -19,7 +14,6 @@ import be.kwakeroni.parameters.basic.client.query.MappedQuery;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.client.support.Entries;
-import be.kwakeroni.parameters.basic.definition.BasicGroup;
 import be.kwakeroni.parameters.basic.definition.builder.RangedDefinitionBuilder;
 import be.kwakeroni.parameters.basic.type.Range;
 import be.kwakeroni.parameters.basic.type.Ranges;
@@ -28,46 +22,23 @@ import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
-import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
-import static be.kwakeroni.parameters.basic.definition.BasicGroup.mappedGroup;
+import static be.kwakeroni.parameters.basic.definition.BasicGroup.*;
 import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Slot, Simple>>>, ParameterGroupDefinition {
+public abstract class AbstractMappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Slot, Simple>>>, ParameterGroupDefinition {
 
-    private final boolean withRangeLimits;
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
 
     public static Parameter<Dag> DAY = new DefaultParameter<>("day", Dag.type);
     public static Parameter<Range<Slot>> SLOT = new DefaultParameter<>("slot", Ranges.rangeTypeOf(Slot.type));
     public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
-
-    public static final MappedRangedTVGroup instance() {
-        return new MappedRangedTVGroup(false);
-    }
-
-    public static final MappedRangedTVGroup withRangeLimits() {
-        return new MappedRangedTVGroup(true);
-    }
-
-    public static final MappedRangedTVGroup withoutRangeLimits() {
-        return new MappedRangedTVGroup(false);
-    }
-
-    private MappedRangedTVGroup(boolean withRangeLimits) {
-        this.withRangeLimits = withRangeLimits;
-    }
 
     public static Entry entry(Dag day, Slot from, Slot to, String program) {
         return Entries.entryOf(DAY, day, SLOT, Range.of(from, to), PROGRAM, program);
@@ -98,13 +69,13 @@ public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Sl
     }
 
     // For test purposes
-    public static final GroupData getData(EntryData... data) {
-        return new DefaultGroupData(INMEMORY_GROUP, data);
+    public static final GroupData getData(String name, EntryData... data) {
+        return new DefaultGroupData(inmemoryTestGroup(name), data);
     }
 
     // For test purposes
     public static Query<Mapped<Dag, Ranged<Slot, Simple>>, String> programQuery(Dag day, Slot slot) {
-        return valueQuery(day, slot, MappedRangedTVGroup.PROGRAM);
+        return valueQuery(day, slot, AbstractMappedRangedTVGroup.PROGRAM);
     }
 
     public static <T> Query<Mapped<Dag, Ranged<Slot, Simple>>, T> valueQuery(Dag day, Slot slot, Parameter<T> parameter) {
@@ -114,41 +85,20 @@ public class MappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Sl
     }
 
 
-    private static final String NAME = "tv.mapped-ranged";
-    public static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(),
-            new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type),
-                    new InmemorySimpleGroup(NAME, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
-    private static final ElasticSearchMappedGroup ELASTICSEARCH_GROUP_WITH_POSTFILTER = new ElasticSearchMappedGroup(DAY.getName(),
-            new ElasticSearchPostFilterRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type),
-                    new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
-    private static final ElasticSearchMappedGroup ELASTICSEARCH_GROUP_WITH_QUERY = new ElasticSearchMappedGroup(DAY.getName(),
-            new ElasticSearchQueryBasedRangedGroup(SLOT.getName(),
-                    ElasticSearchDataType.INTEGER, string -> Slot.fromString(string).toInt(), new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
-
-    public static ElasticSearchGroup elasticSearchGroup(boolean withRangeLimits) {
-        return (withRangeLimits) ? ELASTICSEARCH_GROUP_WITH_QUERY : ELASTICSEARCH_GROUP_WITH_POSTFILTER;
+    public static final InmemoryMappedGroup inmemoryTestGroup(String name) {
+        return new InmemoryMappedGroup(DAY.getName(),
+                new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type),
+                        new InmemorySimpleGroup(name, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
     }
 
-    @Override
-    public <G> G createGroup(GroupFactoryContext<G> context) {
-        return definition().createGroup(context);
-    }
-
-    private final ParameterGroupDefinition definition() {
+    protected static final ParameterGroupDefinition definition(String name, Function<RangedDefinitionBuilder, RangedDefinitionBuilder> withRangeParameter) {
         return mappedGroup()
                 .withKeyParameter(DAY.getName())
-                .mappingTo(rangedGroup()
+                .mappingTo(withRangeParameter.apply(rangedGroup())
                         .mappingTo(group()
                                 .withParameter(PROGRAM.getName())))
-                .build(NAME);
+                .build(name);
     }
 
-    private RangedDefinitionBuilder rangedGroup() {
-        if (withRangeLimits) {
-            return BasicGroup.rangedGroup().withRangeParameter(SLOT.getName(), Slot.type);
-        } else {
-            return BasicGroup.rangedGroup().withComparableRangeParameter(SLOT.getName(), Slot.type);
-        }
-    }
 
 }

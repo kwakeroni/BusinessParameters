@@ -8,16 +8,17 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.junit.Assume;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
+import java.util.stream.StreamSupport;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -51,7 +52,7 @@ public class Environment implements TestRule, AutoCloseable {
 
     public Environment(Supplier<TestData> testDataSupplier) {
         this.testData = testDataSupplier.get();
-        BusinessParametersFactory factory = load(BusinessParametersFactory.class);
+        BusinessParametersFactory factory = Services.loadService(BusinessParametersFactory.class);
         ((DirectBusinessParametersServiceFactory) factory).setBackendType(this.testData::acceptBackend);
         WritableBusinessParameters local = factory.getWritableInstance();
         this.parameters = new WritableBusinessParameters() {
@@ -91,18 +92,6 @@ public class Environment implements TestRule, AutoCloseable {
         Assume.assumeTrue(this.testData.hasDataForGroup(group.getName()));
     }
 
-    private <S> S load(Class<S> serviceType) {
-        ServiceLoader<S> loader = ServiceLoader.load(serviceType);
-        Iterator<S> services = loader.iterator();
-        if (!services.hasNext()) {
-            throw new IllegalStateException("Service not found: " + serviceType.getName());
-        }
-        S service = services.next();
-        if (services.hasNext()) {
-            throw new IllegalStateException("Multiple services of type " + serviceType.getName() + ": " + service.getClass().getName() + " & " + services.next().getClass().getName());
-        }
-        return service;
-    }
 
     public TestRule reset() {
         return (base, description) -> new Statement() {
@@ -113,6 +102,5 @@ public class Environment implements TestRule, AutoCloseable {
             }
         };
     }
-
 
 }

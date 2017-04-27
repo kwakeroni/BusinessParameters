@@ -2,12 +2,22 @@ package be.kwakeroni.scratch;
 
 import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendServiceFactory;
 import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
+import be.kwakeroni.parameters.basic.definition.factory.MappedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.RangedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.SimpleGroupFactory;
+import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryMappedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryRangedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.inmemory.InMemorySimpleGroupFactory;
+import be.kwakeroni.parameters.client.api.model.ParameterGroup;
+import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 import be.kwakeroni.scratch.tv.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -37,6 +47,11 @@ public class InMemoryTestData implements TestData {
         return this.groups.contains(name);
     }
 
+    private <G extends ParameterGroup<?>> void setGroupData(G group1, G group2, Function<G, GroupData> data) {
+        setGroupData(group1.getName(), data.apply(group1));
+        setGroupData(group2.getName(), data.apply(group2));
+    }
+
     private void setGroupData(String groupName, GroupData data) {
         this.backend.setGroupData(groupName, data);
         this.groups.add(groupName);
@@ -58,17 +73,23 @@ public class InMemoryTestData implements TestData {
                 MappedTVGroup.getData(Dag.ZATERDAG, "Samson",
                         Dag.ZONDAG, "Morgen Maandag"));
 
-        setGroupData(RangedTVGroup.instance().getName(),
-                RangedTVGroup.getData(Slot.atHour(8), Slot.atHour(12), "Samson",
+        setGroupData(RangedFilterTVGroup.instance(), RangedQueryTVGroup.instance(),
+                group -> AbstractRangedTVGroup.getData(group, Slot.atHour(8), Slot.atHour(12), "Samson",
                         Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag"));
 
-        setGroupData(MappedRangedTVGroup.instance().getName(),
-                MappedRangedTVGroup.getData(
-                        MappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag"),
-                        MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson"),
-                        MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers"),
-                        MappedRangedTVGroup.entryData(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag")
+        setGroupData(MappedRangedFilterTVGroup.instance(), MappedRangedQueryTVGroup.instance(),
+                group -> AbstractMappedRangedTVGroup.getData(group.getName(),
+                        AbstractMappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag"),
+                        AbstractMappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson"),
+                        AbstractMappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers"),
+                        AbstractMappedRangedTVGroup.entryData(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag")
                 ));
     }
+
+    public static GroupFactoryContext<InMemoryGroup> FACTORY_CONTEXT = Contexts.of(
+            SimpleGroupFactory.class, new InMemorySimpleGroupFactory(),
+            MappedGroupFactory.class, new InMemoryMappedGroupFactory(),
+            RangedGroupFactory.class, new InMemoryRangedGroupFactory()
+    );
 
 }

@@ -5,6 +5,13 @@ import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.factory.ElasticSearchBackendServiceFactory;
 import be.kwakeroni.parameters.backend.es.service.ElasticSearchBackend;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
+import be.kwakeroni.parameters.basic.definition.es.ElasticSearchMappedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.es.ElasticSearchRangedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.es.ElasticSearchSimpleGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.MappedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.RangedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.SimpleGroupFactory;
+import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 import be.kwakeroni.scratch.tv.*;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -14,6 +21,7 @@ import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -56,26 +64,26 @@ public class ElasticSearchTestData implements TestData {
 
         Map<String, List<String>> uuids = new HashMap<>();
 
-        register(SimpleTVGroup.ELASTICSEARCH_GROUP);
-        addInsert(uuids, SimpleTVGroup.instance().getName(), SimpleTVGroup.getEntryData(Dag.MAANDAG, Slot.atHour(20)));
 
-        register(MappedTVGroup.ELASTICSEARCH_GROUP);
+        Services.loadDefinitions()
+                .map(definition -> definition.createGroup(FACTORY_CONTEXT))
+                .forEach(this::register);
+
+        addInsert(uuids, SimpleTVGroup.instance().getName(), SimpleTVGroup.getEntryData(Dag.MAANDAG, Slot.atHour(20)));
         addInsert(uuids, MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZATERDAG, "Samson"));
         addInsert(uuids, MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZONDAG, "Morgen Maandag"));
 
-        boolean addRangeLimits = true;
 
-        register(RangedTVGroup.elasticSearchGroup(addRangeLimits));
-        addInsert(uuids, RangedTVGroup.instance().getName(),
-                RangedTVGroup.entryData(Slot.atHour(8), Slot.atHour(12), "Samson", addRangeLimits),
-                RangedTVGroup.entryData(Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag", addRangeLimits));
+        addInsert(uuids, withLimits -> (withLimits) ? RangedQueryTVGroup.instance().getName() : RangedFilterTVGroup.instance().getName(),
+                withLimits -> AbstractRangedTVGroup.entryData(Slot.atHour(8), Slot.atHour(12), "Samson", withLimits),
+                withLimits -> AbstractRangedTVGroup.entryData(Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag", withLimits));
 
-        register(MappedRangedTVGroup.elasticSearchGroup(addRangeLimits));
-        addInsert(uuids, MappedRangedTVGroup.instance().getName(),
-                MappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag", addRangeLimits),
-                MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson", addRangeLimits),
-                MappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers", addRangeLimits),
-                MappedRangedTVGroup.entryData(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag", addRangeLimits)
+
+        addInsert(uuids, withLimits -> (withLimits) ? MappedRangedQueryTVGroup.instance().getName() : MappedRangedFilterTVGroup.instance().getName(),
+                withLimits -> AbstractMappedRangedTVGroup.entryData(Dag.MAANDAG, Slot.atHalfPast(20), Slot.atHour(22), "Gisteren Zondag", withLimits),
+                withLimits -> AbstractMappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(8), Slot.atHour(12), "Samson", withLimits),
+                withLimits -> AbstractMappedRangedTVGroup.entryData(Dag.ZATERDAG, Slot.atHour(14), Slot.atHour(18), "Koers", withLimits),
+                withLimits -> AbstractMappedRangedTVGroup.entryData(Dag.ZONDAG, Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag", withLimits)
         );
 
         LOG.info("Waiting for test data to become available...");
@@ -85,9 +93,6 @@ public class ElasticSearchTestData implements TestData {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        Object o = findAll(MappedRangedTVGroup.instance().getName());
-        System.out.println(o);
 
     }
 
@@ -134,6 +139,10 @@ public class ElasticSearchTestData implements TestData {
     @Override
     public boolean hasDataForGroup(String name) {
         return groups.contains(name);
+    }
+
+    private void registerCatalog() {
+
     }
 
     private void register(ElasticSearchGroup group) {
@@ -185,6 +194,12 @@ public class ElasticSearchTestData implements TestData {
             uuids.add(insert(group, entryData.asMap()));
         }
         return uuids;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void addInsert(Map<String, List<String>> accu, Function<Boolean, String> name, Function<Boolean, Map<String, ?>>... entryDatas) {
+        addInsert(accu, name.apply(false), (Map<String, ?>[]) Arrays.stream(entryDatas).map(f -> f.apply(false)).toArray(Map[]::new));
+        addInsert(accu, name.apply(true), (Map<String, ?>[]) Arrays.stream(entryDatas).map(f -> f.apply(true)).toArray(Map[]::new));
     }
 
     private void addInsert(Map<String, List<String>> accu, String group, Map<String, ?>... entryDatas) {
@@ -278,6 +293,14 @@ public class ElasticSearchTestData implements TestData {
             return response;
         }
     }
+
+
+    public static GroupFactoryContext<ElasticSearchGroup> FACTORY_CONTEXT = Contexts.of(
+            SimpleGroupFactory.class, new ElasticSearchSimpleGroupFactory(),
+            MappedGroupFactory.class, new ElasticSearchMappedGroupFactory(),
+            RangedGroupFactory.class, new ElasticSearchRangedGroupFactory()
+    );
+
 }
 // INFO  - http://127.0.0.1:9200/13591bee-a2f9-431c-ab27-3572bf5aeb4f?pretty
 //  http://127.0.0.1:9200/parameters/tv.simple/13591bee-a2f9-431c-ab27-3572bf5aeb4f?pretty

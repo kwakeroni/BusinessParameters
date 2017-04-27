@@ -56,7 +56,7 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>>, Param
     // For test purposes
     public static final GroupData getData(Dag dag0, String program0, Dag dag1, String program1) {
         return new DefaultGroupData(
-                INMEMORY_GROUP,
+                INMEMORY_TEST_GROUP,
                 entryData(dag0, program0),
                 entryData(dag1, program1)
         );
@@ -77,8 +77,8 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>>, Param
     }
 
     private static final String NAME = "tv.mapped";
-    public static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, new InmemorySimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
-    public static final ElasticSearchMappedGroup ELASTICSEARCH_GROUP =
+    static final InmemoryMappedGroup INMEMORY_TEST_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, new InmemorySimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
+    static final ElasticSearchMappedGroup ELASTICSEARCH_TEST_GROUP =
             new ElasticSearchMappedGroup(DAY.getName(),
                     new ElasticSearchSimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
 
@@ -87,7 +87,7 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>>, Param
         return DEFINITION.createGroup(context);
     }
 
-    private static final ParameterGroupDefinition DEFINITION =
+    public static final ParameterGroupDefinition DEFINITION =
             mappedGroup()
                     .withKeyParameter(DAY.getName())
                     .mappingTo(group()

@@ -40,7 +40,7 @@ public class SimpleTVGroup implements ParameterGroup<Simple>, ParameterGroupDefi
     // For test purposes
     public static final GroupData getData(Dag dag, Slot slot) {
         return new DefaultGroupData(
-                INMEMORY_GROUP,
+                INMEMORY_TEST_GROUP,
                 getEntryData(dag, slot)
         );
     }
@@ -53,15 +53,15 @@ public class SimpleTVGroup implements ParameterGroup<Simple>, ParameterGroupDefi
     }
 
     public static final String NAME = "tv.simple";
-    public static final InmemorySimpleGroup INMEMORY_GROUP = new InmemorySimpleGroup(NAME, DAY.getName(), SLOT.getName());
-    public static final ElasticSearchSimpleGroup ELASTICSEARCH_GROUP = new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName());
+    static final InmemorySimpleGroup INMEMORY_TEST_GROUP = new InmemorySimpleGroup(NAME, DAY.getName(), SLOT.getName());
+    static final ElasticSearchSimpleGroup ELASTICSEARCH_TEST_GROUP = new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName());
 
     @Override
     public <G> G createGroup(GroupFactoryContext<G> context) {
         return DEFINITION.createGroup(context);
     }
 
-    private static final ParameterGroupDefinition DEFINITION =
+    public static final ParameterGroupDefinition DEFINITION =
             group()
                     .withParameter(DAY.getName())
                     .withParameter(SLOT.getName())

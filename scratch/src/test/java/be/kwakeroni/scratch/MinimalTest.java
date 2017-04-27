@@ -70,39 +70,66 @@ public class MinimalTest {
     }
 
     @Test
-    public void testRangedValueQuery() {
-        environment.runTestForGroup(RangedTVGroup.instance());
-        String program = environment.getBusinessParameters().get(RangedTVGroup.instance(),
+    public void testRangedValueQueryFilter() {
+        testRangedValueQuery(RangedFilterTVGroup.instance());
+    }
+
+    @Test
+    public void testRangedValueQueryQuery() {
+        testRangedValueQuery(RangedQueryTVGroup.instance());
+    }
+
+    public void testRangedValueQuery(AbstractRangedTVGroup rangedGroup) {
+        environment.runTestForGroup(rangedGroup);
+        String program = environment.getBusinessParameters().get(rangedGroup,
                 new RangedQuery<>(Slot.atHalfPast(9), Slot.type,
-                        new ValueQuery<>(RangedTVGroup.PROGRAM))).get();
+                        new ValueQuery<>(AbstractRangedTVGroup.PROGRAM))).get();
         assertEquals("Samson", program);
     }
 
     @Test
-    public void testRangedEntryQuery() {
-        environment.runTestForGroup(RangedTVGroup.instance());
-        Entry entry = environment.getBusinessParameters().get(RangedTVGroup.instance(),
-                new RangedQuery<>(Slot.atHour(21), Slot.type,
-                        new EntryQuery())).get();
-        assertEquals(Range.of(Slot.atHalfPast(20), Slot.atHour(22)), entry.getValue(RangedTVGroup.SLOT));
-        assertEquals("Morgen Maandag", entry.getValue(RangedTVGroup.PROGRAM));
+    public void testRangedEntryQueryFilter() {
+        testRangedEntryQuery(RangedFilterTVGroup.instance());
     }
 
     @Test
-    public void testMappedRangedValueQuery() {
-        environment.runTestForGroup(MappedRangedTVGroup.instance());
-
-        assertEquals("Samson", getMappedRangedProgram(Dag.ZATERDAG, Slot.atHalfPast(11)));
-        assertEquals("Koers", getMappedRangedProgram(Dag.ZATERDAG, Slot.atHour(14)));
-        assertEquals("Morgen Maandag", getMappedRangedProgram(Dag.ZONDAG, Slot.atHour(21)));
-        assertEquals("Gisteren Zondag", getMappedRangedProgram(Dag.MAANDAG, Slot.atHour(21)));
+    public void testRangedEntryQueryQuery() {
+        testRangedEntryQuery(RangedQueryTVGroup.instance());
     }
 
-    private String getMappedRangedProgram(Dag day, Slot slot) {
-        return environment.getBusinessParameters().get(MappedRangedTVGroup.instance(),
+    public void testRangedEntryQuery(AbstractRangedTVGroup rangedGroup) {
+        environment.runTestForGroup(rangedGroup);
+        Entry entry = environment.getBusinessParameters().get(rangedGroup,
+                new RangedQuery<>(Slot.atHour(21), Slot.type,
+                        new EntryQuery())).get();
+        assertEquals(Range.of(Slot.atHalfPast(20), Slot.atHour(22)), entry.getValue(AbstractRangedTVGroup.SLOT));
+        assertEquals("Morgen Maandag", entry.getValue(AbstractRangedTVGroup.PROGRAM));
+    }
+
+    @Test
+    public void testMappedRangedValueQueryFilter() {
+        testMappedRangedValueQuery(MappedRangedFilterTVGroup.instance());
+    }
+
+    @Test
+    public void testMappedRangedValueQueryQuery() {
+        testMappedRangedValueQuery(MappedRangedQueryTVGroup.instance());
+    }
+
+    public void testMappedRangedValueQuery(AbstractMappedRangedTVGroup rangedGroup) {
+        environment.runTestForGroup(rangedGroup);
+
+        assertEquals("Samson", getMappedRangedProgram(rangedGroup, Dag.ZATERDAG, Slot.atHalfPast(11)));
+        assertEquals("Koers", getMappedRangedProgram(rangedGroup, Dag.ZATERDAG, Slot.atHour(14)));
+        assertEquals("Morgen Maandag", getMappedRangedProgram(rangedGroup, Dag.ZONDAG, Slot.atHour(21)));
+        assertEquals("Gisteren Zondag", getMappedRangedProgram(rangedGroup, Dag.MAANDAG, Slot.atHour(21)));
+    }
+
+    private String getMappedRangedProgram(AbstractMappedRangedTVGroup rangedGroup, Dag day, Slot slot) {
+        return environment.getBusinessParameters().get(rangedGroup,
                 new MappedQuery<>(day, Dag.type,
                         new RangedQuery<>(slot, Slot.type,
-                                new ValueQuery<>(MappedRangedTVGroup.PROGRAM)))).get();
+                                new ValueQuery<>(AbstractMappedRangedTVGroup.PROGRAM)))).get();
     }
 
 }

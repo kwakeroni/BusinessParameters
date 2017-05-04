@@ -10,6 +10,7 @@ import be.kwakeroni.parameters.backend.inmemory.support.FilteredGroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.IntermediateInMemoryQuery;
 import be.kwakeroni.parameters.basic.backend.query.RangedBackendGroup;
 import be.kwakeroni.parameters.basic.type.Range;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.types.api.ParameterType;
 
 import java.util.function.Predicate;
@@ -19,13 +20,15 @@ import java.util.function.Predicate;
  */
 public class InmemoryRangedGroup implements InMemoryGroup, RangedBackendGroup<InMemoryQuery<?>, InMemoryGroup> {
 
+    private final ParameterGroupDefinition definition;
     private final String rangeParameterName;
     private final ParameterType<Range<String>> rangeType;
     private final InMemoryGroup subGroup;
 
-    public InmemoryRangedGroup(String rangeParameterName, ParameterType<Range<String>> rangeType, InMemoryGroup subGroup) {
+    public InmemoryRangedGroup(String rangeParameterName, ParameterType<Range<String>> rangeType, ParameterGroupDefinition definition, InMemoryGroup subGroup) {
         this.rangeParameterName = rangeParameterName;
         this.rangeType = rangeType;
+        this.definition = definition;
         this.subGroup = subGroup;
     }
 
@@ -58,6 +61,11 @@ public class InmemoryRangedGroup implements InMemoryGroup, RangedBackendGroup<In
     @Override
     public String getName() {
         return subGroup.getName();
+    }
+
+    @Override
+    public ParameterGroupDefinition getDefinition() {
+        return this.definition;
     }
 
     @Override

@@ -11,6 +11,6 @@ public class ElasticSearchMappedGroupFactory implements MappedGroupFactory<Elast
 
     @Override
     public ElasticSearchGroup createGroup(Definition definition, ElasticSearchGroup subGroup) {
-        return new ElasticSearchMappedGroup(definition.getKeyParameter(), subGroup);
+        return new ElasticSearchMappedGroup(definition.getKeyParameter(), definition.getDefinition(), subGroup);
     }
 }

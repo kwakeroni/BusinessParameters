@@ -6,6 +6,7 @@ import be.kwakeroni.parameters.basic.backend.query.support.IntermediaryBackendGr
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediateBackendQuerySupport;
 import be.kwakeroni.parameters.basic.type.Range;
 import be.kwakeroni.parameters.basic.type.Ranges;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -28,8 +29,8 @@ public class ElasticSearchQueryBasedRangedGroup
     private final ElasticSearchDataType<?> dataType;
     private final Function<String, ?> converter;
 
-    public <T> ElasticSearchQueryBasedRangedGroup(String rangeParameterName, ElasticSearchDataType<T> dataType, Function<String, T> converter, ElasticSearchGroup subGroup) {
-        super(subGroup);
+    public <T> ElasticSearchQueryBasedRangedGroup(String rangeParameterName, ElasticSearchDataType<T> dataType, Function<String, T> converter, ParameterGroupDefinition definition, ElasticSearchGroup subGroup) {
+        super(definition, subGroup);
         this.rangeParameterName = rangeParameterName;
         this.dataType = dataType;
         this.converter = converter;

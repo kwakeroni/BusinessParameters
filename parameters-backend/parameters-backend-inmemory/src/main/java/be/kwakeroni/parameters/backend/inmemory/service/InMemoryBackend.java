@@ -9,6 +9,7 @@ import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,5 +85,10 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     @Override
     public Collection<String> getGroupNames() {
         return data.keySet();
+    }
+
+    @Override
+    public ParameterGroupDefinition getDefinition(String groupName) {
+        return getGroupData(groupName).getGroup().getDefinition();
     }
 }

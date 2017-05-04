@@ -4,6 +4,7 @@ import be.kwakeroni.parameters.backend.es.api.*;
 import be.kwakeroni.parameters.basic.backend.query.MappedBackendGroup;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediaryBackendGroupSupport;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediateBackendQuerySupport;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -17,8 +18,8 @@ public class ElasticSearchMappedGroup
 
     private final String keyParameterName;
 
-    public ElasticSearchMappedGroup(String keyParameterName, ElasticSearchGroup subGroup) {
-        super(subGroup);
+    public ElasticSearchMappedGroup(String keyParameterName, ParameterGroupDefinition definition, ElasticSearchGroup subGroup) {
+        super(definition, subGroup);
         this.keyParameterName = keyParameterName;
     }
 

@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.basic.definition.factory;
 
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.factory.GroupFactory;
 import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 
@@ -15,6 +16,7 @@ public interface MappedGroupFactory<G> extends GroupFactory<G> {
     }
 
     public interface Definition {
+        public ParameterGroupDefinition getDefinition();
         public String getKeyParameter();
     }
 

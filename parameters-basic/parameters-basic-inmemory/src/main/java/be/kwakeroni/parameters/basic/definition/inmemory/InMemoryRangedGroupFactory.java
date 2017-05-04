@@ -20,6 +20,7 @@ public class InMemoryRangedGroupFactory implements RangedGroupFactory<InMemoryGr
         return new InmemoryRangedGroup(
                 definition.getRangeParameter(),
                 Ranges.stringRangeTypeOf(type),
+                definition.getDefinition(),
                 subGroup
         );
     }
@@ -29,6 +30,7 @@ public class InMemoryRangedGroupFactory implements RangedGroupFactory<InMemoryGr
         return new InmemoryRangedGroup(
                 definition.getRangeParameter(),
                 Ranges.stringRangeTypeOf(type, comparator),
+                definition.getDefinition(),
                 subGroup
         );
     }

@@ -5,6 +5,7 @@ import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.basic.backend.query.support.SimpleBackendGroupSupport;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import java.util.Map;
 import java.util.Set;
@@ -15,12 +16,12 @@ import java.util.Set;
 public class InmemorySimpleGroup extends SimpleBackendGroupSupport<InMemoryQuery<?>, GroupData, EntryData>
         implements InMemoryGroup {
 
-    public InmemorySimpleGroup(String name, String... parameters) {
-        super(name, parameters);
+    public InmemorySimpleGroup(String name, ParameterGroupDefinition definition, String... parameters) {
+        super(name, definition, parameters);
     }
 
-    public InmemorySimpleGroup(String name, Set<String> parameters) {
-        super(name, parameters);
+    public InmemorySimpleGroup(String name, ParameterGroupDefinition definition, Set<String> parameters) {
+        super(name, definition, parameters);
     }
 
     @Override

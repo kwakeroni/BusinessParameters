@@ -12,6 +12,6 @@ import java.util.LinkedHashSet;
 public class InMemorySimpleGroupFactory implements SimpleGroupFactory<InMemoryGroup> {
     @Override
     public InMemoryGroup createGroup(Definition definition) {
-        return new InmemorySimpleGroup(definition.getName(), new LinkedHashSet<>(definition.getParameters()));
+        return new InmemorySimpleGroup(definition.getName(), definition.getDefinition(), new LinkedHashSet<>(definition.getParameters()));
     }
 }

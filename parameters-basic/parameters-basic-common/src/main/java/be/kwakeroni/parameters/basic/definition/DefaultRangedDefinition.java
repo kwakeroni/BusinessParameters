@@ -35,6 +35,11 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
     }
 
     @Override
+    public ParameterGroupDefinition getDefinition() {
+        return this;
+    }
+
+    @Override
     public <G> G createGroup(GroupFactoryContext<G> context) {
         G subGroup = subGroupDefinition.createGroup(context);
         return factory.createGroup(RangedGroupFactory.from(context), this, subGroup);

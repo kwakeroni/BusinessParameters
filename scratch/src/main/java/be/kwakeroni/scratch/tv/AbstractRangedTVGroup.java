@@ -33,7 +33,7 @@ import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public abstract class AbstractRangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>>, ParameterGroupDefinition {
+public abstract class AbstractRangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>> {
 
     public static Parameter<Range<Slot>> SLOT = new DefaultParameter<>("slot", Ranges.rangeTypeOf(Slot.type));
     public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
@@ -44,6 +44,8 @@ public abstract class AbstractRangedTVGroup implements ParameterGroup<Ranged<Slo
     }
 
     // For test purposes
+    protected abstract ParameterGroupDefinition getDefinition();
+
     public static EntryData entryData(Slot from, Slot to, String program) {
         return DefaultEntryData.of(
                 SLOT.getName(), Ranges.toRangeString(from, to, Slot::toString),
@@ -68,7 +70,7 @@ public abstract class AbstractRangedTVGroup implements ParameterGroup<Ranged<Slo
     // For test purposes
     public static final GroupData getData(AbstractRangedTVGroup group, Slot slot0From, Slot slot0To, String program0, Slot slot1From, Slot slot1To, String program1) {
         return new DefaultGroupData(
-                inmemoryTestGroup(group.getName()),
+                inmemoryTestGroup(group.getName(), group.getDefinition()),
                 entryData(slot0From, slot0To, program0),
                 entryData(slot1From, slot1To, program1)
         );
@@ -80,12 +82,12 @@ public abstract class AbstractRangedTVGroup implements ParameterGroup<Ranged<Slo
                 new ValueQuery<>(MappedTVGroup.PROGRAM));
     }
 
-    protected static final InmemoryRangedGroup inmemoryTestGroup(String name) {
-        return new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), new InmemorySimpleGroup(name, SLOT.getName(), PROGRAM.getName()));
+    protected static final InmemoryRangedGroup inmemoryTestGroup(String name, ParameterGroupDefinition definition) {
+        return new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), definition, new InmemorySimpleGroup(name, definition, SLOT.getName(), PROGRAM.getName()));
     }
 
-    protected static final ElasticSearchGroup elasticSearchSubGroup(String name) {
-        return new ElasticSearchSimpleGroup(name, SLOT.getName(), PROGRAM.getName());
+    protected static final ElasticSearchGroup elasticSearchSubGroup(String name, ParameterGroupDefinition definition) {
+        return new ElasticSearchSimpleGroup(name, definition, SLOT.getName(), PROGRAM.getName());
     }
 
     protected static final ParameterGroupDefinition definition(String name, Function<RangedDefinitionBuilder, RangedDefinitionBuilder> withRangeParameter) {

@@ -10,6 +10,7 @@ import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.backend.es.api.EntryModification;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,11 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ParameterGroupDefinition getDefinition(String groupName) {
+        return getGroup(groupName).getDefinition();
     }
 
     private ElasticSearchGroup getGroup(String name){

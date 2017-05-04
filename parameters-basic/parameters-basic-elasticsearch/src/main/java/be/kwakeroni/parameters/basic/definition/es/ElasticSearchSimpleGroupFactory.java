@@ -13,7 +13,7 @@ public class ElasticSearchSimpleGroupFactory implements SimpleGroupFactory<Elast
 
     @Override
     public ElasticSearchGroup createGroup(Definition definition) {
-        return new ElasticSearchSimpleGroup(definition.getName(), new LinkedHashSet<>(definition.getParameters()));
+        return new ElasticSearchSimpleGroup(definition.getName(), definition.getDefinition(), new LinkedHashSet<>(definition.getParameters()));
     }
 
 }

@@ -29,6 +29,11 @@ final class DefaultSimpleDefinition implements SimpleGroupFactory.Definition, Pa
     }
 
     @Override
+    public ParameterGroupDefinition getDefinition() {
+        return this;
+    }
+
+    @Override
     public Collection<String> getParameters() {
         return Collections.unmodifiableCollection(parameters);
     }

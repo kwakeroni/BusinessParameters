@@ -10,6 +10,6 @@ import be.kwakeroni.parameters.basic.definition.factory.MappedGroupFactory;
 public class InMemoryMappedGroupFactory implements MappedGroupFactory<InMemoryGroup> {
     @Override
     public InMemoryGroup createGroup(Definition definition, InMemoryGroup subGroup) {
-        return new InmemoryMappedGroup(definition.getKeyParameter(), subGroup);
+        return new InmemoryMappedGroup(definition.getKeyParameter(), definition.getDefinition(), subGroup);
     }
 }

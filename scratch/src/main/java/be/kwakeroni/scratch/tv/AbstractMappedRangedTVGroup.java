@@ -33,7 +33,7 @@ import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public abstract class AbstractMappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Slot, Simple>>>, ParameterGroupDefinition {
+public abstract class AbstractMappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Slot, Simple>>> {
 
 
     public static Parameter<Dag> DAY = new DefaultParameter<>("day", Dag.type);
@@ -69,8 +69,8 @@ public abstract class AbstractMappedRangedTVGroup implements ParameterGroup<Mapp
     }
 
     // For test purposes
-    public static final GroupData getData(String name, EntryData... data) {
-        return new DefaultGroupData(inmemoryTestGroup(name), data);
+    public static final GroupData getData(String name, ParameterGroupDefinition definition, EntryData... data) {
+        return new DefaultGroupData(inmemoryTestGroup(name, definition), data);
     }
 
     // For test purposes
@@ -85,13 +85,13 @@ public abstract class AbstractMappedRangedTVGroup implements ParameterGroup<Mapp
     }
 
 
-    public static final InmemoryMappedGroup inmemoryTestGroup(String name) {
-        return new InmemoryMappedGroup(DAY.getName(),
-                new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type),
-                        new InmemorySimpleGroup(name, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
+    static final InmemoryMappedGroup inmemoryTestGroup(String name, ParameterGroupDefinition definition) {
+        return new InmemoryMappedGroup(DAY.getName(), definition,
+                new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), definition,
+                        new InmemorySimpleGroup(name, definition, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
     }
 
-    protected static final ParameterGroupDefinition definition(String name, Function<RangedDefinitionBuilder, RangedDefinitionBuilder> withRangeParameter) {
+    static final ParameterGroupDefinition definition(String name, Function<RangedDefinitionBuilder, RangedDefinitionBuilder> withRangeParameter) {
         return mappedGroup()
                 .withKeyParameter(DAY.getName())
                 .mappingTo(withRangeParameter.apply(rangedGroup())

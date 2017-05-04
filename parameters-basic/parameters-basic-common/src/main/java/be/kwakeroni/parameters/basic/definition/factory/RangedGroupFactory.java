@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.basic.definition.factory;
 
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.factory.GroupFactory;
 import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
 import be.kwakeroni.parameters.types.api.ParameterType;
@@ -27,5 +28,6 @@ public interface RangedGroupFactory<G> extends GroupFactory<G> {
 
     public interface Definition {
         public String getRangeParameter();
+        public ParameterGroupDefinition getDefinition();
     }
 }

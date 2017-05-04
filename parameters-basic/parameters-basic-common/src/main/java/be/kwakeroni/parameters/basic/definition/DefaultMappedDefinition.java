@@ -32,6 +32,11 @@ final class DefaultMappedDefinition implements MappedGroupFactory.Definition, Pa
     }
 
     @Override
+    public ParameterGroupDefinition getDefinition() {
+        return this;
+    }
+
+    @Override
     public <G> G createGroup(GroupFactoryContext<G> context) {
         G subGroup = subGroupDefinition.createGroup(context);
         return MappedGroupFactory.from(context).createGroup(this, subGroup);

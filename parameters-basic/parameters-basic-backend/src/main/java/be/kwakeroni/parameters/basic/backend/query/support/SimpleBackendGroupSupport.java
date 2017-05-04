@@ -3,6 +3,7 @@ package be.kwakeroni.parameters.basic.backend.query.support;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.basic.backend.query.SimpleBackendGroup;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -13,15 +14,17 @@ import java.util.function.BinaryOperator;
 public abstract class SimpleBackendGroupSupport<Q extends BackendQuery<? extends Q, ?>, S, E> implements SimpleBackendGroup<Q> {
 
     private final String name;
+    private final ParameterGroupDefinition definition;
     private final Set<String> parameters;
 
-    public SimpleBackendGroupSupport(String name, String... parameters) {
-        this(name, new LinkedHashSet<>(Arrays.asList(parameters)));
+    public SimpleBackendGroupSupport(String name, ParameterGroupDefinition definition, String... parameters) {
+        this(name, definition, new LinkedHashSet<>(Arrays.asList(parameters)));
     }
 
-    public SimpleBackendGroupSupport(String name, Set<String> parameters) {
+    public SimpleBackendGroupSupport(String name, ParameterGroupDefinition definition, Set<String> parameters) {
         this.parameters = Collections.unmodifiableSet(Objects.requireNonNull(parameters, "parameters"));
         this.name = Objects.requireNonNull(name, "name");
+        this.definition = definition;//Objects.requireNonNull(definition, "definition");
 
         if (parameters.isEmpty()) {
             throw new IllegalArgumentException("parameters cannot be empty");
@@ -31,6 +34,11 @@ public abstract class SimpleBackendGroupSupport<Q extends BackendQuery<? extends
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ParameterGroupDefinition getDefinition() {
+        return definition;
     }
 
     protected Set<String> getParameterNames() {

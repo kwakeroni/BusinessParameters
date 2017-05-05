@@ -4,7 +4,7 @@ import be.kwakeroni.parameters.backend.es.api.ElasticSearchDataType;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchQueryBasedRangedGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemoryRangedGroup;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -23,8 +23,8 @@ public class RangedQueryTVGroup extends AbstractRangedTVGroup {
     }
 
     @Override
-    public <G> G createGroup(GroupFactoryContext<G> context) {
-        return DEFINITION.createGroup(context);
+    public <G> G apply(DefinitionVisitorContext<G> context) {
+        return DEFINITION.apply(context);
     }
 
     static final InmemoryRangedGroup INMEMORY_TEST_GROUP = inmemoryTestGroup(NAME);

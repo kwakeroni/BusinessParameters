@@ -5,14 +5,14 @@ import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendServiceFactory;
 import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
-import be.kwakeroni.parameters.basic.definition.factory.MappedGroupFactory;
-import be.kwakeroni.parameters.basic.definition.factory.RangedGroupFactory;
-import be.kwakeroni.parameters.basic.definition.factory.SimpleGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
+import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
+import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryMappedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryRangedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.inmemory.InMemorySimpleGroupFactory;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.scratch.tv.*;
 
 import java.util.ArrayList;
@@ -86,10 +86,10 @@ public class InMemoryTestData implements TestData {
                 ));
     }
 
-    public static GroupFactoryContext<InMemoryGroup> FACTORY_CONTEXT = Contexts.of(
-            SimpleGroupFactory.class, new InMemorySimpleGroupFactory(),
-            MappedGroupFactory.class, new InMemoryMappedGroupFactory(),
-            RangedGroupFactory.class, new InMemoryRangedGroupFactory()
+    public static DefinitionVisitorContext<InMemoryGroup> FACTORY_CONTEXT = Contexts.of(
+            SimpleDefinitionVisitor.class, new InMemorySimpleGroupFactory(),
+            MappedDefinitionVisitor.class, new InMemoryMappedGroupFactory(),
+            RangedDefinitionVisitor.class, new InMemoryRangedGroupFactory()
     );
 
 }

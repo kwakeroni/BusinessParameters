@@ -3,7 +3,7 @@ package be.kwakeroni.scratch.tv;
 
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.scratch.ElasticSearchTestData;
 import be.kwakeroni.scratch.InMemoryTestData;
 import be.kwakeroni.scratch.Services;
@@ -32,7 +32,7 @@ public class BuilderTest<G extends BackendGroup<?>> {
     @Parameterized.Parameter(2)
     public Supplier<ParameterGroupDefinition> definition;
     @Parameterized.Parameter(3)
-    public GroupFactoryContext<G> context;
+    public DefinitionVisitorContext<G> context;
 
 
     @Parameterized.Parameters(name = "{0}")
@@ -70,13 +70,13 @@ public class BuilderTest<G extends BackendGroup<?>> {
     @Test
     public void isGroupDefined() {
         Optional<ParameterGroupDefinition> opt = Services.loadDefinition(constant.getName());
-        G built = opt.get().createGroup(context);
+        G built = opt.get().apply(context);
         assertEqualGroups(built);
     }
 
     @Test
     public void testBuildsGroupAsExpected() {
-        G built = definition.get().createGroup(context);
+        G built = definition.get().apply(context);
         assertEqualGroups(built);
     }
 
@@ -102,7 +102,7 @@ public class BuilderTest<G extends BackendGroup<?>> {
             this.definition = definition;
         }
 
-        public Object[] toArray(String name, GroupFactoryContext<?> context) {
+        public Object[] toArray(String name, DefinitionVisitorContext<?> context) {
             return new Object[]{name + " : " + definitionClass.getSimpleName(), group, definition, context};
         }
     }

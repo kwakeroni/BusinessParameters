@@ -1,18 +1,18 @@
 package be.kwakeroni.parameters.basic.definition;
 
 import be.kwakeroni.parameters.basic.definition.builder.MappedDefinitionBuilder;
-import be.kwakeroni.parameters.basic.definition.factory.MappedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilder;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
 import java.util.function.Function;
 
 /**
  * Created by kwakeroni on 11.04.17.
  */
-final class DefaultMappedDefinition implements MappedGroupFactory.Definition, ParameterGroupDefinition {
+final class DefaultMappedDefinition implements MappedDefinitionVisitor.Definition, ParameterGroupDefinition {
 
     private String keyParameter;
     private ParameterGroupDefinition subGroupDefinition;
@@ -32,9 +32,9 @@ final class DefaultMappedDefinition implements MappedGroupFactory.Definition, Pa
     }
 
     @Override
-    public <G> G createGroup(GroupFactoryContext<G> context) {
-        G subGroup = subGroupDefinition.createGroup(context);
-        return MappedGroupFactory.from(context).createGroup(this, subGroup);
+    public <G> G apply(DefinitionVisitorContext<G> context) {
+        G subGroup = subGroupDefinition.apply(context);
+        return MappedDefinitionVisitor.from(context).visit(this, subGroup);
     }
 
     static Builder builder() {

@@ -11,7 +11,7 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
 import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
 
@@ -57,8 +57,8 @@ public class SimpleTVGroup implements ParameterGroup<Simple>, ParameterGroupDefi
     static final ElasticSearchSimpleGroup ELASTICSEARCH_TEST_GROUP = new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName());
 
     @Override
-    public <G> G createGroup(GroupFactoryContext<G> context) {
-        return DEFINITION.createGroup(context);
+    public <G> G apply(DefinitionVisitorContext<G> context) {
+        return DEFINITION.apply(context);
     }
 
     public static final ParameterGroupDefinition DEFINITION =

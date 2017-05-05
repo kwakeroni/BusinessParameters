@@ -3,7 +3,7 @@ package be.kwakeroni.parameters.basic.definition.es;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchPostFilterRangedGroup;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchQueryBasedRangedGroup;
-import be.kwakeroni.parameters.basic.definition.factory.RangedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.type.Ranges;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.BasicType;
@@ -14,10 +14,10 @@ import java.util.function.Function;
 /**
  * Created by kwakeroni on 24/04/17.
  */
-public class ElasticSearchRangedGroupFactory implements RangedGroupFactory<ElasticSearchGroup> {
+public class ElasticSearchRangedGroupFactory implements RangedDefinitionVisitor<ElasticSearchGroup> {
 
     @Override
-    public <T extends Comparable<? super T>> ElasticSearchGroup createGroup(Definition definition, ParameterType<T> type, ElasticSearchGroup subGroup) {
+    public <T extends Comparable<? super T>> ElasticSearchGroup visit(Definition definition, ParameterType<T> type, ElasticSearchGroup subGroup) {
         return new ElasticSearchPostFilterRangedGroup(
                 definition.getRangeParameter(),
                 Ranges.stringRangeTypeOf(type),
@@ -26,7 +26,7 @@ public class ElasticSearchRangedGroupFactory implements RangedGroupFactory<Elast
     }
 
     @Override
-    public <T> ElasticSearchGroup createGroup(Definition definition, ParameterType<T> type, Comparator<? super T> comparator, ElasticSearchGroup subGroup) {
+    public <T> ElasticSearchGroup visit(Definition definition, ParameterType<T> type, Comparator<? super T> comparator, ElasticSearchGroup subGroup) {
         return new ElasticSearchPostFilterRangedGroup(
                 definition.getRangeParameter(),
                 Ranges.stringRangeTypeOf(type, comparator),
@@ -35,7 +35,7 @@ public class ElasticSearchRangedGroupFactory implements RangedGroupFactory<Elast
     }
 
     @Override
-    public <T, B> ElasticSearchGroup createGroup(Definition definition, BasicType<T, B> type, ElasticSearchGroup subGroup) {
+    public <T, B> ElasticSearchGroup visit(Definition definition, BasicType<T, B> type, ElasticSearchGroup subGroup) {
         Function<String, B> stringConverter = ((Function<String, T>) type::fromString).andThen(type::toBasic);
 
         return new ElasticSearchQueryBasedRangedGroup(
@@ -47,7 +47,7 @@ public class ElasticSearchRangedGroupFactory implements RangedGroupFactory<Elast
     }
 
     @Override
-    public <T, B> ElasticSearchGroup createGroup(Definition definition, ParameterType<T> type, Function<T, B> converter, BasicType<B, B> basicType, ElasticSearchGroup subGroup) {
+    public <T, B> ElasticSearchGroup visit(Definition definition, ParameterType<T> type, Function<T, B> converter, BasicType<B, B> basicType, ElasticSearchGroup subGroup) {
         Function<String, B> stringConverter = ((Function<String, T>) type::fromString).andThen(converter);
 
         return new ElasticSearchQueryBasedRangedGroup(

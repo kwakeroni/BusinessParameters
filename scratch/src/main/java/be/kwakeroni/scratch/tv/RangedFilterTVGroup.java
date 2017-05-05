@@ -3,7 +3,7 @@ package be.kwakeroni.scratch.tv;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchPostFilterRangedGroup;
 import be.kwakeroni.parameters.basic.type.Ranges;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -22,8 +22,8 @@ public class RangedFilterTVGroup extends AbstractRangedTVGroup {
     }
 
     @Override
-    public <G> G createGroup(GroupFactoryContext<G> context) {
-        return DEFINITION.createGroup(context);
+    public <G> G apply(DefinitionVisitorContext<G> context) {
+        return DEFINITION.apply(context);
     }
 
     static final ElasticSearchPostFilterRangedGroup ELASTICSEARCH_TEST_GROUP =

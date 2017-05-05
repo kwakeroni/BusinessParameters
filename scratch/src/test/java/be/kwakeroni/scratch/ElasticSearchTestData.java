@@ -8,10 +8,10 @@ import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.basic.definition.es.ElasticSearchMappedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.es.ElasticSearchRangedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.es.ElasticSearchSimpleGroupFactory;
-import be.kwakeroni.parameters.basic.definition.factory.MappedGroupFactory;
-import be.kwakeroni.parameters.basic.definition.factory.RangedGroupFactory;
-import be.kwakeroni.parameters.basic.definition.factory.SimpleGroupFactory;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
+import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
+import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
+import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.scratch.tv.*;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -66,7 +66,7 @@ public class ElasticSearchTestData implements TestData {
 
 
         Services.loadDefinitions()
-                .map(definition -> definition.createGroup(FACTORY_CONTEXT))
+                .map(definition -> definition.apply(FACTORY_CONTEXT))
                 .forEach(this::register);
 
         addInsert(uuids, SimpleTVGroup.instance().getName(), SimpleTVGroup.getEntryData(Dag.MAANDAG, Slot.atHour(20)));
@@ -295,10 +295,10 @@ public class ElasticSearchTestData implements TestData {
     }
 
 
-    public static GroupFactoryContext<ElasticSearchGroup> FACTORY_CONTEXT = Contexts.of(
-            SimpleGroupFactory.class, new ElasticSearchSimpleGroupFactory(),
-            MappedGroupFactory.class, new ElasticSearchMappedGroupFactory(),
-            RangedGroupFactory.class, new ElasticSearchRangedGroupFactory()
+    public static DefinitionVisitorContext<ElasticSearchGroup> FACTORY_CONTEXT = Contexts.of(
+            SimpleDefinitionVisitor.class, new ElasticSearchSimpleGroupFactory(),
+            MappedDefinitionVisitor.class, new ElasticSearchMappedGroupFactory(),
+            RangedDefinitionVisitor.class, new ElasticSearchRangedGroupFactory()
     );
 
 }

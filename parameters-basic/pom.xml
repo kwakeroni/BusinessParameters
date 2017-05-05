@@ -20,6 +20,7 @@
         <module>parameters-basic-elasticsearch</module>
         <module>parameters-basic-inmemory</module>
         <module>parameters-basic-wireformat-raw</module>
+        <module>parameters-basic-jmx</module>
     </modules>
 
     <dependencyManagement>

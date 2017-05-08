@@ -9,6 +9,7 @@ import org.slf4j.MDC;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -22,11 +23,11 @@ class DirectBackendAdapter<Q> {
     private BackendWireFormatterContext wireFormatterContext;
 
     DirectBackendAdapter(BusinessParametersBackend<Q> backend, BackendWireFormatterContext wireFormatterContext) {
-        this.backend = backend;
-        this.wireFormatterContext = wireFormatterContext;
+        this.backend = Objects.requireNonNull(backend, "backend");
+        this.wireFormatterContext = Objects.requireNonNull(wireFormatterContext, "wireFormatterContext");
     }
 
-    public BusinessParametersBackend<?> getBackend(){
+    public BusinessParametersBackend<?> getBackend() {
         return this.backend;
     }
 

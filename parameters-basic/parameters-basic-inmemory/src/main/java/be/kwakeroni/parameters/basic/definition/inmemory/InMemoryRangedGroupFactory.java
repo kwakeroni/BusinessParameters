@@ -1,9 +1,11 @@
 package be.kwakeroni.parameters.basic.definition.inmemory;
 
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroupFactory;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemoryRangedGroup;
 import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.type.Ranges;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.BasicType;
 
@@ -13,7 +15,13 @@ import java.util.function.Function;
 /**
  * Created by kwakeroni on 14.04.17.
  */
-public class InMemoryRangedGroupFactory implements RangedDefinitionVisitor<InMemoryGroup> {
+public class InMemoryRangedGroupFactory implements RangedDefinitionVisitor<InMemoryGroup>, InMemoryGroupFactory {
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public Class<? extends DefinitionVisitor> getProvidedInterface() {
+        return RangedDefinitionVisitor.class;
+    }
 
     @Override
     public <T extends Comparable<? super T>> InMemoryGroup visit(Definition definition, ParameterType<T> type, InMemoryGroup subGroup) {

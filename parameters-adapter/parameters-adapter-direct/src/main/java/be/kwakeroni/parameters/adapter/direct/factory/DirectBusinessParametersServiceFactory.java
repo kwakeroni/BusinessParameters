@@ -35,9 +35,8 @@ public class DirectBusinessParametersServiceFactory implements BusinessParameter
         registerClientFormatters(clientRegistry);
         DefaultBackendWireFormatterContext backendRegistry = new DefaultBackendWireFormatterContext();
         registerBackendFormatters(backendRegistry);
-        BackendRegistry backends = new BackendRegistry(backendRegistry);
-        registerBackends(backends);
-        return new DirectBusinessParametersClient(clientRegistry, backends);
+
+        return new DirectBusinessParametersClient(getSingleBackend(), backendRegistry, clientRegistry);
     }
 
     private void registerClientFormatters(DefaultClientWireFormatterContext registry) {
@@ -50,6 +49,12 @@ public class DirectBusinessParametersServiceFactory implements BusinessParameter
         loader.forEach(registry::register);
     }
 
+    private BackendRegistry getAllBackends(DefaultBackendWireFormatterContext backendRegistry) {
+        BackendRegistry backends = new BackendRegistry(backendRegistry);
+        registerBackends(backends);
+        return backends;
+    }
+
     private void registerBackends(BackendRegistry registry) {
         ServiceLoader<BusinessParametersBackendFactory> loader = ServiceLoader.load(BusinessParametersBackendFactory.class);
         for (BusinessParametersBackendFactory factory : loader) {
@@ -58,5 +63,26 @@ public class DirectBusinessParametersServiceFactory implements BusinessParameter
                 registry.register(backend);
             }
         }
+    }
+
+    private BusinessParametersBackend<?> getSingleBackend() {
+        BusinessParametersBackend<?> result = null;
+
+        ServiceLoader<BusinessParametersBackendFactory> loader = ServiceLoader.load(BusinessParametersBackendFactory.class);
+        for (BusinessParametersBackendFactory factory : loader) {
+            if (backendFilter.test(factory)) {
+                if (result == null) {
+                    result = factory.getInstance();
+                } else {
+                    throw new IllegalStateException("Multiple backends are not supported");
+                }
+            }
+        }
+
+        if (result == null) {
+            throw new IllegalStateException("No Business Parameters backend found");
+        }
+
+        return result;
     }
 }

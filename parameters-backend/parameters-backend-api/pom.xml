@@ -12,4 +12,20 @@
     <artifactId>parameters-backend-api</artifactId>
     <packaging>bundle</packaging>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.definition</groupId>
+                <artifactId>parameters-definition-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.definition</groupId>
+            <artifactId>parameters-definition-api</artifactId>
+        </dependency>
+    </dependencies>
 </project>

@@ -1,10 +1,10 @@
 package be.kwakeroni.parameters.basic.definition;
 
 import be.kwakeroni.parameters.basic.definition.builder.SimpleDefinitionBuilder;
-import be.kwakeroni.parameters.basic.definition.factory.SimpleGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.function.Function;
 /**
  * Created by kwakeroni on 11.04.17.
  */
-final class DefaultSimpleDefinition implements SimpleGroupFactory.Definition, ParameterGroupDefinition {
+final class DefaultSimpleDefinition implements SimpleDefinitionVisitor.Definition, ParameterGroupDefinition {
 
     private String name;
     private final List<String> parameters = new ArrayList<>();
@@ -39,8 +39,8 @@ final class DefaultSimpleDefinition implements SimpleGroupFactory.Definition, Pa
     }
 
     @Override
-    public <G> G createGroup(GroupFactoryContext<G> context) {
-        return SimpleGroupFactory.from(context).createGroup(this);
+    public <G> G apply(DefinitionVisitorContext<G> context) {
+        return SimpleDefinitionVisitor.from(context).visit(this);
     }
 
     static Builder builder() {

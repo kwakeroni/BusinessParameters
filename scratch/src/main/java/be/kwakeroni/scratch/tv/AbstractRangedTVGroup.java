@@ -2,7 +2,6 @@ package be.kwakeroni.scratch.tv;
 
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
-import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchQueryBasedRangedGroup;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
@@ -65,15 +64,6 @@ public abstract class AbstractRangedTVGroup implements ParameterGroup<Ranged<Slo
         } else {
             return entryData(from, to, program).asMap();
         }
-    }
-
-    // For test purposes
-    public static final GroupData getData(AbstractRangedTVGroup group, Slot slot0From, Slot slot0To, String program0, Slot slot1From, Slot slot1To, String program1) {
-        return new DefaultGroupData(
-                inmemoryTestGroup(group.getName(), group.getDefinition()),
-                entryData(slot0From, slot0To, program0),
-                entryData(slot1From, slot1To, program1)
-        );
     }
 
     // For test purposes

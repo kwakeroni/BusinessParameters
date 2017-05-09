@@ -1,7 +1,6 @@
 package be.kwakeroni.scratch.tv;
 
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
-import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
@@ -10,6 +9,7 @@ import be.kwakeroni.parameters.basic.client.support.Entries;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
@@ -37,13 +37,6 @@ public class SimpleTVGroup implements ParameterGroup<Simple> {
     }
 
     // For test purposes
-    public static final GroupData getData(Dag dag, Slot slot) {
-        return new DefaultGroupData(
-                INMEMORY_TEST_GROUP,
-                getEntryData(dag, slot)
-        );
-    }
-
     public static final EntryData getEntryData(Dag dag, Slot slot) {
         return DefaultEntryData.of(
                 DAY.getName(), dag.toString(),

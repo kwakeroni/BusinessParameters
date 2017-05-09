@@ -1,11 +1,11 @@
 package be.kwakeroni.parameters.basic.definition;
 
 import be.kwakeroni.parameters.basic.definition.builder.RangedDefinitionBuilder;
-import be.kwakeroni.parameters.basic.definition.factory.RangedGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilder;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.BasicType;
 
@@ -15,14 +15,14 @@ import java.util.function.Function;
 /**
  * Created by kwakeroni on 11.04.17.
  */
-final class DefaultRangedDefinition implements RangedGroupFactory.Definition, ParameterGroupDefinition {
+final class DefaultRangedDefinition implements RangedDefinitionVisitor.Definition, ParameterGroupDefinition {
 
     private String rangeParameter;
     private ParameterGroupDefinition subGroupDefinition;
     private Factory factory;
 
     private interface Factory {
-        <G> G createGroup(RangedGroupFactory<G> factory, RangedGroupFactory.Definition definition, G subGroup);
+        <G> G createGroup(RangedDefinitionVisitor<G> factory, RangedDefinitionVisitor.Definition definition, G subGroup);
     }
 
     @Override
@@ -40,9 +40,9 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
     }
 
     @Override
-    public <G> G createGroup(GroupFactoryContext<G> context) {
-        G subGroup = subGroupDefinition.createGroup(context);
-        return factory.createGroup(RangedGroupFactory.from(context), this, subGroup);
+    public <G> G apply(DefinitionVisitorContext<G> context) {
+        G subGroup = subGroupDefinition.apply(context);
+        return factory.createGroup(RangedDefinitionVisitor.from(context), this, subGroup);
     }
 
     static Builder builder() {
@@ -57,8 +57,8 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
             rangeParameter = name;
             factory = new Factory() {
                 @Override
-                public <G> G createGroup(RangedGroupFactory<G> f, RangedGroupFactory.Definition d, G s) {
-                    return f.createGroup(d, type, s);
+                public <G> G createGroup(RangedDefinitionVisitor<G> f, RangedDefinitionVisitor.Definition d, G s) {
+                    return f.visit(d, type, s);
                 }
             };
             return this;
@@ -69,8 +69,8 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
             rangeParameter = name;
             factory = new Factory() {
                 @Override
-                public <G> G createGroup(RangedGroupFactory<G> factory, RangedGroupFactory.Definition definition, G subGroup) {
-                    return factory.createGroup(definition, type, comparator, subGroup);
+                public <G> G createGroup(RangedDefinitionVisitor<G> factory, RangedDefinitionVisitor.Definition definition, G subGroup) {
+                    return factory.visit(definition, type, comparator, subGroup);
                 }
             };
             return this;
@@ -81,8 +81,8 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
             rangeParameter = name;
             factory = new Factory() {
                 @Override
-                public <G> G createGroup(RangedGroupFactory<G> factory, RangedGroupFactory.Definition definition, G subGroup) {
-                    return factory.createGroup(definition, type, subGroup);
+                public <G> G createGroup(RangedDefinitionVisitor<G> factory, RangedDefinitionVisitor.Definition definition, G subGroup) {
+                    return factory.visit(definition, type, subGroup);
                 }
             };
             return this;
@@ -93,8 +93,8 @@ final class DefaultRangedDefinition implements RangedGroupFactory.Definition, Pa
             rangeParameter = name;
             factory = new Factory() {
                 @Override
-                public <G> G createGroup(RangedGroupFactory<G> factory, RangedGroupFactory.Definition definition, G subGroup) {
-                    return factory.createGroup(definition, type, converter, basicType, subGroup);
+                public <G> G createGroup(RangedDefinitionVisitor<G> factory, RangedDefinitionVisitor.Definition definition, G subGroup) {
+                    return factory.visit(definition, type, converter, basicType, subGroup);
                 }
             };
             return this;

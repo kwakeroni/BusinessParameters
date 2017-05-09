@@ -3,15 +3,14 @@ package be.kwakeroni.scratch;
 import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.factory.ElasticSearchBackendServiceFactory;
-import be.kwakeroni.parameters.backend.es.service.ElasticSearchBackend;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.basic.definition.es.ElasticSearchMappedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.es.ElasticSearchRangedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.es.ElasticSearchSimpleGroupFactory;
-import be.kwakeroni.parameters.basic.definition.factory.MappedGroupFactory;
-import be.kwakeroni.parameters.basic.definition.factory.RangedGroupFactory;
-import be.kwakeroni.parameters.basic.definition.factory.SimpleGroupFactory;
-import be.kwakeroni.parameters.definition.api.factory.GroupFactoryContext;
+import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
+import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
+import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.scratch.tv.*;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -30,13 +29,11 @@ public class ElasticSearchTestData implements TestData {
     private static Logger LOG = org.slf4j.LoggerFactory.getLogger(ElasticSearchTestData.class);
 
     private final ElasticSearchTestNode elasticSearch;
-    private final ElasticSearchBackend backend;
     private final Client client = new Client();
     private final List<String> groups = new ArrayList<>();
 
 
     public ElasticSearchTestData() {
-        this.backend = ElasticSearchBackendServiceFactory.getSingletonInstance();
         this.elasticSearch = ElasticSearchTestNode.getRunningInstance();
         reset();
     }
@@ -53,7 +50,6 @@ public class ElasticSearchTestData implements TestData {
         } catch (Exception exc) {
         }
 
-        this.backend.getGroupNames().forEach(this.backend::unregisterGroup);
         this.groups.clear();
         try {
             callES("/parameters", WebResource::delete);
@@ -66,7 +62,7 @@ public class ElasticSearchTestData implements TestData {
 
 
         Services.loadDefinitions()
-                .map(definition -> definition.createGroup(FACTORY_CONTEXT))
+                .map(definition -> definition.apply(FACTORY_CONTEXT))
                 .forEach(this::register);
 
         addInsert(uuids, SimpleTVGroup.instance().getName(), SimpleTVGroup.getEntryData(Dag.MAANDAG, Slot.atHour(20)));
@@ -141,12 +137,7 @@ public class ElasticSearchTestData implements TestData {
         return groups.contains(name);
     }
 
-    private void registerCatalog() {
-
-    }
-
     private void register(ElasticSearchGroup group) {
-        backend.registerGroup(group);
         this.groups.add(group.getName());
     }
 
@@ -196,7 +187,7 @@ public class ElasticSearchTestData implements TestData {
         return uuids;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void addInsert(Map<String, List<String>> accu, Function<Boolean, String> name, Function<Boolean, Map<String, ?>>... entryDatas) {
         addInsert(accu, name.apply(false), (Map<String, ?>[]) Arrays.stream(entryDatas).map(f -> f.apply(false)).toArray(Map[]::new));
         addInsert(accu, name.apply(true), (Map<String, ?>[]) Arrays.stream(entryDatas).map(f -> f.apply(true)).toArray(Map[]::new));
@@ -295,10 +286,10 @@ public class ElasticSearchTestData implements TestData {
     }
 
 
-    public static GroupFactoryContext<ElasticSearchGroup> FACTORY_CONTEXT = Contexts.of(
-            SimpleGroupFactory.class, new ElasticSearchSimpleGroupFactory(),
-            MappedGroupFactory.class, new ElasticSearchMappedGroupFactory(),
-            RangedGroupFactory.class, new ElasticSearchRangedGroupFactory()
+    public static DefinitionVisitorContext<ElasticSearchGroup> FACTORY_CONTEXT = Contexts.of(
+            SimpleDefinitionVisitor.class, new ElasticSearchSimpleGroupFactory(),
+            MappedDefinitionVisitor.class, new ElasticSearchMappedGroupFactory(),
+            RangedDefinitionVisitor.class, new ElasticSearchRangedGroupFactory()
     );
 
 }

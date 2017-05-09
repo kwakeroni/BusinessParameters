@@ -1,7 +1,6 @@
 package be.kwakeroni.scratch.tv;
 
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
-import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchMappedGroup;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
@@ -17,6 +16,7 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
@@ -49,15 +49,6 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
         return DefaultEntryData.of(
                 DAY.getName(), day.toString(),
                 PROGRAM.getName(), program
-        );
-    }
-
-    // For test purposes
-    public static final GroupData getData(Dag dag0, String program0, Dag dag1, String program1) {
-        return new DefaultGroupData(
-                INMEMORY_TEST_GROUP,
-                entryData(dag0, program0),
-                entryData(dag1, program1)
         );
     }
 

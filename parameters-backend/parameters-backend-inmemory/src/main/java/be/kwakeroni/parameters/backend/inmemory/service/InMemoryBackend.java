@@ -6,7 +6,6 @@ import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.api.*;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendGroupFactoryContext;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultGroupData;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.slf4j.Logger;

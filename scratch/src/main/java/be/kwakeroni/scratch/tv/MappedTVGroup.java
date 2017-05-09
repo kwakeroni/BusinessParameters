@@ -16,7 +16,6 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;

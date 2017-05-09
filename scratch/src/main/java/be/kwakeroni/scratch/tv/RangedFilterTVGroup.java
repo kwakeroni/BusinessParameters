@@ -3,7 +3,6 @@ package be.kwakeroni.scratch.tv;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchPostFilterRangedGroup;
 import be.kwakeroni.parameters.basic.type.Ranges;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck

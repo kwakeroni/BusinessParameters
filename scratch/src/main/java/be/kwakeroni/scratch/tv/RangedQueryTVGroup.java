@@ -4,7 +4,6 @@ import be.kwakeroni.parameters.backend.es.api.ElasticSearchDataType;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchQueryBasedRangedGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemoryRangedGroup;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck

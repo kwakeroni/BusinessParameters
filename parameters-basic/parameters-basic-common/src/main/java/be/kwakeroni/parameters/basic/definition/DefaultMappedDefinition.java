@@ -2,10 +2,10 @@ package be.kwakeroni.parameters.basic.definition;
 
 import be.kwakeroni.parameters.basic.definition.builder.MappedDefinitionBuilder;
 import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilder;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
 import java.util.function.Function;
 

@@ -2,10 +2,10 @@ package be.kwakeroni.parameters.basic.definition;
 
 import be.kwakeroni.parameters.basic.definition.builder.RangedDefinitionBuilder;
 import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilder;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.BasicType;
 

@@ -6,7 +6,6 @@ import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.es.api.*;
 import be.kwakeroni.parameters.backend.es.factory.ElasticSearchGroupFactoryContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

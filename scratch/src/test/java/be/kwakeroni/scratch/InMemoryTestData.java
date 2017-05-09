@@ -11,7 +11,6 @@ import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryMappedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryRangedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.inmemory.InMemorySimpleGroupFactory;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.scratch.tv.*;
 
@@ -19,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck

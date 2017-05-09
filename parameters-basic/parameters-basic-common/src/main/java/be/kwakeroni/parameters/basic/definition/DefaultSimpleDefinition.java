@@ -2,9 +2,9 @@ package be.kwakeroni.parameters.basic.definition;
 
 import be.kwakeroni.parameters.basic.definition.builder.SimpleDefinitionBuilder;
 import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
 import java.util.ArrayList;
 import java.util.Collection;

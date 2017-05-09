@@ -6,6 +6,7 @@ package be.kwakeroni.parameters.definition.api;
 public interface ParameterGroupDefinition {
 
     public String getName();
+
     public <G> G apply(DefinitionVisitorContext<G> context);
 
 }

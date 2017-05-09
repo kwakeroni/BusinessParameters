@@ -6,7 +6,6 @@ import be.kwakeroni.parameters.basic.backend.es.ElasticSearchQueryBasedRangedGro
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemoryMappedGroup;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
 /**
  * Created by kwakeroni on 27/04/17.

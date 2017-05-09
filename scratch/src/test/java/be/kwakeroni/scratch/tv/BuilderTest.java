@@ -3,8 +3,8 @@ package be.kwakeroni.scratch.tv;
 
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.scratch.ElasticSearchTestData;
 import be.kwakeroni.scratch.InMemoryTestData;
 import be.kwakeroni.scratch.Services;
@@ -15,7 +15,6 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -10,7 +10,6 @@ import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
  * Created by kwakeroni on 14.04.17.
  */
 public class InMemoryMappedGroupFactory implements MappedDefinitionVisitor<InMemoryGroup>, InMemoryGroupFactory {
-
     @Override
     @SuppressWarnings("rawtypes")
     public Class<? extends DefinitionVisitor> getProvidedInterface() {

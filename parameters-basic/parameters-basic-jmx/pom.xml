@@ -11,5 +11,26 @@
 
     <artifactId>parameters-basic-jmx</artifactId>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.adapter</groupId>
+                <artifactId>parameters-adapter</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.adapter</groupId>
+            <artifactId>parameters-adapter-jmx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-common</artifactId>
+        </dependency>
+    </dependencies>
 </project>

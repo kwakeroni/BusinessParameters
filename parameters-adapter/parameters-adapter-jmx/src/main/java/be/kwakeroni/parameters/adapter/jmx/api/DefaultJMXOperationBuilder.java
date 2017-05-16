@@ -94,7 +94,7 @@ class DefaultJMXOperationBuilder implements JMXOperationBuilder {
     }
 
     @Override
-    public GroupOperation toGroupOperation() {
-        return new DefaultGroupOperation(this.name, this.operationTypes);
+    public JMXOperation toOperation() {
+        return new DefaultJMXOperation(this.name, this.operationTypes);
     }
 }

@@ -23,5 +23,5 @@ public interface JMXGroupBuilder {
 
     public MBeanInfo getMBeanInfo(Class<?> targetClass);
 
-    public Map<String, GroupOperation> getOperationsByName();
+    public Map<String, JMXOperation> getOperationsByName();
 }

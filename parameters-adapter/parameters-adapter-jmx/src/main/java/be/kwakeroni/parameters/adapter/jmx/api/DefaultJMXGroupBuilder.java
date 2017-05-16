@@ -68,7 +68,7 @@ class DefaultJMXGroupBuilder implements JMXGroupBuilder {
     }
 
     @Override
-    public Map<String, GroupOperation> getOperationsByName() {
-        return this.operations.values().stream().collect(Collectors.toMap(JMXOperationBuilder::getName, JMXOperationBuilder::toGroupOperation));
+    public Map<String, JMXOperation> getOperationsByName() {
+        return this.operations.values().stream().collect(Collectors.toMap(JMXOperationBuilder::getName, JMXOperationBuilder::toOperation));
     }
 }

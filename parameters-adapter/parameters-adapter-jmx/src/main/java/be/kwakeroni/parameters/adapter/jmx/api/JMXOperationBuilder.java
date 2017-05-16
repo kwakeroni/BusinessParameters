@@ -31,5 +31,5 @@ public interface JMXOperationBuilder {
 
     public MBeanOperationInfo toOperationInfo();
 
-    public GroupOperation toGroupOperation();
+    public JMXOperation toOperation();
 }

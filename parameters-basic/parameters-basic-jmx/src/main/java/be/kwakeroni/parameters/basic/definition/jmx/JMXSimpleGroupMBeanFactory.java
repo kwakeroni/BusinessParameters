@@ -10,6 +10,7 @@ import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
  */
 public class JMXSimpleGroupMBeanFactory implements SimpleDefinitionVisitor<JMXGroupBuilder>, JMXGroupMBeanFactory {
 
+
     @Override
     @SuppressWarnings("rawtypes")
     public Class<? extends DefinitionVisitor> getProvidedInterface() {
@@ -24,11 +25,13 @@ public class JMXSimpleGroupMBeanFactory implements SimpleDefinitionVisitor<JMXGr
                 .withParameters(definition.getParameters());
 
         builder.addQuery(Operations.GET_VALUE)
+                .pushType(BasicJMXBackendWireFormatter.ACTION_TYPE_VALUE)
                 .withName("getValue")
                 .withDescription("retrieve a parameter value for the selected entry")
                 .appendParameter("parameter", definition.getParameters());
 
         builder.addQuery(Operations.GET_ENTRY)
+                .pushType(BasicJMXBackendWireFormatter.ACTION_TYPE_ENTRY)
                 .withName("getEntry")
                 .withDescription("retrieve the selected entry");
 

@@ -20,9 +20,11 @@ public class JMXMappedGroupMBeanFactory implements MappedDefinitionVisitor<JMXGr
     public JMXGroupBuilder visit(Definition definition, JMXGroupBuilder subGroup) {
 
         subGroup.getQuery(Operations.GET_VALUE)
+                .pushType(BasicJMXBackendWireFormatter.ACTION_TYPE_MAPPED)
                 .prependParameter(definition.getKeyParameter());
 
         subGroup.getQuery(Operations.GET_ENTRY)
+                .pushType(BasicJMXBackendWireFormatter.ACTION_TYPE_MAPPED)
                 .prependParameter(definition.getKeyParameter());
 
         return subGroup;

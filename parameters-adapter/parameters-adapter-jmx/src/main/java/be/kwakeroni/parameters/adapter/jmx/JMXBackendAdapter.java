@@ -2,6 +2,7 @@ package be.kwakeroni.parameters.adapter.jmx;
 
 import be.kwakeroni.parameters.adapter.jmx.api.JMXGroupBuilder;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,15 +22,17 @@ public class JMXBackendAdapter {
 
     private final MBeanServer mbeanServer;
     private final JMXGroupMBeanFactoryContext factoryContext;
+    private final BackendWireFormatterContext wireFormatterContext;
     private final Map<BusinessParametersBackend<?>, Map<String, Object>> beans = new HashMap<>();
 
-    public JMXBackendAdapter(JMXGroupMBeanFactoryContext factoryContext) {
-        this(ManagementFactory.getPlatformMBeanServer(), factoryContext);
+    public JMXBackendAdapter(JMXGroupMBeanFactoryContext factoryContext, BackendWireFormatterContext wireFormatterContext) {
+        this(ManagementFactory.getPlatformMBeanServer(), factoryContext, wireFormatterContext);
     }
 
-    public JMXBackendAdapter(MBeanServer server, JMXGroupMBeanFactoryContext factoryContext) {
+    public JMXBackendAdapter(MBeanServer server, JMXGroupMBeanFactoryContext factoryContext, BackendWireFormatterContext wireFormatterContext) {
         this.mbeanServer = server;
         this.factoryContext = factoryContext;
+        this.wireFormatterContext = wireFormatterContext;
     }
 
 
@@ -43,7 +46,7 @@ public class JMXBackendAdapter {
 
     private void register(BusinessParametersBackend<?> backend, JMXGroupBuilder builder) {
         String groupName = builder.getGroupName();
-        Object mbean = builder.build();
+        GroupMBean mbean = new GroupMBean(groupName, builder.getMBeanInfo(GroupMBean.class), builder.getOperationsByName(), backend, wireFormatterContext);
         try {
             register(backend, "be.kwakeroni.parameters:backend=" + backend.toString() + ",group=" + groupName, mbean);
         } catch (JMException exc) {

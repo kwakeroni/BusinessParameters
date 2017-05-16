@@ -1,6 +1,8 @@
 package be.kwakeroni.parameters.adapter.jmx.api;
 
+import javax.management.MBeanInfo;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Created by kwakeroni on 09/05/17.
@@ -19,6 +21,7 @@ public interface JMXGroupBuilder {
 
     public String getGroupName();
 
-    public Object build();
+    public MBeanInfo getMBeanInfo(Class<?> targetClass);
 
+    public Map<String, GroupOperation> getOperationsByName();
 }

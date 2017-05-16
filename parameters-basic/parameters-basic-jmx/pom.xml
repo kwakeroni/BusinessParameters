@@ -32,5 +32,14 @@
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-backend</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+        </dependency>
     </dependencies>
 </project>

@@ -12,6 +12,7 @@ import be.kwakeroni.parameters.client.api.factory.ClientWireFormatterFactory;
 
 import java.util.ServiceLoader;
 import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -41,12 +42,16 @@ public class DirectBusinessParametersServiceFactory implements BusinessParameter
 
     private void registerClientFormatters(DefaultClientWireFormatterContext registry) {
         ServiceLoader<ClientWireFormatterFactory> loader = ServiceLoader.load(ClientWireFormatterFactory.class);
-        loader.forEach(registry::register);
+        StreamSupport.stream(loader.spliterator(), false)
+                .filter(factory -> "raw".equals(factory.getWireFormat()))
+                .forEach(registry::register);
     }
 
     private void registerBackendFormatters(DefaultBackendWireFormatterContext registry) {
         ServiceLoader<BackendWireFormatterFactory> loader = ServiceLoader.load(BackendWireFormatterFactory.class);
-        loader.forEach(registry::register);
+        StreamSupport.stream(loader.spliterator(), false)
+                .filter(factory -> "raw".equals(factory.getWireFormat()))
+                .forEach(registry::register);
     }
 
     private BackendRegistry getAllBackends(DefaultBackendWireFormatterContext backendRegistry) {

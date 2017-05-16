@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Created by kwakeroni on 10/05/17.
@@ -49,25 +50,25 @@ class DefaultJMXGroupBuilder implements JMXGroupBuilder {
     }
 
     @Override
-    public Object build() {
-        return new GroupMBean(name, createMBeanInfo());
-    }
-
-    private MBeanInfo createMBeanInfo() {
+    public MBeanInfo getMBeanInfo(Class<?> targetClass) {
 
         final Descriptor descriptor = new DescriptorSupport();
         descriptor.setField("name", this.name);
         descriptor.setField("descriptorType", "mbean");
 
         return new MBeanInfo(
-                GroupMBean.class.getName(),
+                targetClass.getName(),
                 "Provides access to parameters of group " + name,
                 null,      // attributes
                 null,      // constructors
-                operations.values().stream().map(JMXOperationBuilder::build).toArray(MBeanOperationInfo[]::new),
+                operations.values().stream().map(JMXOperationBuilder::toOperationInfo).toArray(MBeanOperationInfo[]::new),
                 null,      // notifications
                 descriptor);
 
     }
 
+    @Override
+    public Map<String, GroupOperation> getOperationsByName() {
+        return this.operations.values().stream().collect(Collectors.toMap(JMXOperationBuilder::getName, JMXOperationBuilder::toGroupOperation));
+    }
 }

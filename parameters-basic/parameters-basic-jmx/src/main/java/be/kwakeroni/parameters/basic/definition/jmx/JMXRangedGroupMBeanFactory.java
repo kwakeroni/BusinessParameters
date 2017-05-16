@@ -24,9 +24,11 @@ public class JMXRangedGroupMBeanFactory implements RangedDefinitionVisitor<JMXGr
     private JMXGroupBuilder visit(Definition definition, JMXGroupBuilder subGroup) {
 
         subGroup.getQuery(Operations.GET_VALUE)
+                .pushType(BasicJMXBackendWireFormatter.ACTION_TYPE_RANGED)
                 .prependParameter(definition.getRangeParameter());
 
         subGroup.getQuery(Operations.GET_ENTRY)
+                .pushType(BasicJMXBackendWireFormatter.ACTION_TYPE_RANGED)
                 .prependParameter(definition.getRangeParameter());
 
         return subGroup;

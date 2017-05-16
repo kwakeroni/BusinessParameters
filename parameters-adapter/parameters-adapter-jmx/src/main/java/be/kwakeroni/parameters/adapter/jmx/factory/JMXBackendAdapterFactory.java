@@ -4,6 +4,7 @@ import be.kwakeroni.parameters.adapter.jmx.JMXBackendAdapter;
 import be.kwakeroni.parameters.adapter.jmx.JMXGroupMBeanFactoryContext;
 import be.kwakeroni.parameters.adapter.jmx.api.JMXGroupMBeanFactory;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
+import be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory;
 import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCatalog;
@@ -28,7 +29,9 @@ public class JMXBackendAdapterFactory {
     }
 
     public JMXBackendAdapter newInstance() {
-        JMXBackendAdapter adapter = new JMXBackendAdapter(loadFactories());
+        DefaultBackendWireFormatterContext wireFormatterContext = new DefaultBackendWireFormatterContext();
+        registerBackendFormatters(wireFormatterContext);
+        JMXBackendAdapter adapter = new JMXBackendAdapter(loadFactories(), wireFormatterContext);
         registerBackends(adapter);
         return adapter;
     }
@@ -49,6 +52,14 @@ public class JMXBackendAdapterFactory {
         loader.forEach(factory -> context.register(factory.getProvidedInterface(), factory));
         return context;
     }
+
+    private void registerBackendFormatters(DefaultBackendWireFormatterContext registry) {
+        ServiceLoader<BackendWireFormatterFactory> loader = ServiceLoader.load(BackendWireFormatterFactory.class);
+        StreamSupport.stream(loader.spliterator(), false)
+                .filter(factory -> "jmx".equals(factory.getWireFormat()))
+                .forEach(registry::register);
+    }
+
 
     private static Supplier<Stream<ParameterGroupDefinition>> loadDefinitions() {
         return () -> loadServices(ParameterGroupDefinitionCatalog.class)

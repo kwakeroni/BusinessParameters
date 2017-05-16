@@ -17,6 +17,7 @@ class DefaultJMXOperationBuilder implements JMXOperationBuilder {
     private String description;
     private int infoType;
     private List<MBeanParameterInfo> parameters = new ArrayList<>();
+    private List<String> operationTypes = new ArrayList<>();
 
 
     DefaultJMXOperationBuilder(int infoType) {
@@ -32,6 +33,12 @@ class DefaultJMXOperationBuilder implements JMXOperationBuilder {
     @Override
     public JMXOperationBuilder withDescription(String description) {
         this.description = description;
+        return this;
+    }
+
+    @Override
+    public JMXOperationBuilder pushType(String type) {
+        this.operationTypes.add(0, type);
         return this;
     }
 
@@ -68,11 +75,15 @@ class DefaultJMXOperationBuilder implements JMXOperationBuilder {
         return new ImmutableDescriptor(
                 new String[]{"legalValues"}, new Object[]{legalValues.toArray()}
         );
-
     }
 
     @Override
-    public MBeanOperationInfo build() {
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public MBeanOperationInfo toOperationInfo() {
         this.parameters.toArray(new MBeanParameterInfo[0]);
         return new MBeanOperationInfo(
                 this.name,
@@ -80,6 +91,10 @@ class DefaultJMXOperationBuilder implements JMXOperationBuilder {
                 this.parameters.toArray(new MBeanParameterInfo[0]),
                 String.class.getName(),
                 this.infoType);
+    }
 
+    @Override
+    public GroupOperation toGroupOperation() {
+        return new DefaultGroupOperation(this.name, this.operationTypes);
     }
 }

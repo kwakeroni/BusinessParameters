@@ -9,6 +9,7 @@ import java.util.function.Consumer;
  */
 public interface BackendWireFormatterFactory {
 
+    public String getWireFormat();
     public void registerInstance(Registry registry);
     public void unregisterInstance(Consumer<Class<?>> registry);
 

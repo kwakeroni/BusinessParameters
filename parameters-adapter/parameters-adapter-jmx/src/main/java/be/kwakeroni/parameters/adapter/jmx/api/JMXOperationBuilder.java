@@ -17,6 +17,8 @@ public interface JMXOperationBuilder {
 
     public JMXOperationBuilder withDescription(String description);
 
+    public JMXOperationBuilder pushType(String type);
+
     public JMXOperationBuilder prependParameter(String name);
 
     public JMXOperationBuilder prependParameter(String name, Collection<?> legalValues);
@@ -25,6 +27,9 @@ public interface JMXOperationBuilder {
 
     public JMXOperationBuilder appendParameter(String name, Collection<?> legalValues);
 
+    public String getName();
 
-    public MBeanOperationInfo build();
+    public MBeanOperationInfo toOperationInfo();
+
+    public GroupOperation toGroupOperation();
 }

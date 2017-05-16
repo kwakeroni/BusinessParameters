@@ -1,7 +1,7 @@
 package be.kwakeroni.parameters.adapter.jmx;
 
-import be.kwakeroni.parameters.adapter.jmx.api.GroupOperation;
-import be.kwakeroni.parameters.adapter.jmx.api.JMXOperationAction;
+import be.kwakeroni.parameters.adapter.jmx.api.JMXOperation;
+import be.kwakeroni.parameters.adapter.jmx.api.JMXInvocation;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
@@ -21,11 +21,11 @@ class GroupMBean implements DynamicMBean {
 
     private final String groupName;
     private final MBeanInfo mbeanInfo;
-    private final Map<String, GroupOperation> operations;
+    private final Map<String, JMXOperation> operations;
     private final BusinessParametersBackend<?> backend;
     private final BackendWireFormatterContext wireFormatterContext;
 
-    GroupMBean(String groupName, MBeanInfo mbeanInfo, Map<String, GroupOperation> operations, BusinessParametersBackend<?> backend, BackendWireFormatterContext wireFormatterContext) {
+    GroupMBean(String groupName, MBeanInfo mbeanInfo, Map<String, JMXOperation> operations, BusinessParametersBackend<?> backend, BackendWireFormatterContext wireFormatterContext) {
         this.groupName = Objects.requireNonNull(groupName, "groupName");
         this.mbeanInfo = Objects.requireNonNull(mbeanInfo, "mbeanInfo");
         this.operations = operations;
@@ -64,21 +64,21 @@ class GroupMBean implements DynamicMBean {
 
     @Override
     public Object invoke(String actionName, Object[] params, String[] signature) throws MBeanException, ReflectionException {
-        JMXOperationAction action = this.operations.get(actionName).withParameters(params, signature);
-        return execute(this.groupName, action);
+        JMXInvocation invocation = this.operations.get(actionName).withParameters(params, signature);
+        return execute(this.groupName, invocation);
     }
 
-    private Object execute(String groupName, JMXOperationAction action) {
+    private Object execute(String groupName, JMXInvocation invocation) {
         try {
-            return execute(groupName, action, this.backend);
+            return execute(groupName, invocation, this.backend);
         } catch (RuntimeException exc) {
-            LOG.error("Could not execute action {} on group {}", action.getActionType(), groupName, exc);
+            LOG.error("Could not execute invocation {} on group {}", invocation.getOperationType(), groupName, exc);
             throw exc;
         }
     }
 
-    private <Q> Object execute(String groupName, JMXOperationAction action, BusinessParametersBackend<Q> backend) {
-        BackendQuery<? extends Q, ?> query = backend.internalizeQuery(groupName, action, this.wireFormatterContext);
+    private <Q> Object execute(String groupName, JMXInvocation invocation, BusinessParametersBackend<Q> backend) {
+        BackendQuery<? extends Q, ?> query = backend.internalizeQuery(groupName, invocation, this.wireFormatterContext);
         return execute(groupName, query, backend);
     }
 

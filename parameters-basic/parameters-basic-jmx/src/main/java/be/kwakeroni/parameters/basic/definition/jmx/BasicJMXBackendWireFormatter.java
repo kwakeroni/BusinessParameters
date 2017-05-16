@@ -1,6 +1,6 @@
 package be.kwakeroni.parameters.basic.definition.jmx;
 
-import be.kwakeroni.parameters.adapter.jmx.api.JMXOperationAction;
+import be.kwakeroni.parameters.adapter.jmx.api.JMXInvocation;
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
@@ -22,9 +22,9 @@ public class BasicJMXBackendWireFormatter implements BasicBackendWireFormatter {
     @Override
     public <Q> Optional<Q> tryInternalize(BackendGroup<Q> group, Object actionObject, BackendWireFormatterContext context) {
 
-        JMXOperationAction action = (JMXOperationAction) actionObject;
+        JMXInvocation action = (JMXInvocation) actionObject;
 
-        switch (action.getActionType()) {
+        switch (action.getOperationType()) {
             case ACTION_TYPE_VALUE:
                 return Optional.of(internalizeValueQuery(action.popParameter(), group, context));
             case ACTION_TYPE_ENTRY:

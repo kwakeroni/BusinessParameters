@@ -40,6 +40,11 @@ public class JMXBackendAdapter {
         backend.getGroupNames().forEach(name -> register(backend, name));
     }
 
+    public void unregister(BusinessParametersBackend<?> backend) {
+        backend.getGroupNames().forEach(name -> unregister(backend, name));
+        this.beans.remove(backend);
+    }
+
     private void register(BusinessParametersBackend<?> backend, String groupName) {
         register(backend, createMBeanBuilder(backend, groupName));
     }
@@ -48,21 +53,32 @@ public class JMXBackendAdapter {
         String groupName = builder.getGroupName();
         GroupMBean mbean = new GroupMBean(groupName, builder.getMBeanInfo(GroupMBean.class), builder.getOperationsByName(), backend, wireFormatterContext);
         try {
-            register(backend, "be.kwakeroni.parameters:backend=" + backend.toString() + ",group=" + groupName, mbean);
+            mbeanServer.registerMBean(mbean, getObjectName(backend, groupName));
         } catch (JMException exc) {
             LOG.error("Unable to register JMX bean for group " + groupName, exc);
         }
         this.beans.computeIfAbsent(backend, be -> new HashMap<>(be.getGroupNames().size())).put(groupName, mbean);
     }
 
-    private void register(BusinessParametersBackend<?> backend, String name, Object mbean) throws JMException {
-        final ObjectName objectName = new ObjectName(name);
-        mbeanServer.registerMBean(mbean, objectName);
+    private void unregister(BusinessParametersBackend<?> backend, String groupName){
+        try {
+            mbeanServer.unregisterMBean(getObjectName(backend, groupName));
+        } catch (JMException exc){
+            LOG.error("Unable to unregister JMX bean for group " + groupName, exc);
+        }
+    }
 
+    private void unregister(String name) throws JMException {
+        final ObjectName objectName = new ObjectName(name);
+        mbeanServer.unregisterMBean(objectName);
     }
 
     private JMXGroupBuilder createMBeanBuilder(BusinessParametersBackend<?> backend, String name) {
         return backend.getDefinition(name).apply(this.factoryContext);
     }
 
+    private ObjectName getObjectName(BusinessParametersBackend<?> backend, String groupName) throws JMException {
+        String name = "be.kwakeroni.parameters:backend=" + backend.toString() + ",group=" + groupName;
+        return new ObjectName(name);
+    }
 }

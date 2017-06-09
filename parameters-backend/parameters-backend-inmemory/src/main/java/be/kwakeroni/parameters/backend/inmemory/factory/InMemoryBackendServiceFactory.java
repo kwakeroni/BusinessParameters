@@ -40,7 +40,7 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
     private static InMemoryBackendGroupFactoryContext loadFactories() {
         ServiceLoader<InMemoryGroupFactory> loader = ServiceLoader.load(InMemoryGroupFactory.class);
         InMemoryBackendGroupFactoryContext context = new InMemoryBackendGroupFactoryContext();
-        loader.forEach(factory -> context.register(factory.getProvidedInterface(), factory));
+        loader.forEach(context::register);
         return context;
     }
 

@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.adapter.jmx;
 
 import be.kwakeroni.parameters.adapter.jmx.api.JMXGroupBuilder;
+import be.kwakeroni.parameters.adapter.jmx.api.JMXGroupMBeanFactory;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
@@ -16,8 +17,16 @@ public class JMXGroupMBeanFactoryContext implements DefinitionVisitorContext<JMX
 
     private Map<Class<? extends DefinitionVisitor<?>>, DefinitionVisitor<?>> factories = new HashMap<>();
 
-    public <I extends DefinitionVisitor<?>> void register(Class<I> type, DefinitionVisitor<JMXGroupBuilder> factory) {
+    private <I extends DefinitionVisitor<?>> void register(Class<I> type, DefinitionVisitor<JMXGroupBuilder> factory) {
         this.factories.put(type, type.cast(factory));
+    }
+
+    public void register(JMXGroupMBeanFactory factory){
+        register(factory.getProvidedInterface(), factory);
+    }
+
+    public void unregister(JMXGroupMBeanFactory factory){
+        this.factories.remove(factory.getProvidedInterface(), factory);
     }
 
     @Override

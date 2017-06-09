@@ -56,7 +56,7 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <artifactId>be.kwakeroni.parameters.basic</artifactId>
+                <artifactId>parameters-basic-jmx</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>

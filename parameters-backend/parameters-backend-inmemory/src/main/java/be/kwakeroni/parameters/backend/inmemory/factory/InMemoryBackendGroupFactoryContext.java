@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.backend.inmemory.factory;
 
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroupFactory;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
@@ -15,8 +16,16 @@ public class InMemoryBackendGroupFactoryContext implements DefinitionVisitorCont
 
     private Map<Class<? extends DefinitionVisitor<?>>, DefinitionVisitor<?>> factories = new HashMap<>();
 
-    public <I extends DefinitionVisitor<?>> void register(Class<I> type, DefinitionVisitor<InMemoryGroup> factory) {
+    private <I extends DefinitionVisitor<?>> void register(Class<I> type, DefinitionVisitor<InMemoryGroup> factory) {
         this.factories.put(type, type.cast(factory));
+    }
+
+    public void register(InMemoryGroupFactory factory){
+        register(factory.getProvidedInterface(), factory);
+    }
+
+    public void unregister(InMemoryGroupFactory factory){
+        this.factories.remove(factory.getProvidedInterface(), factory);
     }
 
     @Override

@@ -49,7 +49,7 @@ public class JMXBackendAdapterFactory {
     private static JMXGroupMBeanFactoryContext loadFactories() {
         ServiceLoader<JMXGroupMBeanFactory> loader = ServiceLoader.load(JMXGroupMBeanFactory.class);
         JMXGroupMBeanFactoryContext context = new JMXGroupMBeanFactoryContext();
-        loader.forEach(factory -> context.register(factory.getProvidedInterface(), factory));
+        loader.forEach(context::register);
         return context;
     }
 

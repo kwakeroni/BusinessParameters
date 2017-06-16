@@ -1,14 +1,13 @@
 package be.kwakeroni.parameters.backend.inmemory.service;
 
-import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
-import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
-import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
-import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
+import be.kwakeroni.parameters.backend.inmemory.api.*;
+import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendGroupFactoryContext;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
+import be.kwakeroni.parameters.backend.inmemory.support.DefaultGroupData;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +15,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -25,20 +26,43 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     Logger LOG = LoggerFactory.getLogger(InMemoryBackend.class);
 
     private final Map<String, GroupData> data;
+    private final InMemoryBackendGroupFactoryContext factoryContext;
+    private final Supplier<Stream<ParameterGroupDefinition>> definitions;
 
-    public InMemoryBackend() {
-        this(new HashMap<>());
+
+    public InMemoryBackend(InMemoryBackendGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition>> definitions) {
+        this(new HashMap<>(), factoryContext, definitions);
     }
 
-    private InMemoryBackend(Map<String, GroupData> data) {
+    private InMemoryBackend(Map<String, GroupData> data, InMemoryBackendGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition>> definitions) {
         this.data = data;
+        this.factoryContext = factoryContext;
+        this.definitions = definitions;
     }
 
-    public void setGroupData(String groupName, GroupData data) {
-        this.data.put(groupName, data);
+    public void setGroupData(String groupName, Collection<EntryData> entries) {
+        this.data.put(groupName, this.createGroupData(groupName, entries));
     }
 
-    public void addGroupData(String groupName, GroupData data) {
+    private GroupData createGroupData(String groupName, Collection<EntryData> entries) {
+        return new DefaultGroupData(defineGroup(groupName), entries);
+    }
+
+
+    private InMemoryGroup defineGroup(String name) {
+        return this.definitions.get()
+                .filter(definition -> name.equals(definition.getName()))
+                .findAny()
+                .map(this::defineGroup)
+                .orElseThrow(() -> new IllegalStateException("No definition found for group " + name));
+    }
+
+    private InMemoryGroup defineGroup(ParameterGroupDefinition definition) {
+        return definition.apply(this.factoryContext);
+    }
+
+
+    private void addGroupData(String groupName, GroupData data) {
         this.data.merge(groupName, data, (key, d) -> {
             throw new IllegalStateException("Duplicate data for group " + key);
         });

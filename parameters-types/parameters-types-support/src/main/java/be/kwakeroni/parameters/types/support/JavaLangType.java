@@ -1,11 +1,9 @@
 package be.kwakeroni.parameters.types.support;
 
-import be.kwakeroni.parameters.types.api.ParameterType;
-
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-enum JavaLangType implements ParameterType {
+public enum JavaLangType implements BasicType {
     STRING {
         @Override
         public Object fromString(String value) {
@@ -61,4 +59,30 @@ enum JavaLangType implements ParameterType {
             return Character.toString((char) value);
         }
     };
+
+
+    @Override
+    public JavaLangType asBasicType() {
+        return this;
+    }
+
+    @Override
+    public Object toBasic(Object value) {
+        return value;
+    }
+
+    @Override
+    public Object fromBasic(Object value) {
+        return value;
+    }
+
+
+    @Override
+    public int compare(Object o1, Object o2) {
+        return compareGeneric(o1, o2);
+    }
+
+    private <T extends Comparable<T>> int compareGeneric(Object o1, Object o2) {
+        return ((T) o1).compareTo((T) o2);
+    }
 }

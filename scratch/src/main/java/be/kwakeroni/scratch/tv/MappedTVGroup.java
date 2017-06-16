@@ -1,7 +1,6 @@
 package be.kwakeroni.scratch.tv;
 
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
-import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchMappedGroup;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
@@ -17,13 +16,17 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
+import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
+import static be.kwakeroni.parameters.basic.definition.BasicGroup.mappedGroup;
 import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
+public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>>, ParameterGroupDefinition {
 
     public static final MappedTVGroup instance() {
         return new MappedTVGroup();
@@ -33,6 +36,7 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
     public String getName() {
         return NAME;
     }
+
     public static Parameter<Dag> DAY = new DefaultParameter<>("day", Dag.type);
     public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
 
@@ -49,31 +53,35 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
     }
 
     // For test purposes
-    public static final GroupData getData(Dag dag0, String program0, Dag dag1, String program1) {
-        return new DefaultGroupData(
-                INMEMORY_GROUP,
-                entryData(dag0, program0),
-                entryData(dag1, program1)
-        );
-    }
-
-    // For test purposes
     public static Query<Mapped<Dag, Simple>, String> programQuery(Dag dag) {
         return valueQuery(dag, MappedTVGroup.PROGRAM);
     }
 
-    public static <T> Query<Mapped<Dag, Simple>, T> valueQuery(Dag dag, Parameter<T> parameter){
+    public static <T> Query<Mapped<Dag, Simple>, T> valueQuery(Dag dag, Parameter<T> parameter) {
         return new MappedQuery<>(dag, Dag.type,
                 new ValueQuery<>(parameter));
     }
 
-    public static Query<Mapped<Dag, Simple>, Entry> entryQuery(Dag dag){
+    public static Query<Mapped<Dag, Simple>, Entry> entryQuery(Dag dag) {
         return new MappedQuery<>(dag, Dag.type, new EntryQuery());
     }
 
     private static final String NAME = "tv.mapped";
-    private static final InmemoryMappedGroup INMEMORY_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, new InmemorySimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
-    public static final ElasticSearchMappedGroup ELASTICSEARCH_GROUP =
+    static final InmemoryMappedGroup INMEMORY_TEST_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, new InmemorySimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
+    static final ElasticSearchMappedGroup ELASTICSEARCH_TEST_GROUP =
             new ElasticSearchMappedGroup(DAY.getName(),
-            new ElasticSearchSimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
+                    new ElasticSearchSimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
+
+    @Override
+    public <G> G apply(DefinitionVisitorContext<G> context) {
+        return DEFINITION.apply(context);
+    }
+
+    public static final ParameterGroupDefinition DEFINITION =
+            mappedGroup()
+                    .withKeyParameter(DAY.getName())
+                    .mappingTo(group()
+                            .withParameter(PROGRAM.getName()))
+                    .build(NAME);
+
 }

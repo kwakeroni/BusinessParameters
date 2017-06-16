@@ -1,6 +1,6 @@
 package be.kwakeroni.scratch.tv;
 
-import be.kwakeroni.parameters.types.api.ParameterType;
+import be.kwakeroni.parameters.types.support.BasicType;
 import be.kwakeroni.parameters.types.support.ParameterTypes;
 
 import java.util.Objects;
@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class Slot implements Comparable<Slot> {
 
-    public static final ParameterType<Slot> type = ParameterTypes.of(Slot.class, Slot::fromString, Slot::toString);
+    public static final BasicType<Slot, Integer> type = ParameterTypes.ofIntegerType(Slot.class, Slot::fromString, Slot::toString, Slot::fromInt, Slot::toInt);
 
     private final int hour;
     private final boolean halfPast;
@@ -43,7 +43,9 @@ public class Slot implements Comparable<Slot> {
         return Objects.hash(hour, halfPast);
     }
 
-    public int toInt(){return 10*hour + ((halfPast) ? 5 : 0); }
+    public int toInt() {
+        return 10 * hour + ((halfPast) ? 5 : 0);
+    }
 
     public String toString() {
         return hour + ((halfPast) ? ".5" : ".0");
@@ -61,6 +63,16 @@ public class Slot implements Comparable<Slot> {
             }
         }
         throw new IllegalArgumentException("Incorrect Slot format: " + string);
+    }
+
+    public static Slot fromInt(Integer integer) {
+        if (integer % 10 == 0) {
+            return atHour(integer / 10);
+        } else if (integer % 10 == 5) {
+            return atHalfPast(integer / 10);
+        } else {
+            throw new IllegalArgumentException("Integer value " + integer + " is no valid representation of a Slot");
+        }
     }
 
     public static Slot atHour(int hour) {

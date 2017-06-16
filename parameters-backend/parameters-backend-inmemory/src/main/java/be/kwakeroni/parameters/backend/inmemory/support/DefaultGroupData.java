@@ -1,14 +1,12 @@
-package be.kwakeroni.scratch.tv;
+package be.kwakeroni.parameters.backend.inmemory.support;
 
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
-import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
-import be.kwakeroni.parameters.backend.inmemory.support.FilteredGroupData;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -16,14 +14,14 @@ import java.util.stream.Stream;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-class DefaultGroupData implements GroupData {
+public class DefaultGroupData implements GroupData {
 
     private final InMemoryGroup group;
     private final List<EntryData> data;
 
-    DefaultGroupData(InMemoryGroup group, EntryData... data) {
+    public DefaultGroupData(InMemoryGroup group, Collection<EntryData> data) {
         this.group = group;
-        this.data = new java.util.ArrayList<>(Arrays.asList(data));
+        this.data = new java.util.ArrayList<>(data);
     }
 
     @Override
@@ -46,7 +44,7 @@ class DefaultGroupData implements GroupData {
     public void modifyEntry(EntryData data, Consumer<EntryData> modifier) {
         EntryData copy = DefaultEntryData.of(data.asMap());
         modifier.accept(copy);
-        EntryData modified = group.validateNewEntry(copy, new FilteredGroupData(this, stream -> stream.filter(entry -> entry!=data)));
+        EntryData modified = group.validateNewEntry(copy, new FilteredGroupData(this, stream -> stream.filter(entry -> entry != data)));
         modifier.accept(data);
     }
 }

@@ -1,12 +1,6 @@
 package be.kwakeroni.parameters.basic.backend.es;
 
-import be.kwakeroni.parameters.backend.api.BackendGroup;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
-import be.kwakeroni.parameters.backend.es.api.EntryModification;
+import be.kwakeroni.parameters.backend.es.api.*;
 import be.kwakeroni.parameters.basic.backend.query.MappedBackendGroup;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediaryBackendGroupSupport;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediateBackendQuerySupport;
@@ -44,7 +38,13 @@ public class ElasticSearchMappedGroup
         }
     }
 
-    private Consumer<ElasticSearchCriteria> mapKeyFilter(String keyValue){
+    @Override
+    public String toString() {
+        return "mapped(" + this.keyParameterName + " : " + getSubGroup() + ")";
+    }
+
+
+    private Consumer<ElasticSearchCriteria> mapKeyFilter(String keyValue) {
         return criteria -> criteria.addParameterMatch(keyParameterName, keyValue);
     }
 

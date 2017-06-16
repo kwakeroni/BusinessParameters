@@ -1,5 +1,6 @@
 package be.kwakeroni.scratch;
 
+import be.kwakeroni.parameters.adapter.direct.factory.DirectBusinessParametersServiceFactory;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.WritableBusinessParameters;
 import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
@@ -7,16 +8,17 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.junit.Assume;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
+import java.util.stream.StreamSupport;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -48,29 +50,22 @@ public class Environment implements TestRule, AutoCloseable {
         this(InMemoryTestData::new);
     }
 
-    public Environment(Supplier<TestData> testData) {
-        this.testData = testData.get();
-        BusinessParametersFactory factory = load(BusinessParametersFactory.class);
+    public Environment(Supplier<TestData> testDataSupplier) {
+        this.testData = testDataSupplier.get();
+        BusinessParametersFactory factory = Services.loadService(BusinessParametersFactory.class);
+        ((DirectBusinessParametersServiceFactory) factory).setBackendType(this.testData::acceptBackend);
         WritableBusinessParameters local = factory.getWritableInstance();
         this.parameters = new WritableBusinessParameters() {
             @Override
             public <ET extends EntryType, T> void set(ParameterGroup<ET> group, Query<ET, T> query, T value) {
                 local.set(group, query, value);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException exc){
-
-                }
+                testData.notifyModifiedGroup(group.getName());
             }
 
             @Override
             public void addEntry(ParameterGroup<?> group, Entry entry) {
                 local.addEntry(group, entry);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException exc){
-
-                }
+                testData.notifyModifiedGroup(group.getName());
             }
 
             @Override
@@ -97,18 +92,6 @@ public class Environment implements TestRule, AutoCloseable {
         Assume.assumeTrue(this.testData.hasDataForGroup(group.getName()));
     }
 
-    private <S> S load(Class<S> serviceType) {
-        ServiceLoader<S> loader = ServiceLoader.load(serviceType);
-        Iterator<S> services = loader.iterator();
-        if (!services.hasNext()) {
-            throw new IllegalStateException("Service not found: " + serviceType.getName());
-        }
-        S service = services.next();
-        if (services.hasNext()) {
-            throw new IllegalStateException("Multiple services of type " + serviceType.getName() + ": " + service.getClass().getName() + " & " + services.next().getClass().getName());
-        }
-        return service;
-    }
 
     public TestRule reset() {
         return (base, description) -> new Statement() {
@@ -119,6 +102,5 @@ public class Environment implements TestRule, AutoCloseable {
             }
         };
     }
-
 
 }

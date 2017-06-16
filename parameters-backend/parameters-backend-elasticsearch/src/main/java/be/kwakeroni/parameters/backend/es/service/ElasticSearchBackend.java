@@ -1,15 +1,11 @@
 package be.kwakeroni.parameters.backend.es.service;
 
-import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
-import be.kwakeroni.parameters.backend.es.api.EntryModification;
+import be.kwakeroni.parameters.backend.es.api.*;
+import be.kwakeroni.parameters.backend.es.factory.ElasticSearchGroupFactoryContext;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,21 +26,34 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchBackend.class);
 
     private final ElasticSearchClient client;
+    private final ElasticSearchGroupFactoryContext factoryContext;
     private final Map<String, ElasticSearchGroup> groups;
+    private final Supplier<Stream<ParameterGroupDefinition>> definitions;
 
-    public ElasticSearchBackend(Configuration configuration) {
+    public ElasticSearchBackend(Configuration configuration, ElasticSearchGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition>> definitions) {
         this.client = new ElasticSearchClient(configuration);
+        this.factoryContext = factoryContext;
+        this.definitions = definitions;
         this.groups = new HashMap<>();
     }
 
-    public void registerGroup(ElasticSearchGroup group) {
-        this.groups.merge(group.getName(), group,
-                (g1, g2) -> {
-                    throw new IllegalStateException("Registered two groups for name " + g1.getName());
-                });
+    private synchronized ElasticSearchGroup getGroup(String name) {
+        return this.groups.computeIfAbsent(name, this::defineGroup);
     }
 
-    public void unregisterGroup(String name) {
+    private ElasticSearchGroup defineGroup(String name) {
+        return this.definitions.get()
+                .filter(definition -> name.equals(definition.getName()))
+                .findAny()
+                .map(this::defineGroup)
+                .orElseThrow(() -> new IllegalStateException("No definition found for group " + name));
+    }
+
+    private ElasticSearchGroup defineGroup(ParameterGroupDefinition definition) {
+        return definition.apply(this.factoryContext);
+    }
+
+    private void unregisterGroup(String name) {
         this.groups.remove(name);
     }
 
@@ -61,13 +71,9 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
                 .collect(Collectors.toList());
     }
 
-    private ElasticSearchGroup getGroup(String name){
-        return groups.get(name);
-    }
-
     @Override
     public BackendQuery<? extends ElasticSearchQuery<?>, ?> internalizeQuery(String groupName, Object queryObject, BackendWireFormatterContext context) {
-        return groups.get(groupName).internalize(queryObject, context);
+        return getGroup(groupName).internalize(queryObject, context);
     }
 
     private ElasticSearchData data = new ElasticSearchData() {
@@ -79,7 +85,7 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
         }
     };
 
-    private ElasticSearchData getDataForGroup(String name){
+    private ElasticSearchData getDataForGroup(String name) {
         return data.with(criteria -> criteria.inGroup(name));
     }
 
@@ -93,7 +99,7 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
         doUpdate(group, (ElasticSearchQuery<V>) query.raw(), value);
     }
 
-    private <V> void doUpdate(String group, ElasticSearchQuery<V> query, V value){
+    private <V> void doUpdate(String group, ElasticSearchQuery<V> query, V value) {
         ElasticSearchData groupData = getDataForGroup(group);
         EntryModification modification = query.getEntryModification(value, groupData);
         ElasticSearchEntry original = modification.getOriginalEntry();

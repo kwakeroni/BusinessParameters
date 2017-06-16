@@ -1,13 +1,6 @@
 package be.kwakeroni.parameters.basic.backend.es;
 
-import be.kwakeroni.parameters.backend.api.BackendGroup;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchDataType;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
-import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
-import be.kwakeroni.parameters.backend.es.api.EntryModification;
+import be.kwakeroni.parameters.backend.es.api.*;
 import be.kwakeroni.parameters.basic.backend.query.RangedBackendGroup;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediaryBackendGroupSupport;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediateBackendQuerySupport;
@@ -21,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -65,28 +57,28 @@ public class ElasticSearchQueryBasedRangedGroup
         return entry;
     }
 
-    private void addMetaParams(ElasticSearchEntry entry){
+    private void addMetaParams(ElasticSearchEntry entry) {
         String rangeString = entry.getParameter(this.rangeParameterName);
         Range<String> range = Ranges.fromString(rangeString, Function.identity());
         entry.setMetaParameter(getFromParameter(), toJSONRepresentation(range.getFrom()));
         entry.setMetaParameter(getToParameter(), toJSONRepresentation(range.getTo()));
     }
 
-    private <T> Object toJSONRepresentation(String valueString){
+    private <T> Object toJSONRepresentation(String valueString) {
         T value = (T) converter.apply(valueString);
         return ((ElasticSearchDataType<T>) dataType).toJSONRepresentation(value);
     }
 
-    private void clearMetaParams(ElasticSearchEntry entry){
+    private void clearMetaParams(ElasticSearchEntry entry) {
         entry.clearParameter(getFromParameter(this.rangeParameterName));
         entry.clearParameter(getToParameter(this.rangeParameterName));
     }
 
-    private String getFromParameter(){
+    private String getFromParameter() {
         return getFromParameter(this.rangeParameterName);
     }
 
-    private String getToParameter(){
+    private String getToParameter() {
         return getToParameter(this.rangeParameterName);
     }
 
@@ -129,7 +121,7 @@ public class ElasticSearchQueryBasedRangedGroup
                 .put("range", new JSONObject()
                         .put(fromParameter, new JSONObject()
                                 .put("lte", from))
-                        );
+                );
         JSONObject otop = new JSONObject()
                 .put("range", new JSONObject()
                         .put(toParameter, new JSONObject()
@@ -138,9 +130,9 @@ public class ElasticSearchQueryBasedRangedGroup
 
         JSONObject other = new JSONObject()
                 .put("bool", new JSONObject()
-                    .put("must", new JSONArray()
-                        .put(ofromp)
-                        .put(otop)));
+                        .put("must", new JSONArray()
+                                .put(ofromp)
+                                .put(otop)));
 
         JSONObject filter = new JSONObject()
                 .put("bool", new JSONObject()
@@ -148,7 +140,7 @@ public class ElasticSearchQueryBasedRangedGroup
                                 .put(fromp)
                                 .put(top)
                                 .put(other)
-                                ));
+                        ));
 
 //        return (otherTo > this.from && otherTo < this.to)
 //                || (otherFrom >= this.from && otherFrom < this.to)
@@ -195,6 +187,10 @@ public class ElasticSearchQueryBasedRangedGroup
         }
     }
 
+    @Override
+    public String toString() {
+        return "ranged-query(" + this.rangeParameterName + " : " + getSubGroup() + ")";
+    }
 
     public static String getFromParameter(String parameterName) {
         return parameterName + "_range_from";

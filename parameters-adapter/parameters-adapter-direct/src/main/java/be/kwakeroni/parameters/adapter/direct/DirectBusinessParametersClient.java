@@ -1,5 +1,7 @@
 package be.kwakeroni.parameters.adapter.direct;
 
+import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.client.api.WritableBusinessParameters;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.EntryType;
@@ -9,6 +11,7 @@ import be.kwakeroni.parameters.client.api.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -18,17 +21,16 @@ public class DirectBusinessParametersClient implements WritableBusinessParameter
 
     private static final Logger LOG = LoggerFactory.getLogger(DirectBusinessParametersClient.class);
 
+    private final DirectBackendAdapter<?> backend;
     private final ClientWireFormatterContext formatters;
-    private final BackendRegistry backends;
 
-    public DirectBusinessParametersClient(ClientWireFormatterContext formatters, BackendRegistry backends) {
-        this.formatters = formatters;
-        this.backends = backends;
+    public DirectBusinessParametersClient(BusinessParametersBackend<?> backend, BackendWireFormatterContext wireFormatterContext, ClientWireFormatterContext formatters) {
+        this.backend = new DirectBackendAdapter<>(backend, wireFormatterContext);
+        this.formatters = Objects.requireNonNull(formatters, "formatters");
     }
 
     @Override
     public <ET extends EntryType, T> Optional<T> get(ParameterGroup<ET> group, Query<ET, T> query) {
-        DirectBackendAdapter backend = getBackend(group);
         Object external = externalize(query);
         Object resultObject = executeQuery(backend, group.getName(), external);
         Optional<T> result = internalize(resultObject, query);
@@ -37,7 +39,6 @@ public class DirectBusinessParametersClient implements WritableBusinessParameter
 
     @Override
     public <ET extends EntryType, T> void set(ParameterGroup<ET> group, Query<ET, T> query, T value) {
-        DirectBackendAdapter backend = getBackend(group);
         Object externalQuery = externalize(query);
         Object externalValue = externalizeValue(value, query);
         executeWrite(backend, group.getName(), externalQuery, externalValue);
@@ -45,7 +46,6 @@ public class DirectBusinessParametersClient implements WritableBusinessParameter
 
     @Override
     public void addEntry(ParameterGroup<?> group, Entry entry) {
-        DirectBackendAdapter backend = getBackend(group);
         backend.addEntry(group.getName(), entry.toMap());
     }
 
@@ -59,19 +59,14 @@ public class DirectBusinessParametersClient implements WritableBusinessParameter
         return query.externalizeValue(value, this.formatters);
     }
 
-    private DirectBackendAdapter getBackend(ParameterGroup<?> group) {
-        LOG.debug("Retrieving api for: {}", group.getName());
-        return backends.get(group.getName());
-    }
-
-    private Object executeQuery(DirectBackendAdapter backend, String groupName, Object external) {
+    private Object executeQuery(DirectBackendAdapter<?> backend, String groupName, Object external) {
         LOG.debug("Querying on: {}", groupName);
         Object result = backend.get(groupName, external);
         LOG.debug("Query has result: {} ", result);
         return result;
     }
 
-    private void executeWrite(DirectBackendAdapter backend, String groupName, Object externalQuery, Object externalValue) {
+    private void executeWrite(DirectBackendAdapter<?> backend, String groupName, Object externalQuery, Object externalValue) {
         LOG.debug("Writing to: {}", groupName);
         backend.set(groupName, externalQuery, externalValue);
     }

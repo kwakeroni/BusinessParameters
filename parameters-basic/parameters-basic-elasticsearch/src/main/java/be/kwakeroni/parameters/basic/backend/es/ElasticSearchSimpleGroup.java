@@ -13,7 +13,7 @@ import java.util.Set;
  * (C) 2017 Maarten Van Puymbroeck
  */
 public class ElasticSearchSimpleGroup extends SimpleBackendGroupSupport<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry>
-                                        implements ElasticSearchGroup {
+        implements ElasticSearchGroup {
 
     public ElasticSearchSimpleGroup(String name, String... parameters) {
         super(name, parameters);
@@ -47,4 +47,10 @@ public class ElasticSearchSimpleGroup extends SimpleBackendGroupSupport<ElasticS
     public ElasticSearchEntry prepareAndValidateNewEntry(ElasticSearchEntry entry, ElasticSearchData storage) {
         return validateNewEntry(entry, storage);
     }
+
+    @Override
+    public String toString() {
+        return "simple(ES " + getParameterNames() + ")";
+    }
+
 }

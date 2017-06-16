@@ -9,8 +9,6 @@ public interface ElasticSearchDataType<T> {
 
     public Object toJSONRepresentation(T value);
 
-//    public  Standard asStandard();
-
     public static enum Standard implements ElasticSearchDataType {
         INTEGER {
             @Override
@@ -18,12 +16,6 @@ public interface ElasticSearchDataType<T> {
                 return (Integer) value;
             }
         };
-
-
-//        @Override
-//        public Standard asStandard() {
-//            return this;
-//        }
     }
 
 }

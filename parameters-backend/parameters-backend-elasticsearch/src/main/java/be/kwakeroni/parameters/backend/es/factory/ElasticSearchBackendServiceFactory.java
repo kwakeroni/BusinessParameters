@@ -66,7 +66,7 @@ public class ElasticSearchBackendServiceFactory implements BusinessParametersBac
     private static ElasticSearchGroupFactoryContext loadFactories() {
         ServiceLoader<ElasticSearchGroupFactory> loader = ServiceLoader.load(ElasticSearchGroupFactory.class);
         ElasticSearchGroupFactoryContext context = new ElasticSearchGroupFactoryContext();
-        loader.forEach(factory -> context.register(factory.getProvidedInterface(), factory));
+        loader.forEach(context::register);
         return context;
     }
 

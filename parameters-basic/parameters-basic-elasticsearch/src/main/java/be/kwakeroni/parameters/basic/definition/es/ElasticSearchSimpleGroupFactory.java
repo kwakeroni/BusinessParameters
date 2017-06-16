@@ -21,6 +21,6 @@ public class ElasticSearchSimpleGroupFactory implements SimpleDefinitionVisitor<
 
     @Override
     public ElasticSearchGroup visit(Definition definition) {
-        return new ElasticSearchSimpleGroup(definition.getName(), new LinkedHashSet<>(definition.getParameters()));
+        return new ElasticSearchSimpleGroup(definition.getName(), definition.getDefinition(), new LinkedHashSet<>(definition.getParameters()));
     }
 }

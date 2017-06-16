@@ -9,7 +9,6 @@ import be.kwakeroni.parameters.basic.client.support.Entries;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
@@ -17,7 +16,7 @@ import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class SimpleTVGroup implements ParameterGroup<Simple>, ParameterGroupDefinition {
+public class SimpleTVGroup implements ParameterGroup<Simple> {
 
 
     public static final SimpleTVGroup instance() {
@@ -45,18 +44,15 @@ public class SimpleTVGroup implements ParameterGroup<Simple>, ParameterGroupDefi
     }
 
     public static final String NAME = "tv.simple";
-    static final InmemorySimpleGroup INMEMORY_TEST_GROUP = new InmemorySimpleGroup(NAME, DAY.getName(), SLOT.getName());
-    static final ElasticSearchSimpleGroup ELASTICSEARCH_TEST_GROUP = new ElasticSearchSimpleGroup(NAME, DAY.getName(), SLOT.getName());
-
-    @Override
-    public <G> G apply(DefinitionVisitorContext<G> context) {
-        return DEFINITION.apply(context);
-    }
 
     public static final ParameterGroupDefinition DEFINITION =
             group()
                     .withParameter(DAY.getName())
                     .withParameter(SLOT.getName())
                     .build(NAME);
+
+    static final InmemorySimpleGroup INMEMORY_TEST_GROUP = new InmemorySimpleGroup(NAME, DEFINITION, DAY.getName(), SLOT.getName());
+
+    static final ElasticSearchSimpleGroup ELASTICSEARCH_TEST_GROUP = new ElasticSearchSimpleGroup(NAME, DEFINITION, DAY.getName(), SLOT.getName());
 
 }

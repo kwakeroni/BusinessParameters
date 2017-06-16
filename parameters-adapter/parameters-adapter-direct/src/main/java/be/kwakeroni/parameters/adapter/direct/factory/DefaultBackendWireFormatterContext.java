@@ -5,14 +5,14 @@ import be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatter;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
 public class DefaultBackendWireFormatterContext implements BackendWireFormatterContext {
+
+    public static final Set<String> SUPPORTED_WIREFORMATS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("raw")));
 
     private final Map<Class<?>, BackendWireFormatter> formatters = new HashMap<>(2);
 
@@ -23,7 +23,7 @@ public class DefaultBackendWireFormatterContext implements BackendWireFormatterC
                 });
     }
 
-    public void unregister(Class<?> type) {
+    private void unregister(Class<?> type) {
         this.formatters.remove(type);
     }
 
@@ -32,7 +32,9 @@ public class DefaultBackendWireFormatterContext implements BackendWireFormatterC
     }
 
     public void unregister(BackendWireFormatterFactory formatterFactory) {
-        formatterFactory.unregisterInstance(this::unregister);
+        if (formatterFactory != null) {
+            formatterFactory.unregisterInstance(this::unregister);
+        }
     }
 
     @Override

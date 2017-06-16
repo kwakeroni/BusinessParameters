@@ -5,6 +5,7 @@ import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
 import be.kwakeroni.parameters.basic.backend.query.support.SimpleBackendGroupSupport;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import java.util.Map;
 import java.util.Set;
@@ -15,12 +16,12 @@ import java.util.Set;
 public class ElasticSearchSimpleGroup extends SimpleBackendGroupSupport<ElasticSearchQuery<?>, ElasticSearchData, ElasticSearchEntry>
         implements ElasticSearchGroup {
 
-    public ElasticSearchSimpleGroup(String name, String... parameters) {
-        super(name, parameters);
+    public ElasticSearchSimpleGroup(String name, ParameterGroupDefinition definition, String... parameters) {
+        super(name, definition, parameters);
     }
 
-    public ElasticSearchSimpleGroup(String name, Set<String> parameters) {
-        super(name, parameters);
+    public ElasticSearchSimpleGroup(String name, ParameterGroupDefinition definition, Set<String> parameters) {
+        super(name, definition, parameters);
     }
 
     @Override

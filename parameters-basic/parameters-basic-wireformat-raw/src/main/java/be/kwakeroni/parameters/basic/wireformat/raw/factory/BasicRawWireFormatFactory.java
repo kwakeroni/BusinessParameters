@@ -16,6 +16,11 @@ public class BasicRawWireFormatFactory implements ClientWireFormatterFactory, Ba
     private static final BasicRawWireFormat WIRE_FORMAT = new BasicRawWireFormat();
 
     @Override
+    public String getWireFormat() {
+        return WIRE_FORMAT.getType();
+    }
+
+    @Override
     public void registerInstance(ClientWireFormatterFactory.Registry registry) {
         registry.register(BasicClientWireFormatter.class, WIRE_FORMAT);
     }

@@ -72,6 +72,11 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     }
 
     @Override
+    public ParameterGroupDefinition getDefinition(String groupName) {
+        return getGroup(groupName).getDefinition();
+    }
+
+    @Override
     public BackendQuery<? extends ElasticSearchQuery<?>, ?> internalizeQuery(String groupName, Object queryObject, BackendWireFormatterContext context) {
         return getGroup(groupName).internalize(queryObject, context);
     }

@@ -8,6 +8,7 @@ import be.kwakeroni.parameters.backend.inmemory.support.FilteredGroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.IntermediateInMemoryQuery;
 import be.kwakeroni.parameters.basic.backend.query.MappedBackendGroup;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediaryBackendGroupSupport;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -22,12 +23,12 @@ public class InmemoryMappedGroup
     private final String keyParameterName;
     private final BiPredicate<String, String> equalizer;
 
-    public InmemoryMappedGroup(String keyParameterName, InMemoryGroup subGroup) {
-        this(keyParameterName, String::equals, subGroup);
+    public InmemoryMappedGroup(String keyParameterName, ParameterGroupDefinition definition, InMemoryGroup subGroup) {
+        this(keyParameterName, String::equals, definition, subGroup);
     }
 
-    public InmemoryMappedGroup(String keyParameterName, BiPredicate<String, String> equalizer, InMemoryGroup subGroup) {
-        super(subGroup);
+    public InmemoryMappedGroup(String keyParameterName, BiPredicate<String, String> equalizer, ParameterGroupDefinition definition, InMemoryGroup subGroup) {
+        super(definition, subGroup);
         this.keyParameterName = keyParameterName;
         this.equalizer = equalizer;
     }

@@ -2,8 +2,9 @@ package be.kwakeroni.scratch.tv;
 
 
 import be.kwakeroni.parameters.backend.api.BackendGroup;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
+import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.scratch.ElasticSearchTestData;
 import be.kwakeroni.scratch.InMemoryTestData;
 import be.kwakeroni.scratch.Services;
@@ -14,7 +15,6 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +30,7 @@ public class BuilderTest<G extends BackendGroup<?>> {
     @Parameterized.Parameter(1)
     public G constant;
     @Parameterized.Parameter(2)
-    public Supplier<ParameterGroupDefinition> definition;
+    public ParameterGroupDefinition definition;
     @Parameterized.Parameter(3)
     public DefinitionVisitorContext<G> context;
 
@@ -38,22 +38,22 @@ public class BuilderTest<G extends BackendGroup<?>> {
     @Parameterized.Parameters(name = "{0}")
     public static Object[][] parameters() {
         List<Param> inMemory = Arrays.asList(
-                param(SimpleTVGroup.class, SimpleTVGroup.INMEMORY_TEST_GROUP, SimpleTVGroup::new),
-                param(MappedTVGroup.class, MappedTVGroup.INMEMORY_TEST_GROUP, MappedTVGroup::new),
-                param(RangedQueryTVGroup.class, RangedQueryTVGroup.INMEMORY_TEST_GROUP, RangedQueryTVGroup::instance),
-                param(AbstractMappedRangedTVGroup.class, MappedRangedQueryTVGroup.INMEMORY_TEST_GROUP, MappedRangedQueryTVGroup::instance)
+                param(SimpleTVGroup.class, SimpleTVGroup.INMEMORY_TEST_GROUP, SimpleTVGroup.DEFINITION),
+                param(MappedTVGroup.class, MappedTVGroup.INMEMORY_TEST_GROUP, MappedTVGroup.DEFINITION),
+                param(RangedQueryTVGroup.class, RangedQueryTVGroup.INMEMORY_TEST_GROUP, RangedQueryTVGroup.DEFINITION),
+                param(AbstractMappedRangedTVGroup.class, MappedRangedQueryTVGroup.INMEMORY_TEST_GROUP, MappedRangedQueryTVGroup.DEFINITION)
         );
 
         List<Param> esQuery = Arrays.asList(
-                param(SimpleTVGroup.class, SimpleTVGroup.ELASTICSEARCH_TEST_GROUP, SimpleTVGroup::new),
-                param(MappedTVGroup.class, MappedTVGroup.ELASTICSEARCH_TEST_GROUP, MappedTVGroup::new),
-                param(RangedQueryTVGroup.class, RangedQueryTVGroup.ELASTICSEARCH_TEST_GROUP, RangedQueryTVGroup::instance),
-                param(AbstractMappedRangedTVGroup.class, MappedRangedQueryTVGroup.ELASTICSEARCH_TEST_GROUP, MappedRangedQueryTVGroup::instance)
+                param(SimpleTVGroup.class, SimpleTVGroup.ELASTICSEARCH_TEST_GROUP, SimpleTVGroup.DEFINITION),
+                param(MappedTVGroup.class, MappedTVGroup.ELASTICSEARCH_TEST_GROUP, MappedTVGroup.DEFINITION),
+                param(RangedQueryTVGroup.class, RangedQueryTVGroup.ELASTICSEARCH_TEST_GROUP, RangedQueryTVGroup.DEFINITION),
+                param(AbstractMappedRangedTVGroup.class, MappedRangedQueryTVGroup.ELASTICSEARCH_TEST_GROUP, MappedRangedQueryTVGroup.DEFINITION)
         );
 
         List<Param> esPostFilter = Arrays.asList(
-                param(RangedFilterTVGroup.class, RangedFilterTVGroup.ELASTICSEARCH_TEST_GROUP, RangedFilterTVGroup::instance),
-                param(AbstractMappedRangedTVGroup.class, MappedRangedFilterTVGroup.ELASTICSEARCH_TEST_GROUP, MappedRangedFilterTVGroup::instance)
+                param(RangedFilterTVGroup.class, RangedFilterTVGroup.ELASTICSEARCH_TEST_GROUP, RangedFilterTVGroup.DEFINITION),
+                param(AbstractMappedRangedTVGroup.class, MappedRangedFilterTVGroup.ELASTICSEARCH_TEST_GROUP, MappedRangedFilterTVGroup.DEFINITION)
         );
 
         return Stream.concat(
@@ -76,7 +76,7 @@ public class BuilderTest<G extends BackendGroup<?>> {
 
     @Test
     public void testBuildsGroupAsExpected() {
-        G built = definition.get().apply(context);
+        G built = definition.apply(context);
         assertEqualGroups(built);
     }
 
@@ -85,18 +85,19 @@ public class BuilderTest<G extends BackendGroup<?>> {
         System.out.println(built);
 
         assertThat(built.toString()).isEqualTo(constant.toString());
+        assertThat(built.getDefinition()).isSameAs(definition);
     }
 
-    private static <D extends ParameterGroupDefinition> Param param(Class<D> definitionClass, BackendGroup<?> group, Supplier<D> definition) {
+    private static <G extends ParameterGroup<?>> Param param(Class<G> definitionClass, BackendGroup<?> group, ParameterGroupDefinition definition) {
         return new Param(definitionClass, group, definition);
     }
 
     private static class Param {
         public final Class<?> definitionClass;
         public final BackendGroup<?> group;
-        public final Supplier<? extends ParameterGroupDefinition> definition;
+        public final ParameterGroupDefinition definition;
 
-        public Param(Class<?> definitionClass, BackendGroup<?> group, Supplier<? extends ParameterGroupDefinition> definition) {
+        public Param(Class<?> definitionClass, BackendGroup<?> group, ParameterGroupDefinition definition) {
             this.definitionClass = definitionClass;
             this.group = group;
             this.definition = definition;

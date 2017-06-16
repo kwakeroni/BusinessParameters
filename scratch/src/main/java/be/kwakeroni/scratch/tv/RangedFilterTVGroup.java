@@ -3,7 +3,6 @@ package be.kwakeroni.scratch.tv;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchPostFilterRangedGroup;
 import be.kwakeroni.parameters.basic.type.Ranges;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -22,13 +21,13 @@ public class RangedFilterTVGroup extends AbstractRangedTVGroup {
     }
 
     @Override
-    public <G> G apply(DefinitionVisitorContext<G> context) {
-        return DEFINITION.apply(context);
+    protected ParameterGroupDefinition getDefinition() {
+        return DEFINITION;
     }
 
-    static final ElasticSearchPostFilterRangedGroup ELASTICSEARCH_TEST_GROUP =
-            new ElasticSearchPostFilterRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), elasticSearchSubGroup(NAME));
-
     public static final ParameterGroupDefinition DEFINITION = definition(NAME, rangedGroup -> rangedGroup.withComparableRangeParameter(SLOT.getName(), Slot.type));
+
+    static final ElasticSearchPostFilterRangedGroup ELASTICSEARCH_TEST_GROUP =
+            new ElasticSearchPostFilterRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), DEFINITION, elasticSearchSubGroup(NAME, DEFINITION));
 
 }

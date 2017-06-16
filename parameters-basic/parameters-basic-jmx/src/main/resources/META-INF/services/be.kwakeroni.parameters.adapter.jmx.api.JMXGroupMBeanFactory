@@ -1,0 +1,3 @@
+be.kwakeroni.parameters.basic.definition.jmx.JMXSimpleGroupMBeanFactory
+be.kwakeroni.parameters.basic.definition.jmx.JMXMappedGroupMBeanFactory
+be.kwakeroni.parameters.basic.definition.jmx.JMXRangedGroupMBeanFactory

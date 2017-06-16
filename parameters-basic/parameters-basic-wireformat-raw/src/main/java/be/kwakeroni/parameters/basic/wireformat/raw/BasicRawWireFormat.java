@@ -23,6 +23,10 @@ public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBacken
 
     Logger LOG = LoggerFactory.getLogger(BasicRawWireFormat.class);
 
+    public String getType(){
+        return "raw";
+    }
+
     @Override
     public Object externalizeEntryQuery(EntryQuery query, ClientWireFormatterContext context) {
         return query;

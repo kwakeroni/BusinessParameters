@@ -3,11 +3,7 @@ package be.kwakeroni.parameters.adapter.direct;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -30,12 +26,14 @@ public class BackendRegistry {
     }
 
     public void unregister(BusinessParametersBackend<?> backend){
-        backends.remove(backend);
-        Iterator<Map.Entry<String, DirectBackendAdapter>> iter = backendsByGroupName.entrySet().iterator();
-        while (iter.hasNext()){
-            Map.Entry<String, DirectBackendAdapter> entry = iter.next();
-            if (entry.getValue().getBackend().equals(backend)){
-                iter.remove();
+        if (backend != null) {
+            backends.remove(backend);
+            Iterator<Map.Entry<String, DirectBackendAdapter>> iter = backendsByGroupName.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry<String, DirectBackendAdapter> entry = iter.next();
+                if (entry.getValue().getBackend().equals(backend)) {
+                    iter.remove();
+                }
             }
         }
     }

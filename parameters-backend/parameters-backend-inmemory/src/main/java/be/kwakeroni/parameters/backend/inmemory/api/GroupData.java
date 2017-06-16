@@ -11,8 +11,11 @@ import java.util.stream.Stream;
 public interface GroupData {
 
     Stream<EntryData> getEntries();
+
     void addEntry(EntryData data);
+
     void modifyEntry(EntryData data, Consumer<EntryData> modifier);
+
     BackendGroup<InMemoryQuery<?>> getGroup();
 
 }

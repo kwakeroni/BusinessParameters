@@ -19,6 +19,6 @@ public class ElasticSearchMappedGroupFactory implements MappedDefinitionVisitor<
 
     @Override
     public ElasticSearchGroup visit(Definition definition, ElasticSearchGroup subGroup) {
-        return new ElasticSearchMappedGroup(definition.getKeyParameter(), subGroup);
+        return new ElasticSearchMappedGroup(definition.getKeyParameter(), definition.getDefinition(), subGroup);
     }
 }

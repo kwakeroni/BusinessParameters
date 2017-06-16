@@ -31,6 +31,7 @@ public class ElasticSearchRangedGroupFactory implements RangedDefinitionVisitor<
         return new ElasticSearchPostFilterRangedGroup(
                 definition.getRangeParameter(),
                 Ranges.stringRangeTypeOf(type),
+                definition.getDefinition(),
                 subGroup
         );
     }
@@ -40,6 +41,7 @@ public class ElasticSearchRangedGroupFactory implements RangedDefinitionVisitor<
         return new ElasticSearchPostFilterRangedGroup(
                 definition.getRangeParameter(),
                 Ranges.stringRangeTypeOf(type, comparator),
+                definition.getDefinition(),
                 subGroup
         );
     }
@@ -52,6 +54,7 @@ public class ElasticSearchRangedGroupFactory implements RangedDefinitionVisitor<
                 definition.getRangeParameter(),
                 TypeMapping.getElasticSearchType(type),
                 stringConverter,
+                definition.getDefinition(),
                 subGroup
         );
     }
@@ -64,6 +67,7 @@ public class ElasticSearchRangedGroupFactory implements RangedDefinitionVisitor<
                 definition.getRangeParameter(),
                 TypeMapping.getElasticSearchType(basicType),
                 stringConverter,
+                definition.getDefinition(),
                 subGroup
         );
     }

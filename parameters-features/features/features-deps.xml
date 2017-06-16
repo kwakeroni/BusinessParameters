@@ -8,6 +8,9 @@
         <feature>jersey-client</feature>
         <feature>json</feature>
     </feature>
+    <feature name="businessparameters-basic-jmx-deps" version="${project.version}">
+        <feature>json</feature>
+    </feature>
     <feature name="jersey-client" version="1.19.1">
         <bundle>mvn:com.sun.jersey/jersey-client/1.19.1</bundle>
         <bundle>mvn:com.sun.jersey/jersey-core/1.19.1</bundle>

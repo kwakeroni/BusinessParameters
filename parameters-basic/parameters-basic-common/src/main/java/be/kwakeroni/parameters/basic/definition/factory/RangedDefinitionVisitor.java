@@ -2,6 +2,7 @@ package be.kwakeroni.parameters.basic.definition.factory;
 
 import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.BasicType;
 
@@ -26,6 +27,7 @@ public interface RangedDefinitionVisitor<G> extends DefinitionVisitor<G> {
     }
 
     public interface Definition {
+        public ParameterGroupDefinition getDefinition();
         public String getRangeParameter();
     }
 }

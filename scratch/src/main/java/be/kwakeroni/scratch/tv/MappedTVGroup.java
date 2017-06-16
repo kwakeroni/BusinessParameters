@@ -16,7 +16,6 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
@@ -26,7 +25,7 @@ import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>>, ParameterGroupDefinition {
+public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
 
     public static final MappedTVGroup instance() {
         return new MappedTVGroup();
@@ -67,21 +66,17 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>>, Param
     }
 
     private static final String NAME = "tv.mapped";
-    static final InmemoryMappedGroup INMEMORY_TEST_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, new InmemorySimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
-    static final ElasticSearchMappedGroup ELASTICSEARCH_TEST_GROUP =
-            new ElasticSearchMappedGroup(DAY.getName(),
-                    new ElasticSearchSimpleGroup(NAME, DAY.getName(), PROGRAM.getName()));
-
-    @Override
-    public <G> G apply(DefinitionVisitorContext<G> context) {
-        return DEFINITION.apply(context);
-    }
-
     public static final ParameterGroupDefinition DEFINITION =
             mappedGroup()
                     .withKeyParameter(DAY.getName())
                     .mappingTo(group()
                             .withParameter(PROGRAM.getName()))
                     .build(NAME);
+
+    static final InmemoryMappedGroup INMEMORY_TEST_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, DEFINITION, new InmemorySimpleGroup(NAME, DEFINITION, DAY.getName(), PROGRAM.getName()));
+
+    static final ElasticSearchMappedGroup ELASTICSEARCH_TEST_GROUP =
+            new ElasticSearchMappedGroup(DAY.getName(), DEFINITION,
+                    new ElasticSearchSimpleGroup(NAME, DEFINITION, DAY.getName(), PROGRAM.getName()));
 
 }

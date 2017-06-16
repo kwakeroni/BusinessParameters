@@ -109,4 +109,9 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     public Collection<String> getGroupNames() {
         return data.keySet();
     }
+
+    @Override
+    public ParameterGroupDefinition getDefinition(String groupName) {
+        return getGroupData(groupName).getGroup().getDefinition();
+    }
 }

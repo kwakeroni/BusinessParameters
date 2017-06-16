@@ -16,8 +16,10 @@
         <dependencies>
             <dependency>
                 <groupId>be.kwakeroni.parameters.definition</groupId>
-                <artifactId>parameters-definition-api</artifactId>
+                <artifactId>parameters-definition</artifactId>
+                <type>pom</type>
                 <version>${project.version}</version>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

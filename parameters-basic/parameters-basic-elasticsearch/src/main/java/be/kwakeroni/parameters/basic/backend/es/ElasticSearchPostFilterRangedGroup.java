@@ -5,6 +5,7 @@ import be.kwakeroni.parameters.basic.backend.query.RangedBackendGroup;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediaryBackendGroupSupport;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediateBackendQuerySupport;
 import be.kwakeroni.parameters.basic.type.Range;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.types.api.ParameterType;
 
 import java.util.Optional;
@@ -23,8 +24,8 @@ public class ElasticSearchPostFilterRangedGroup
     private final ParameterType<Range<String>> rangeType;
 
 
-    public ElasticSearchPostFilterRangedGroup(String rangeParameterName, ParameterType<Range<String>> rangeType, ElasticSearchGroup subGroup) {
-        super(subGroup);
+    public ElasticSearchPostFilterRangedGroup(String rangeParameterName, ParameterType<Range<String>> rangeType, ParameterGroupDefinition definition, ElasticSearchGroup subGroup) {
+        super(definition, subGroup);
         this.rangeParameterName = rangeParameterName;
         this.rangeType = rangeType;
     }

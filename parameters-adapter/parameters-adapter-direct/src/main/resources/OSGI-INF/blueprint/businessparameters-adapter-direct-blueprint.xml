@@ -17,10 +17,12 @@
     <service ref="directBusinessParameters" interface="be.kwakeroni.parameters.client.api.BusinessParameters"/>
 
     <reference-list interface="be.kwakeroni.parameters.client.api.factory.ClientWireFormatterFactory"
+                    filter="(wireformat=raw)"
                     availability="mandatory">
         <reference-listener ref="clientWireFormatterContext" bind-method="register" unbind-method="unregister"/>
     </reference-list>
     <reference-list interface="be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory"
+                    filter="(wireformat=raw)"
                     availability="mandatory">
         <reference-listener ref="backendWireFormatterContext" bind-method="register" unbind-method="unregister"/>
     </reference-list>

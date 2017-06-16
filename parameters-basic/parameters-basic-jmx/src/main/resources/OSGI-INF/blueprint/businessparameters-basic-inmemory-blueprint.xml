@@ -3,17 +3,20 @@
            xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
     <service interface="be.kwakeroni.parameters.adapter.jmx.api.JMXGroupMBeanFactory">
-        <bean class="be.kwakeroni.parameters.basic.definition.jmx.JMXSimpleGroupMBeanFactory" />
+        <bean class="be.kwakeroni.parameters.basic.definition.jmx.JMXSimpleGroupMBeanFactory"/>
     </service>
     <service interface="be.kwakeroni.parameters.adapter.jmx.api.JMXGroupMBeanFactory">
-        <bean class="be.kwakeroni.parameters.basic.definition.jmx.JMXMappedGroupMBeanFactory" />
+        <bean class="be.kwakeroni.parameters.basic.definition.jmx.JMXMappedGroupMBeanFactory"/>
     </service>
     <service interface="be.kwakeroni.parameters.adapter.jmx.api.JMXGroupMBeanFactory">
-        <bean class="be.kwakeroni.parameters.basic.definition.jmx.JMXRangedGroupMBeanFactory" />
+        <bean class="be.kwakeroni.parameters.basic.definition.jmx.JMXRangedGroupMBeanFactory"/>
     </service>
 
     <service interface="be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory">
-        <bean class="be.kwakeroni.parameters.basic.definition.jmx.factory.BasicJMXBackendWireFormatterFactory" />
+        <service-properties>
+            <entry key="wireformat" value="jmx"/>
+        </service-properties>
+        <bean class="be.kwakeroni.parameters.basic.definition.jmx.factory.BasicJMXBackendWireFormatterFactory"/>
     </service>
 
 </blueprint>

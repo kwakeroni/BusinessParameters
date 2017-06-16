@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.backend.es.factory;
 
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroupFactory;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 
@@ -15,8 +16,18 @@ public class ElasticSearchGroupFactoryContext implements DefinitionVisitorContex
 
     private Map<Class<? extends DefinitionVisitor<?>>, DefinitionVisitor<?>> factories = new HashMap<>();
 
-    public <I extends DefinitionVisitor<?>> void register(Class<I> type, DefinitionVisitor<ElasticSearchGroup> factory) {
+    private <I extends DefinitionVisitor<?>> void register(Class<I> type, DefinitionVisitor<ElasticSearchGroup> factory) {
         this.factories.put(type, type.cast(factory));
+    }
+
+    public void register(ElasticSearchGroupFactory factory) {
+        register(factory.getProvidedInterface(), factory);
+    }
+
+    public void unregister(ElasticSearchGroupFactory factory) {
+        if (factory != null) {
+            this.factories.remove(factory.getProvidedInterface(), factory);
+        }
     }
 
     @Override

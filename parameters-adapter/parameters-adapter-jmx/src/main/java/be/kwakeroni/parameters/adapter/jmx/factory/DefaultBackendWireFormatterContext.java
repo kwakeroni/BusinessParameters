@@ -23,7 +23,7 @@ public class DefaultBackendWireFormatterContext implements BackendWireFormatterC
                 });
     }
 
-    public void unregister(Class<?> type) {
+    private void unregister(Class<?> type) {
         this.formatters.remove(type);
     }
 
@@ -32,7 +32,9 @@ public class DefaultBackendWireFormatterContext implements BackendWireFormatterC
     }
 
     public void unregister(BackendWireFormatterFactory formatterFactory) {
-        formatterFactory.unregisterInstance(this::unregister);
+        if (formatterFactory != null) {
+            formatterFactory.unregisterInstance(this::unregister);
+        }
     }
 
     @Override

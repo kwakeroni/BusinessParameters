@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.adapter.jmx;
 
-import dustin.jmx.modelmbeans.SimpleCalculator;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.management.*;
@@ -15,9 +16,13 @@ import java.util.Map;
  */
 public class JMXTest {
 
+    @BeforeClass
+    public static void checkRun() {
+        Assume.assumeFalse("Skipping interactive test in maven", isMavenRun());
+    }
+
     @Test
     public void test() throws Exception {
-
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
         Object mbean = dynamicMBean();
         final ObjectName objectName = new ObjectName("be.kwakeroni.parameters:backend=direct");
@@ -25,6 +30,17 @@ public class JMXTest {
 
         JOptionPane.showMessageDialog(null, "Click OK to end test.");
     }
+
+
+    private static boolean isMavenRun() {
+        try {
+            StackTraceElement[] stackTrace = new Exception().getStackTrace();
+            return (stackTrace[stackTrace.length - 1].getClassName().contains("maven"));
+        } catch (Exception exc) {
+            return false;
+        }
+    }
+
 
     private DynamicMBean dynamicMBean() throws Exception {
         return new DynamicTestBean();
@@ -44,7 +60,7 @@ public class JMXTest {
                         null,      // constructors
                         operations(),
                         null,      // notifications
-                        descriptor );
+                        descriptor);
 
         ModelMBean modelmbean = new RequiredModelMBean(modelMBeanInfo);
         modelmbean.setManagedResource(new TestBean(), "ObjectReference");
@@ -57,10 +73,10 @@ public class JMXTest {
                 new MBeanParameterInfo(
                         "key",
                         String.class.getName(),
-                        "The map key" );
+                        "The map key");
 
         final ImmutableDescriptor parameterInfoDescriptor = new ImmutableDescriptor(
-                new String[]{"legalValues"}, new Object[]{ new Object[]{ "key", "one", "two" } }
+                new String[]{"legalValues"}, new Object[]{new Object[]{"key", "one", "two"}}
         );
 
         final MBeanParameterInfo parameter =
@@ -74,20 +90,20 @@ public class JMXTest {
                 new ModelMBeanOperationInfo(
                         "getValue",
                         "retrieve a parameter value for the selected entry",
-                        new MBeanParameterInfo[] {key, parameter},
+                        new MBeanParameterInfo[]{key, parameter},
                         String.class.getName(),
-                        ModelMBeanOperationInfo.INFO );
+                        ModelMBeanOperationInfo.INFO);
 
         final ModelMBeanOperationInfo getEntry =
                 new ModelMBeanOperationInfo(
                         "getEntry",
                         "retrieve the selected entry",
-                        new MBeanParameterInfo[] {key},
+                        new MBeanParameterInfo[]{key},
                         Map.class.toString(),
-                        ModelMBeanOperationInfo.INFO );
+                        ModelMBeanOperationInfo.INFO);
 
         return new ModelMBeanOperationInfo[]{
-            getValue, getEntry
+                getValue, getEntry
         };
 
 
@@ -133,13 +149,13 @@ public class JMXTest {
             descriptor.setField("descriptorType", "mbean");
 
             return new MBeanInfo(
-                            TestBean.class.getName(),
-                            "A group.",
-                            null,      // attributes
-                            null,      // constructors
-                            operations(),
-                            null,      // notifications
-                            descriptor);
+                    TestBean.class.getName(),
+                    "A group.",
+                    null,      // attributes
+                    null,      // constructors
+                    operations(),
+                    null,      // notifications
+                    descriptor);
         }
     }
 }

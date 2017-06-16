@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.backend.inmemory.factory;
+package be.kwakeroni.parameters.backend.es.factory;
 
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
@@ -14,12 +14,14 @@ public class ParameterGroupDefinitionContext implements Supplier<Stream<Paramete
 
     private final Map<String, ParameterGroupDefinition> definitions = new HashMap<>();
 
-    public void register(ParameterGroupDefinition definition){
+    public void register(ParameterGroupDefinition definition) {
         this.definitions.merge(definition.getName(), definition,
-                (a, b) -> { throw new IllegalStateException("Group definition " + a.getName() + " registered twice"); });
+                (a, b) -> {
+                    throw new IllegalStateException("Group definition " + a.getName() + " registered twice");
+                });
     }
 
-    public void unregister(ParameterGroupDefinition definition, Map<Object, Object> properties) {
+    public void unregister(ParameterGroupDefinition definition) {
         if (definition != null) {
             this.definitions.remove(definition.getName(), definition);
         }

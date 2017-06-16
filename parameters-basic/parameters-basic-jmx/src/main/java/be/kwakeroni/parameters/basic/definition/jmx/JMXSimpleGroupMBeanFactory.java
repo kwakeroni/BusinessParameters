@@ -3,18 +3,22 @@ package be.kwakeroni.parameters.basic.definition.jmx;
 import be.kwakeroni.parameters.adapter.jmx.api.JMXGroupBuilder;
 import be.kwakeroni.parameters.adapter.jmx.api.JMXGroupMBeanFactory;
 import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
+
+import java.util.function.Consumer;
 
 /**
  * Created by kwakeroni on 09/05/17.
  */
 public class JMXSimpleGroupMBeanFactory implements SimpleDefinitionVisitor<JMXGroupBuilder>, JMXGroupMBeanFactory {
 
+    @Override
+    public void register(Registry registry) {
+        registry.register(SimpleDefinitionVisitor.class, this);
+    }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public Class<? extends DefinitionVisitor> getProvidedInterface() {
-        return SimpleDefinitionVisitor.class;
+    public void unregister(Consumer<Class<?>> registry) {
+        registry.accept(SimpleDefinitionVisitor.class);
     }
 
     @Override

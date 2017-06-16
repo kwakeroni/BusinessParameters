@@ -14,7 +14,7 @@ public class DefaultClientWireFormatterContext implements ClientWireFormatterCon
 
     private Map<Class<?>, ClientWireFormatter> objects = new HashMap<>(2);
 
-    public <F extends ClientWireFormatter> void register(Class<? super F> type, F formatter) {
+    private <F extends ClientWireFormatter> void register(Class<? super F> type, F formatter) {
         this.objects.merge(type, formatter,
                 (one, two) -> {
                     throw new IllegalStateException("Duplicate ClientWireFormatter for: " + type);
@@ -25,12 +25,14 @@ public class DefaultClientWireFormatterContext implements ClientWireFormatterCon
         formatter.registerInstance(this::register);
     }
 
-    public void unregister(Class<?> type) {
+    private void unregister(Class<?> type) {
         this.objects.remove(type);
     }
 
     public void unregister(ClientWireFormatterFactory formatter) {
-        formatter.unregisterInstance(this::unregister);
+        if (formatter != null) {
+            formatter.unregisterInstance(this::unregister);
+        }
     }
 
 

@@ -3,7 +3,8 @@ package be.kwakeroni.parameters.basic.definition.jmx;
 import be.kwakeroni.parameters.adapter.jmx.api.JMXGroupBuilder;
 import be.kwakeroni.parameters.adapter.jmx.api.JMXGroupMBeanFactory;
 import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
+
+import java.util.function.Consumer;
 
 /**
  * Created by kwakeroni on 10/05/17.
@@ -11,9 +12,13 @@ import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
 public class JMXMappedGroupMBeanFactory implements MappedDefinitionVisitor<JMXGroupBuilder>, JMXGroupMBeanFactory {
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public Class<? extends DefinitionVisitor> getProvidedInterface() {
-        return MappedDefinitionVisitor.class;
+    public void register(Registry registry) {
+        registry.register(MappedDefinitionVisitor.class, this);
+    }
+
+    @Override
+    public void unregister(Consumer<Class<?>> registry) {
+        registry.accept(MappedDefinitionVisitor.class);
     }
 
     @Override

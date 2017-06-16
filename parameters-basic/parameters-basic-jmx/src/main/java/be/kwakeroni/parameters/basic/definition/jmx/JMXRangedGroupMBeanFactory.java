@@ -3,11 +3,11 @@ package be.kwakeroni.parameters.basic.definition.jmx;
 import be.kwakeroni.parameters.adapter.jmx.api.JMXGroupBuilder;
 import be.kwakeroni.parameters.adapter.jmx.api.JMXGroupMBeanFactory;
 import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.BasicType;
 
 import java.util.Comparator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -16,9 +16,13 @@ import java.util.function.Function;
 public class JMXRangedGroupMBeanFactory implements RangedDefinitionVisitor<JMXGroupBuilder>, JMXGroupMBeanFactory {
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public Class<? extends DefinitionVisitor> getProvidedInterface() {
-        return RangedDefinitionVisitor.class;
+    public void register(Registry registry) {
+        registry.register(RangedDefinitionVisitor.class, this);
+    }
+
+    @Override
+    public void unregister(Consumer<Class<?>> registry) {
+        registry.accept(RangedDefinitionVisitor.class);
     }
 
     private JMXGroupBuilder visit(Definition definition, JMXGroupBuilder subGroup) {

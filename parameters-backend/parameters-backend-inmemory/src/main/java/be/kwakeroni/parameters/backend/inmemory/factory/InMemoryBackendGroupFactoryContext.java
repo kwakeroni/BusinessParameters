@@ -14,18 +14,23 @@ import java.util.Objects;
  */
 public class InMemoryBackendGroupFactoryContext implements DefinitionVisitorContext<InMemoryGroup> {
 
-    private Map<Class<? extends DefinitionVisitor<?>>, DefinitionVisitor<?>> factories = new HashMap<>();
+    private Map<Class<?>, Object> factories = new HashMap<>();
 
-    private <I extends DefinitionVisitor<?>> void register(Class<I> type, DefinitionVisitor<InMemoryGroup> factory) {
-        this.factories.put(type, type.cast(factory));
+    private <I> void register(Class<? super I> type, I object) {
+        this.factories.merge(type, object,
+                (one, two) -> {
+                    throw new IllegalStateException(String.format("Multiple JMXGroupMBeanFactory instances registered for %s (%one, %two)", type, one, two));
+                });
     }
 
     public void register(InMemoryGroupFactory factory){
-        register(factory.getProvidedInterface(), factory);
+        factory.register(this::register);
     }
 
     public void unregister(InMemoryGroupFactory factory){
-        this.factories.remove(factory.getProvidedInterface(), factory);
+        if (factory != null) {
+            factory.unregister(this.factories::remove);
+        }
     }
 
     @Override

@@ -4,9 +4,9 @@ import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroupFactory;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
 import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
 
 import java.util.LinkedHashSet;
+import java.util.function.Consumer;
 
 /**
  * Created by kwakeroni on 14.04.17.
@@ -14,9 +14,13 @@ import java.util.LinkedHashSet;
 public class InMemorySimpleGroupFactory implements SimpleDefinitionVisitor<InMemoryGroup>, InMemoryGroupFactory {
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public Class<? extends DefinitionVisitor> getProvidedInterface() {
-        return SimpleDefinitionVisitor.class;
+    public void register(Registry registry) {
+        registry.register(SimpleDefinitionVisitor.class, this);
+    }
+
+    @Override
+    public void unregister(Consumer<Class<?>> registry) {
+        registry.accept(SimpleDefinitionVisitor.class);
     }
 
     @Override

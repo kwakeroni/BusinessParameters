@@ -43,14 +43,14 @@ public class DirectBusinessParametersServiceFactory implements BusinessParameter
     private void registerClientFormatters(DefaultClientWireFormatterContext registry) {
         ServiceLoader<ClientWireFormatterFactory> loader = ServiceLoader.load(ClientWireFormatterFactory.class);
         StreamSupport.stream(loader.spliterator(), false)
-                .filter(factory -> "raw".equals(factory.getWireFormat()))
+                .filter(factory -> DefaultBackendWireFormatterContext.SUPPORTED_WIREFORMATS.contains(factory.getWireFormat()))
                 .forEach(registry::register);
     }
 
     private void registerBackendFormatters(DefaultBackendWireFormatterContext registry) {
         ServiceLoader<BackendWireFormatterFactory> loader = ServiceLoader.load(BackendWireFormatterFactory.class);
         StreamSupport.stream(loader.spliterator(), false)
-                .filter(factory -> "raw".equals(factory.getWireFormat()))
+                .filter(factory -> DefaultBackendWireFormatterContext.SUPPORTED_WIREFORMATS.contains(factory.getWireFormat()))
                 .forEach(registry::register);
     }
 

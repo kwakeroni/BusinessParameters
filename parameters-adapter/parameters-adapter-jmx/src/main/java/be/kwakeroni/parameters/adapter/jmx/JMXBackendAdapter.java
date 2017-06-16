@@ -37,12 +37,16 @@ public class JMXBackendAdapter {
 
 
     public void register(BusinessParametersBackend<?> backend) {
+        registerBackendMBean(backend);
         backend.getGroupNames().forEach(name -> register(backend, name));
     }
 
     public void unregister(BusinessParametersBackend<?> backend) {
-        backend.getGroupNames().forEach(name -> unregister(backend, name));
-        this.beans.remove(backend);
+        if (backend != null) {
+            unregisterBackendMBean(backend);
+            backend.getGroupNames().forEach(name -> unregister(backend, name));
+            this.beans.remove(backend);
+        }
     }
 
     private void register(BusinessParametersBackend<?> backend, String groupName) {
@@ -60,17 +64,28 @@ public class JMXBackendAdapter {
         this.beans.computeIfAbsent(backend, be -> new HashMap<>(be.getGroupNames().size())).put(groupName, mbean);
     }
 
-    private void unregister(BusinessParametersBackend<?> backend, String groupName){
+    private void unregister(BusinessParametersBackend<?> backend, String groupName) {
         try {
             mbeanServer.unregisterMBean(getObjectName(backend, groupName));
-        } catch (JMException exc){
+        } catch (JMException exc) {
             LOG.error("Unable to unregister JMX bean for group " + groupName, exc);
         }
     }
 
-    private void unregister(String name) throws JMException {
-        final ObjectName objectName = new ObjectName(name);
-        mbeanServer.unregisterMBean(objectName);
+    private void registerBackendMBean(BusinessParametersBackend<?> backend) {
+        try {
+            mbeanServer.registerMBean(new JMXParameterGroupBackend(backend), getObjectName(backend));
+        } catch (JMException exc) {
+            LOG.error("Unable to register JMX bean for backend " + backend, exc);
+        }
+    }
+
+    private void unregisterBackendMBean(BusinessParametersBackend<?> backend) {
+        try {
+            mbeanServer.unregisterMBean(getObjectName(backend));
+        } catch (JMException exc) {
+            LOG.error("Unable to unregister JMX bean for backend " + backend, exc);
+        }
     }
 
     private JMXGroupBuilder createMBeanBuilder(BusinessParametersBackend<?> backend, String name) {
@@ -81,4 +96,10 @@ public class JMXBackendAdapter {
         String name = "be.kwakeroni.parameters:backend=" + backend.toString() + ",group=" + groupName;
         return new ObjectName(name);
     }
+
+    private ObjectName getObjectName(BusinessParametersBackend<?> backend) throws JMException {
+        String name = "be.kwakeroni.parameters:backend=" + backend.toString();
+        return new ObjectName(name);
+    }
+
 }

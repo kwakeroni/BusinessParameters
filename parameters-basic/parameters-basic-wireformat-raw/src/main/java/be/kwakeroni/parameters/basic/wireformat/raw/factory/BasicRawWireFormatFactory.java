@@ -1,12 +1,10 @@
 package be.kwakeroni.parameters.basic.wireformat.raw.factory;
 
 import be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory;
-import be.kwakeroni.parameters.client.api.factory.ClientWireFormatterFactory;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
 import be.kwakeroni.parameters.basic.client.query.BasicClientWireFormatter;
 import be.kwakeroni.parameters.basic.wireformat.raw.BasicRawWireFormat;
-
-import java.util.function.Consumer;
+import be.kwakeroni.parameters.client.api.factory.ClientWireFormatterFactory;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -21,17 +19,12 @@ public class BasicRawWireFormatFactory implements ClientWireFormatterFactory, Ba
     }
 
     @Override
-    public void registerInstance(ClientWireFormatterFactory.Registry registry) {
-        registry.register(BasicClientWireFormatter.class, WIRE_FORMAT);
+    public void visitInstances(ClientWireFormatterFactory.Visitor visitor) {
+        visitor.visit(BasicClientWireFormatter.class, WIRE_FORMAT);
     }
 
     @Override
-    public void registerInstance(BackendWireFormatterFactory.Registry registry) {
-        registry.register(BasicBackendWireFormatter.class, WIRE_FORMAT);
-    }
-
-    @Override
-    public void unregisterInstance(Consumer<Class<?>> registry) {
-        registry.accept(BasicBackendWireFormatter.class);
+    public void visitInstances(BackendWireFormatterFactory.Visitor visitor) {
+        visitor.visit(BasicBackendWireFormatter.class, WIRE_FORMAT);
     }
 }

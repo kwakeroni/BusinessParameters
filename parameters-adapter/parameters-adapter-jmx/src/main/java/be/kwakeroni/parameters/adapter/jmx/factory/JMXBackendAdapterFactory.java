@@ -6,6 +6,7 @@ import be.kwakeroni.parameters.adapter.jmx.api.JMXGroupMBeanFactory;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory;
 import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
+import be.kwakeroni.parameters.core.support.backend.DefaultBackendWireFormatterContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCatalog;
 

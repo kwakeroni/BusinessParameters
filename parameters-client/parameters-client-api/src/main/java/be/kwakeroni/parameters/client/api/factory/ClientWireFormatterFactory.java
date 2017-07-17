@@ -2,19 +2,17 @@ package be.kwakeroni.parameters.client.api.factory;
 
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatter;
 
-import java.util.function.Consumer;
-
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
 public interface ClientWireFormatterFactory {
 
     public String getWireFormat();
-    public void registerInstance(Registry registry);
-    public void unregisterInstance(Consumer<Class<?>> registry);
+
+    public void visitInstances(Visitor visitor);
 
     @FunctionalInterface
-    public static interface Registry {
-        public <F extends ClientWireFormatter> void register(Class<? super F> type, F formatter);
+    public static interface Visitor {
+        public <I extends ClientWireFormatter> void visit(Class<? super I> type, I instance);
     }
 }

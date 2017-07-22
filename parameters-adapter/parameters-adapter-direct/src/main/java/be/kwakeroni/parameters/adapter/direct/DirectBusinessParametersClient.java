@@ -24,9 +24,12 @@ public class DirectBusinessParametersClient implements WritableBusinessParameter
     private final DirectBackendAdapter<?> backend;
     private final ClientWireFormatterContext formatters;
 
-    public DirectBusinessParametersClient(BusinessParametersBackend<?> backend, BackendWireFormatterContext wireFormatterContext, ClientWireFormatterContext formatters) {
-        this.backend = new DirectBackendAdapter<>(backend, wireFormatterContext);
-        this.formatters = Objects.requireNonNull(formatters, "formatters");
+    public DirectBusinessParametersClient(BusinessParametersBackend<?> backend, BackendWireFormatterContext backendFormatters, ClientWireFormatterContext clientFormatters) {
+        Objects.requireNonNull(backendFormatters, "backendFormatters");
+        Objects.requireNonNull(clientFormatters, "clientFormatters");
+
+        this.backend = new DirectBackendAdapter<>(backend, backendFormatters);
+        this.formatters = clientFormatters;
     }
 
     @Override

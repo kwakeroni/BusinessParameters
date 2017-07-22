@@ -8,7 +8,6 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.junit.Assume;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -16,9 +15,7 @@ import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 
 import java.util.Optional;
-import java.util.ServiceLoader;
 import java.util.function.Supplier;
-import java.util.stream.StreamSupport;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck

@@ -6,7 +6,7 @@
 
     <repository>mvn:be.kwakeroni.parameters/parameters/1.0-SNAPSHOT/xml/features-deps</repository>
 
-    <feature name="businessparameters-client-support" version="${project.version}">
+    <feature name="businessparameters-client-support" version="${project.version}" hidden="true">
         <bundle>mvn:be.kwakeroni.parameters.client/parameters-client-api/${project.version}</bundle>
         <bundle>mvn:be.kwakeroni.parameters.types/parameters-types-api/${project.version}</bundle>
         <bundle>mvn:be.kwakeroni.parameters.types/parameters-types-support/${project.version}</bundle>
@@ -36,18 +36,19 @@
         <feature>businessparameters-basic-elasticsearch</feature>
     </feature>
 
-    <feature name="businessparameters-backend-support" version="${project.version}">
+    <feature name="businessparameters-backend-support" version="${project.version}" hidden="true">
         <bundle>mvn:be.kwakeroni.parameters.backend/parameters-backend-api/${project.version}</bundle>
         <bundle>mvn:be.kwakeroni.parameters.definition/parameters-definition-api/${project.version}</bundle>
         <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-backend/${project.version}</bundle>
+        <bundle>mvn:be.kwakeroni.parameters.core/parameters-core-support/${project.version}</bundle>
     </feature>
 
-    <feature name="businessparameters-backend-inmemory" version="${project.version}">
+    <feature name="businessparameters-backend-inmemory" version="${project.version}" hidden="true">
         <feature>businessparameters-backend-support</feature>
         <bundle>mvn:be.kwakeroni.parameters.backend/parameters-backend-inmemory/${project.version}</bundle>
     </feature>
 
-    <feature name="businessparameters-backend-elasticsearch" version="${project.version}">
+    <feature name="businessparameters-backend-elasticsearch" version="${project.version}" hidden="true">
         <feature>businessparameters-backend-support</feature>
         <bundle>mvn:be.kwakeroni.parameters.backend/parameters-backend-elasticsearch/${project.version}</bundle>
         <!--<configfile finalname="be.kwakeroni.parameters.backend.elasticsearch" override="false">-->
@@ -55,7 +56,7 @@
         <!--</configfile>-->
     </feature>
 
-    <feature name="businessparameters-basic-inmemory" version="${project.version}">
+    <feature name="businessparameters-basic-inmemory" version="${project.version}" hidden="true">
         <feature>businessparameters-backend-inmemory</feature>
         <bundle>mvn:be.kwakeroni.parameters.types/parameters-types-api/${project.version}</bundle>
         <bundle>mvn:be.kwakeroni.parameters.types/parameters-types-support/${project.version}</bundle>
@@ -63,13 +64,13 @@
         <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-inmemory/${project.version}</bundle>
     </feature>
 
-    <feature name="businessparameters-basic-elasticsearch" version="${project.version}">
+    <feature name="businessparameters-basic-elasticsearch" version="${project.version}" hidden="true">
         <feature>businessparameters-backend-elasticsearch</feature>
         <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-common/${project.version}</bundle>
         <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-elasticsearch/${project.version}</bundle>
     </feature>
 
-    <feature name="businessparameters-basic-jmx" version="${project.version}">
+    <feature name="businessparameters-basic-jmx" version="${project.version}" hidden="true">
         <feature>businessparameters-backend-support</feature>
         <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-common/${project.version}</bundle>
         <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-jmx/${project.version}</bundle>

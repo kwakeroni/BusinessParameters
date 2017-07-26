@@ -2,6 +2,7 @@ package be.kwakeroni.scratch.tv;
 
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCatalog;
+import be.kwakeroni.scratch.tv.definition.*;
 
 import java.util.ArrayList;
 import java.util.stream.Stream;
@@ -12,12 +13,12 @@ import java.util.stream.Stream;
 public class Catalog extends ArrayList<ParameterGroupDefinition> implements ParameterGroupDefinitionCatalog {
 
     private static final ParameterGroupDefinition[] DEFINITIONS = {
-            SimpleTVGroup.DEFINITION,
-            MappedTVGroup.DEFINITION,
-            RangedFilterTVGroup.DEFINITION,
-            RangedQueryTVGroup.DEFINITION,
-            MappedRangedFilterTVGroup.DEFINITION,
-            MappedRangedQueryTVGroup.DEFINITION
+            SimpleTV.DEFINITION,
+            MappedTV.DEFINITION,
+            RangedFilterTV.DEFINITION,
+            RangedQueryTV.DEFINITION,
+            MappedRangedFilterTV.DEFINITION,
+            MappedRangedQueryTV.DEFINITION
     };
 
     public Catalog() {

@@ -7,7 +7,11 @@ import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
  */
 public interface ElasticSearchGroupFactory extends DefinitionVisitor<ElasticSearchGroup> {
 
-    @SuppressWarnings("rawtypes")
-    public Class<? extends DefinitionVisitor> getProvidedInterface();
+    public void visit(Registry registry);
+
+    @FunctionalInterface
+    public static interface Registry {
+        public <I extends ElasticSearchGroupFactory> void register(Class<? super I> type, I formatter);
+    }
 
 }

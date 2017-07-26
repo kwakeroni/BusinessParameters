@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>scratch</artifactId>
+    <packaging>bundle</packaging>
 
     <dependencyManagement>
         <dependencies>
@@ -81,46 +82,57 @@
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-wireformat-raw</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.adapter</groupId>
             <artifactId>parameters-adapter-direct</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.backend</groupId>
             <artifactId>parameters-backend-inmemory</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.backend</groupId>
             <artifactId>parameters-backend-elasticsearch</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-inmemory</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-elasticsearch</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.adapter</groupId>
             <artifactId>parameters-adapter-jmx</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-jmx</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.elasticsearch/elasticsearch -->
         <dependency>

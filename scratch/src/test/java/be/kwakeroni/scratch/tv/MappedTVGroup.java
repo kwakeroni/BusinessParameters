@@ -14,30 +14,17 @@ import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.client.support.Entries;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
-import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-
-import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
-import static be.kwakeroni.parameters.basic.definition.BasicGroup.mappedGroup;
-import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
+import be.kwakeroni.scratch.tv.definition.MappedTV;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
+public class MappedTVGroup extends MappedTV {
 
     public static final MappedTVGroup instance() {
         return new MappedTVGroup();
     }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    public static Parameter<Dag> DAY = new DefaultParameter<>("day", Dag.type);
-    public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
 
     public static Entry entry(Dag dag, String program) {
         return Entries.entryOf(DAY, dag, PROGRAM, program);
@@ -64,14 +51,6 @@ public class MappedTVGroup implements ParameterGroup<Mapped<Dag, Simple>> {
     public static Query<Mapped<Dag, Simple>, Entry> entryQuery(Dag dag) {
         return new MappedQuery<>(dag, Dag.type, new EntryQuery());
     }
-
-    private static final String NAME = "tv.mapped";
-    public static final ParameterGroupDefinition DEFINITION =
-            mappedGroup()
-                    .withKeyParameter(DAY.getName())
-                    .mappingTo(group()
-                            .withParameter(PROGRAM.getName()))
-                    .build(NAME);
 
     static final InmemoryMappedGroup INMEMORY_TEST_GROUP = new InmemoryMappedGroup(DAY.getName(), String::equals, DEFINITION, new InmemorySimpleGroup(NAME, DEFINITION, DAY.getName(), PROGRAM.getName()));
 

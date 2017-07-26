@@ -31,4 +31,8 @@
     <reference-list interface="be.kwakeroni.parameters.definition.api.ParameterGroupDefinition" availability="optional">
         <reference-listener ref="definitionContext" bind-method="register" unbind-method="unregister"/>
     </reference-list>
+    <reference-list interface="be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCatalog"
+                    availability="optional">
+        <reference-listener ref="definitionContext" bind-method="register" unbind-method="unregister"/>
+    </reference-list>
 </blueprint>

@@ -1,4 +1,4 @@
-package be.kwakeroni.scratch;
+package be.kwakeroni.scratch.env;
 
 import be.kwakeroni.parameters.adapter.direct.factory.DirectBusinessParametersServiceFactory;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
@@ -8,6 +8,7 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
+import be.kwakeroni.scratch.env.inmemory.InMemoryTestData;
 import org.junit.Assume;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;

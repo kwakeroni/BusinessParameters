@@ -61,11 +61,11 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     public Collection<String> getGroupNames() {
         Stream<JSONObject> stream = client.getAggregation("group_by_type", new JSONObject().put("field", "_type"));
         Collection<String> inDB = stream.map(o -> o.getString("key")).collect(Collectors.toList());
-        return groups.keySet()
-                .stream()
-                .peek(key -> {
-                    if (!inDB.contains(key)) {
-                        LOG.warn("Registered group without data: " + key);
+        return definitions.get()
+                .map(ParameterGroupDefinition::getName)
+                .peek(name -> {
+                    if (!inDB.contains(name)) {
+                        LOG.warn("Registered group without data: " + name);
                     }
                 })
                 .collect(Collectors.toList());

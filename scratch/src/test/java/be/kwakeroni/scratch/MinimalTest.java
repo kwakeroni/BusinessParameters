@@ -6,6 +6,8 @@ import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.type.Range;
 import be.kwakeroni.parameters.client.api.model.Entry;
+import be.kwakeroni.scratch.env.Environment;
+import be.kwakeroni.scratch.env.TestData;
 import be.kwakeroni.scratch.tv.*;
 import org.junit.Rule;
 import org.junit.Test;

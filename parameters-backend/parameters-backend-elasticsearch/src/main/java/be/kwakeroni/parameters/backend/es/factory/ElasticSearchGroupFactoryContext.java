@@ -14,19 +14,26 @@ import java.util.Objects;
  */
 public class ElasticSearchGroupFactoryContext implements DefinitionVisitorContext<ElasticSearchGroup> {
 
-    private Map<Class<? extends DefinitionVisitor<?>>, DefinitionVisitor<?>> factories = new HashMap<>();
+    private Map<Class<?>, DefinitionVisitor<?>> factories = new HashMap<>();
 
-    private <I extends DefinitionVisitor<?>> void register(Class<I> type, DefinitionVisitor<ElasticSearchGroup> factory) {
-        this.factories.put(type, type.cast(factory));
+    private <I extends DefinitionVisitor<?>> void register(Class<? super I> type, I visitor) {
+        this.factories.put(type, visitor);
     }
 
+    private <I extends DefinitionVisitor<?>> void unregister(Class<? super I> type, I visitor) {
+        this.factories.remove(type, visitor);
+    }
+
+
     public void register(ElasticSearchGroupFactory factory) {
-        register(factory.getProvidedInterface(), factory);
+        if (factory != null) {
+            factory.visit(this::register);
+        }
     }
 
     public void unregister(ElasticSearchGroupFactory factory) {
         if (factory != null) {
-            this.factories.remove(factory.getProvidedInterface(), factory);
+            factory.visit(this::unregister);
         }
     }
 

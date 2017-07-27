@@ -4,7 +4,6 @@ import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroupFactory;
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
 
 import java.util.LinkedHashSet;
 
@@ -14,9 +13,8 @@ import java.util.LinkedHashSet;
 public class ElasticSearchSimpleGroupFactory implements SimpleDefinitionVisitor<ElasticSearchGroup>, ElasticSearchGroupFactory {
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public Class<? extends DefinitionVisitor> getProvidedInterface() {
-        return SimpleDefinitionVisitor.class;
+    public void visit(Registry registry) {
+        registry.register(SimpleDefinitionVisitor.class, this);
     }
 
     @Override

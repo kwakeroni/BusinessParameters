@@ -12,30 +12,20 @@ import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.client.support.Entries;
-import be.kwakeroni.parameters.basic.definition.builder.RangedDefinitionBuilder;
 import be.kwakeroni.parameters.basic.type.Range;
 import be.kwakeroni.parameters.basic.type.Ranges;
 import be.kwakeroni.parameters.client.api.model.Entry;
-import be.kwakeroni.parameters.client.api.model.Parameter;
-import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
+import be.kwakeroni.scratch.tv.definition.AbstractRangedTV;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-
-import static be.kwakeroni.parameters.basic.definition.BasicGroup.group;
-import static be.kwakeroni.parameters.basic.definition.BasicGroup.rangedGroup;
-import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public abstract class AbstractRangedTVGroup implements ParameterGroup<Ranged<Slot, Simple>> {
-
-    public static Parameter<Range<Slot>> SLOT = new DefaultParameter<>("slot", Ranges.rangeTypeOf(Slot.type));
-    public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
+public interface AbstractRangedTVGroup extends AbstractRangedTV {
 
 
     public static Entry entry(Slot from, Slot to, String program) {
@@ -43,7 +33,7 @@ public abstract class AbstractRangedTVGroup implements ParameterGroup<Ranged<Slo
     }
 
     // For test purposes
-    protected abstract ParameterGroupDefinition getDefinition();
+    ParameterGroupDefinition getDefinition();
 
     public static EntryData entryData(Slot from, Slot to, String program) {
         return DefaultEntryData.of(
@@ -72,19 +62,13 @@ public abstract class AbstractRangedTVGroup implements ParameterGroup<Ranged<Slo
                 new ValueQuery<>(MappedTVGroup.PROGRAM));
     }
 
-    protected static final InmemoryRangedGroup inmemoryTestGroup(String name, ParameterGroupDefinition definition) {
+    public static InmemoryRangedGroup inmemoryTestGroup(String name, ParameterGroupDefinition definition) {
         return new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), definition, new InmemorySimpleGroup(name, definition, SLOT.getName(), PROGRAM.getName()));
     }
 
-    protected static final ElasticSearchGroup elasticSearchSubGroup(String name, ParameterGroupDefinition definition) {
+    public static ElasticSearchGroup elasticSearchSubGroup(String name, ParameterGroupDefinition definition) {
         return new ElasticSearchSimpleGroup(name, definition, SLOT.getName(), PROGRAM.getName());
     }
 
-    protected static final ParameterGroupDefinition definition(String name, Function<RangedDefinitionBuilder, RangedDefinitionBuilder> withRangeParameter) {
-        return withRangeParameter.apply(rangedGroup())
-                .mappingTo(group()
-                        .withParameter(PROGRAM.getName()))
-                .build(name);
-    }
 
 }

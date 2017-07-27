@@ -1,4 +1,4 @@
-package be.kwakeroni.scratch;
+package be.kwakeroni.scratch.env.es;
 
 import org.elasticsearch.cli.Terminal;
 import org.elasticsearch.common.network.NetworkModule;
@@ -6,6 +6,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.internal.InternalSettingsPreparer;
 import org.elasticsearch.transport.Netty4Plugin;
+import org.slf4j.Logger;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,6 +17,8 @@ import java.util.function.Supplier;
  * (C) 2017 Maarten Van Puymbroeck
  */
 public class ElasticSearchTestNode implements AutoCloseable {
+
+    private static Logger LOG = org.slf4j.LoggerFactory.getLogger(ElasticSearchTestNode.class);
 
     private static ElasticSearchTestNode INSTANCE = null;
 
@@ -39,7 +42,7 @@ public class ElasticSearchTestNode implements AutoCloseable {
     }
 
     private static synchronized void shutdownRunningInstance() {
-        System.out.println("Shutting down running ElasticSearchTestNode");
+        LOG.info("Shutting down running ElasticSearchTestNode");
         if (INSTANCE != null) {
             try {
                 INSTANCE.stop();
@@ -51,6 +54,7 @@ public class ElasticSearchTestNode implements AutoCloseable {
 
 
     public static ElasticSearchTestNode start() {
+        LOG.info("Starting ElasticSearch test server...");
         ElasticSearchTestNode node = new ElasticSearchTestNode();
         node.thread.start();
         return node;

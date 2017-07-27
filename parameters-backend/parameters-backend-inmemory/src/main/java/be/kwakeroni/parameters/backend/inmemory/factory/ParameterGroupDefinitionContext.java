@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.backend.inmemory.factory;
 
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
+import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCatalog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,14 +15,28 @@ public class ParameterGroupDefinitionContext implements Supplier<Stream<Paramete
 
     private final Map<String, ParameterGroupDefinition> definitions = new HashMap<>();
 
-    public void register(ParameterGroupDefinition definition){
+    public void register(ParameterGroupDefinition definition) {
         this.definitions.merge(definition.getName(), definition,
-                (a, b) -> { throw new IllegalStateException("Group definition " + a.getName() + " registered twice"); });
+                (a, b) -> {
+                    throw new IllegalStateException("Group definition " + a.getName() + " registered twice");
+                });
     }
 
-    public void unregister(ParameterGroupDefinition definition, Map<Object, Object> properties) {
+    public void unregister(ParameterGroupDefinition definition) {
         if (definition != null) {
             this.definitions.remove(definition.getName(), definition);
+        }
+    }
+
+    public void register(ParameterGroupDefinitionCatalog catalog) {
+        if (catalog != null) {
+            catalog.stream().forEach(this::register);
+        }
+    }
+
+    public void unregister(ParameterGroupDefinitionCatalog catalog) {
+        if (catalog != null) {
+            catalog.stream().forEach(this::unregister);
         }
     }
 

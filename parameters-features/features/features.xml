@@ -4,7 +4,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.4.0 http://karaf.apache.org/xsd/karaf-features-1.4.0.xsd">
 
-    <repository>mvn:be.kwakeroni.parameters/parameters/1.0-SNAPSHOT/xml/features-deps</repository>
+    <repository>mvn:be.kwakeroni.parameters/parameters/${project.version}/xml/features-deps</repository>
 
     <feature name="businessparameters-client-support" version="${project.version}" hidden="true">
         <bundle>mvn:be.kwakeroni.parameters.client/parameters-client-api/${project.version}</bundle>
@@ -60,7 +60,7 @@
 
     <feature name="businessparameters-basic-inmemory" version="${project.version}" hidden="true">
         <feature>businessparameters-backend-inmemory</feature>
-        <bundle>mvn:be.kwakeroni.parameters.types/parameters-types-api/${project.version}</bundle>
+        <bundle>mvn:be.kwakeroni.parameters.types/parameters-types-api/${project.version}</bundle>ls
         <bundle>mvn:be.kwakeroni.parameters.types/parameters-types-support/${project.version}</bundle>
         <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-common/${project.version}</bundle>
         <bundle>mvn:be.kwakeroni.parameters.basic/parameters-basic-inmemory/${project.version}</bundle>

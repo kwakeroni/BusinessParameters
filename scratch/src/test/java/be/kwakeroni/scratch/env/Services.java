@@ -1,4 +1,4 @@
-package be.kwakeroni.scratch;
+package be.kwakeroni.scratch.env;
 
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCatalog;

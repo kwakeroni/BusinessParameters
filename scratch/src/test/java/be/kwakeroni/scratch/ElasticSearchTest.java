@@ -1,5 +1,7 @@
 package be.kwakeroni.scratch;
 
+import be.kwakeroni.scratch.env.Environment;
+import be.kwakeroni.scratch.env.es.ElasticSearchTestData;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;

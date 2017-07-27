@@ -2,6 +2,7 @@ package be.kwakeroni.scratch;
 
 import be.kwakeroni.parameters.adapter.jmx.JMXBackendAdapter;
 import be.kwakeroni.parameters.adapter.jmx.factory.JMXBackendAdapterFactory;
+import be.kwakeroni.scratch.env.inmemory.InMemoryTestData;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;

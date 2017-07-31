@@ -4,13 +4,13 @@ import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCatalog;
 import be.kwakeroni.scratch.tv.definition.*;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 /**
  * Created by kwakeroni on 26/04/17.
  */
-public class Catalog extends ArrayList<ParameterGroupDefinition> implements ParameterGroupDefinitionCatalog {
+public class Catalog implements ParameterGroupDefinitionCatalog {
 
     private static final ParameterGroupDefinition[] DEFINITIONS = {
             SimpleTV.DEFINITION,
@@ -21,15 +21,9 @@ public class Catalog extends ArrayList<ParameterGroupDefinition> implements Para
             MappedRangedQueryTV.DEFINITION
     };
 
-    public Catalog() {
-        super(DEFINITIONS.length);
-        for (ParameterGroupDefinition def : DEFINITIONS) {
-            this.add(def);
-        }
-    }
-
     @Override
     public Stream<ParameterGroupDefinition> stream() {
-        return super.stream();
+        return Arrays.stream(DEFINITIONS);
     }
+
 }

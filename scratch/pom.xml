@@ -44,7 +44,7 @@
             </dependency>
             <dependency>
                 <groupId>be.kwakeroni.parameters.types</groupId>
-                <artifactId>parameters-types-api</artifactId>
+                <artifactId>parameters-types</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>

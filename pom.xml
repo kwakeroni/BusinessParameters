@@ -23,6 +23,7 @@
         <module>parameters-features</module>
         <module>parameters-types</module>
         <module>scratch</module>
+        <module>petshop</module>
     </modules>
 
     <properties>

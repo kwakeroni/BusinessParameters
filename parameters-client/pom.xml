@@ -18,6 +18,7 @@
 
     <modules>
         <module>parameters-client-api</module>
+        <module>parameters-client-support</module>
     </modules>
 
     <dependencyManagement>
@@ -28,7 +29,7 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <artifactId>parameters-client-direct</artifactId>
+                <artifactId>parameters-client-support</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>

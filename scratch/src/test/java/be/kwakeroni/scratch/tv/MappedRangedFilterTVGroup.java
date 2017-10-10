@@ -5,26 +5,18 @@ import be.kwakeroni.parameters.basic.backend.es.ElasticSearchPostFilterRangedGro
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchSimpleGroup;
 import be.kwakeroni.parameters.basic.backend.inmemory.InmemoryMappedGroup;
 import be.kwakeroni.parameters.basic.type.Ranges;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
+import be.kwakeroni.scratch.tv.definition.MappedRangedFilterTV;
 
 /**
  * Created by kwakeroni on 27/04/17.
  */
-public class MappedRangedFilterTVGroup extends AbstractMappedRangedTVGroup {
-    public static final String NAME = "tv.mapped-ranged.filter";
+public class MappedRangedFilterTVGroup extends MappedRangedFilterTV implements AbstractMappedRangedTVGroup {
 
     public static final AbstractMappedRangedTVGroup instance() {
         return new MappedRangedFilterTVGroup();
     }
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    public static final ParameterGroupDefinition DEFINITION = definition(NAME, rangedGroup -> rangedGroup.withComparableRangeParameter(SLOT.getName(), Slot.type));
-
-    static final InmemoryMappedGroup INMEMORY_TEST_GROUP = inmemoryTestGroup(NAME, DEFINITION);
+    static final InmemoryMappedGroup INMEMORY_TEST_GROUP = AbstractMappedRangedTVGroup.inmemoryTestGroup(NAME, DEFINITION);
 
     static final ElasticSearchMappedGroup ELASTICSEARCH_TEST_GROUP = new ElasticSearchMappedGroup(DAY.getName(), DEFINITION,
             new ElasticSearchPostFilterRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), DEFINITION,

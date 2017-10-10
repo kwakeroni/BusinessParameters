@@ -1,5 +1,9 @@
 package be.kwakeroni.scratch;
 
+import be.kwakeroni.scratch.env.TestData;
+import be.kwakeroni.scratch.env.es.ElasticSearchTestData;
+import be.kwakeroni.scratch.env.inmemory.InMemoryTestData;
+
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;

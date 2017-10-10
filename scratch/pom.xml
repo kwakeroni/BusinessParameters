@@ -5,11 +5,12 @@
     <parent>
         <artifactId>parameters</artifactId>
         <groupId>be.kwakeroni.parameters</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>scratch</artifactId>
+    <packaging>bundle</packaging>
 
     <dependencyManagement>
         <dependencies>
@@ -43,7 +44,7 @@
             </dependency>
             <dependency>
                 <groupId>be.kwakeroni.parameters.types</groupId>
-                <artifactId>parameters-types-api</artifactId>
+                <artifactId>parameters-types</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -105,6 +106,7 @@
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-wireformat-raw</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
@@ -113,30 +115,37 @@
         <dependency>
             <groupId>be.kwakeroni.parameters.adapter</groupId>
             <artifactId>parameters-adapter-direct</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.backend</groupId>
             <artifactId>parameters-backend-inmemory</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.backend</groupId>
             <artifactId>parameters-backend-elasticsearch</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-inmemory</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-elasticsearch</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.adapter</groupId>
             <artifactId>parameters-adapter-jmx</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-jmx</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.adapter</groupId>
@@ -145,14 +154,17 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.elasticsearch/elasticsearch -->
         <dependency>
@@ -223,7 +235,7 @@
                 <artifactId>graph-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>install</phase>
+                        <phase>none</phase>
                         <goals>
                             <goal>dependencies</goal>
                         </goals>
@@ -236,5 +248,49 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>TestServer</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <executions>
+                            <execution>
+                                <id>ElasticSearchTestServer</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>be.kwakeroni.scratch.env.es.ElasticSearchTestServer</mainClass>
+                                    <classpathScope>test</classpathScope>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>modulegraph</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.kuali.maven.plugins</groupId>
+                        <artifactId>graph-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

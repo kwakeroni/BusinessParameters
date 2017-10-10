@@ -1,4 +1,4 @@
-package be.kwakeroni.scratch;
+package be.kwakeroni.scratch.env.es;
 
 import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
@@ -11,6 +11,9 @@ import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
+import be.kwakeroni.scratch.Contexts;
+import be.kwakeroni.scratch.env.Services;
+import be.kwakeroni.scratch.env.TestData;
 import be.kwakeroni.scratch.tv.*;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -45,6 +48,7 @@ public class ElasticSearchTestData implements TestData {
 
     @Override
     public void reset() {
+        LOG.info("Clearing test data...");
         try {
             callES("/parameters", WebResource::put);
         } catch (Exception exc) {

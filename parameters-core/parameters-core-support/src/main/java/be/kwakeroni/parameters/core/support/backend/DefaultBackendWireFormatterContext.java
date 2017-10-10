@@ -24,11 +24,15 @@ public class DefaultBackendWireFormatterContext extends DefaultRegistry<BackendW
     }
 
     public void register(BackendWireFormatterFactory registrar) {
-        registrar.visitInstances(this::registerInstance);
+        if (registrar != null) {
+            registrar.visitInstances(this::registerInstance);
+        }
     }
 
     public void unregister(BackendWireFormatterFactory registrar) {
-        registrar.visitInstances(this::unregisterInstance);
+        if (registrar != null) {
+            registrar.visitInstances(this::unregisterInstance);
+        }
     }
 
     public <Q> Q internalize(BackendGroup<Q> group, Object query) {

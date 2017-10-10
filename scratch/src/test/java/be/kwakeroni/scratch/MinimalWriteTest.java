@@ -13,6 +13,8 @@ import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
+import be.kwakeroni.scratch.env.Environment;
+import be.kwakeroni.scratch.env.TestData;
 import be.kwakeroni.scratch.tv.*;
 import org.junit.Rule;
 import org.junit.Test;

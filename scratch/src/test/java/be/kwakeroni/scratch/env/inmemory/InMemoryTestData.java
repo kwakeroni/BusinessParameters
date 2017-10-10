@@ -1,4 +1,4 @@
-package be.kwakeroni.scratch;
+package be.kwakeroni.scratch.env.inmemory;
 
 import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
@@ -12,6 +12,8 @@ import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryMappedGroupFact
 import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryRangedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.inmemory.InMemorySimpleGroupFactory;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
+import be.kwakeroni.scratch.Contexts;
+import be.kwakeroni.scratch.env.TestData;
 import be.kwakeroni.scratch.tv.*;
 
 import java.util.ArrayList;

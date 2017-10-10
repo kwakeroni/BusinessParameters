@@ -13,31 +13,22 @@ import be.kwakeroni.parameters.basic.client.query.MappedQuery;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.client.support.Entries;
-import be.kwakeroni.parameters.basic.definition.builder.RangedDefinitionBuilder;
 import be.kwakeroni.parameters.basic.type.Range;
 import be.kwakeroni.parameters.basic.type.Ranges;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
-import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
+import be.kwakeroni.scratch.tv.definition.AbstractMappedRangedTV;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-
-import static be.kwakeroni.parameters.basic.definition.BasicGroup.*;
-import static be.kwakeroni.parameters.types.support.ParameterTypes.STRING;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public abstract class AbstractMappedRangedTVGroup implements ParameterGroup<Mapped<Dag, Ranged<Slot, Simple>>> {
+public interface AbstractMappedRangedTVGroup extends AbstractMappedRangedTV {
 
-
-    public static Parameter<Dag> DAY = new DefaultParameter<>("day", Dag.type);
-    public static Parameter<Range<Slot>> SLOT = new DefaultParameter<>("slot", Ranges.rangeTypeOf(Slot.type));
-    public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
 
     public static Entry entry(Dag day, Slot from, Slot to, String program) {
         return Entries.entryOf(DAY, day, SLOT, Range.of(from, to), PROGRAM, program);
@@ -79,19 +70,10 @@ public abstract class AbstractMappedRangedTVGroup implements ParameterGroup<Mapp
     }
 
 
-    static final InmemoryMappedGroup inmemoryTestGroup(String name, ParameterGroupDefinition definition) {
+    static InmemoryMappedGroup inmemoryTestGroup(String name, ParameterGroupDefinition definition) {
         return new InmemoryMappedGroup(DAY.getName(), definition,
                 new InmemoryRangedGroup(SLOT.getName(), Ranges.stringRangeTypeOf(Slot.type), definition,
                         new InmemorySimpleGroup(name, definition, DAY.getName(), SLOT.getName(), PROGRAM.getName())));
-    }
-
-    static final ParameterGroupDefinition definition(String name, Function<RangedDefinitionBuilder, RangedDefinitionBuilder> withRangeParameter) {
-        return mappedGroup()
-                .withKeyParameter(DAY.getName())
-                .mappingTo(withRangeParameter.apply(rangedGroup())
-                        .mappingTo(group()
-                                .withParameter(PROGRAM.getName())))
-                .build(name);
     }
 
 

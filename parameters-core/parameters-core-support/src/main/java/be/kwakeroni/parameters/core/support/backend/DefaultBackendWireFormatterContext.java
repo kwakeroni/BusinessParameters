@@ -5,13 +5,18 @@ import be.kwakeroni.parameters.backend.api.factory.BackendWireFormatterFactory;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatter;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.core.support.registry.DefaultRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by kwakeroni on 30/06/17.
  */
 public class DefaultBackendWireFormatterContext extends DefaultRegistry<BackendWireFormatter> implements BackendWireFormatterContext {
+
+    Logger LOG = LoggerFactory.getLogger(DefaultBackendWireFormatterContext.class);
 
     @Override
     public <F extends BackendWireFormatter> F getWireFormatter(Class<F> type) {
@@ -31,11 +36,18 @@ public class DefaultBackendWireFormatterContext extends DefaultRegistry<BackendW
             throw new IllegalStateException("No formatters registered");
         }
 
-        return this.instances()
+        Optional<Q> result = this.instances()
                 .map(formatter -> formatter.tryInternalize(group, query, this))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Could not internalize query: " + query));
+                .findFirst();
+
+        if (!result.isPresent()) {
+            LOG.warn("No applicable formatter found for query: {} - available formatters: {}", query,
+                    this.instances().map(Object::toString).collect(Collectors.joining(", ", "[", "]")));
+        }
+
+        return result
+                .orElseThrow(() -> new IllegalStateException("No applicable formatter found for query: " + query));
     }
 }

@@ -7,7 +7,7 @@ import be.kwakeroni.parameters.backend.api.BackendGroup;
  */
 public interface RangedBackendGroup<Q, BG extends BackendGroup<Q>> extends BackendGroup<Q> {
 
-    Q getEntryQuery(String value, Q subQuery);
+    Q getRangedQuery(String value, Q subQuery);
 
     BG getSubGroup();
 

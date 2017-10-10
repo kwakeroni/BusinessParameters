@@ -16,6 +16,7 @@
     <modules>
         <module>parameters-adapter-direct</module>
         <module>parameters-adapter-jmx</module>
+        <module>parameters-adapter-rest</module>
     </modules>
 
     <dependencyManagement>
@@ -28,6 +29,11 @@
             <dependency>
                 <groupId>be.kwakeroni.parameters.adapter</groupId>
                 <artifactId>parameters-adapter-jmx</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.adapter</groupId>
+                <artifactId>parameters-adapter-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

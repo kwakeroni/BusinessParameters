@@ -19,6 +19,7 @@
         <module>parameters-basic-common</module>
         <module>parameters-basic-elasticsearch</module>
         <module>parameters-basic-inmemory</module>
+        <module>parameters-basic-wireformat-json</module>
         <module>parameters-basic-wireformat-raw</module>
         <module>parameters-basic-jmx</module>
     </modules>
@@ -52,6 +53,11 @@
             </dependency>
             <dependency>
                 <artifactId>parameters-basic-wireformat-raw</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>parameters-basic-wireformat-json</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>

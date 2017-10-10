@@ -33,13 +33,13 @@ public interface BasicBackendWireFormatter extends BackendWireFormatter {
     default <Q> Q internalizeRangedQuery(String value, Object rawSubQuery, BackendGroup<Q> group, BackendWireFormatterContext context) {
         RangedBackendGroup<Q, ?> ranged = group.as(RangedBackendGroup.class);
         Q subQuery = context.internalize(ranged.getSubGroup(), rawSubQuery);
-        return ranged.getEntryQuery(value, subQuery);
+        return ranged.getRangedQuery(value, subQuery);
     }
 
     default <Q> Q internalizeMappedQuery(String key, Object rawSubQuery, BackendGroup<Q> group, BackendWireFormatterContext context) {
         MappedBackendGroup<Q, ?> mapped = group.as(MappedBackendGroup.class);
         Q subQuery = context.internalize(mapped.getSubGroup(), rawSubQuery);
-        return mapped.getEntryQuery(key, subQuery);
+        return mapped.getMappedQuery(key, subQuery);
     }
 
 

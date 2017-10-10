@@ -38,7 +38,7 @@ public class InmemoryRangedGroup implements InMemoryGroup, RangedBackendGroup<In
     }
 
     @Override
-    public InMemoryQuery<?> getEntryQuery(String value, InMemoryQuery<?> subQuery) {
+    public InMemoryQuery<?> getRangedQuery(String value, InMemoryQuery<?> subQuery) {
         return IntermediateInMemoryQuery.filter(entryWithRangeContaining(value), subQuery);
     }
 

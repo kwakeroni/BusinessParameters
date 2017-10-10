@@ -193,7 +193,7 @@
                 <artifactId>graph-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>install</phase>
+                        <phase>none</phase>
                         <goals>
                             <goal>dependencies</goal>
                         </goals>
@@ -227,6 +227,22 @@
                                     <mainClass>be.kwakeroni.scratch.env.es.ElasticSearchTestServer</mainClass>
                                     <classpathScope>test</classpathScope>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>modulegraph</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.kuali.maven.plugins</groupId>
+                        <artifactId>graph-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
                             </execution>
                         </executions>
                     </plugin>

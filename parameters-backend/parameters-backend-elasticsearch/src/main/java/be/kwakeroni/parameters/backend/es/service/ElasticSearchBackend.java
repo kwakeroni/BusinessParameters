@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
 public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSearchQuery<?>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchBackend.class);
+    private static final int DEFAULT_PAGESIZE = 50;
 
     private final ElasticSearchClient client;
     private final ElasticSearchGroupFactoryContext factoryContext;
@@ -121,4 +123,13 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
         newEntry = getGroup(group).prepareAndValidateNewEntry(newEntry, groupData);
         client.insert(group, newEntry);
     }
+
+    @Override
+    public <R> R exportEntries(String groupName, Collector<? super Map<String, String>, ?, R> collector) {
+        return getDataForGroup(groupName)
+                .findAll(DEFAULT_PAGESIZE)
+                .map(ElasticSearchEntry::toParameterMap)
+                .collect(collector);
+    }
+
 }

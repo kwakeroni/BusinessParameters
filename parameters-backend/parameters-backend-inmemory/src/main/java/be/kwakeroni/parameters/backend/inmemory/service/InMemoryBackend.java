@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 /**
@@ -98,6 +99,13 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
         EntryData entryData = DefaultEntryData.of(entry);
         groupData.addEntry(entryData);
 
+    }
+
+    public <R> R exportEntries(String groupName, Collector<? super Map<String, String>, ?, R> collector) {
+        return getGroupData(groupName)
+                .getEntries()
+                .map(EntryData::asMap)
+                .collect(collector);
     }
 
     private GroupData getGroupData(String name) {

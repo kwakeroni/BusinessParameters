@@ -6,6 +6,7 @@ import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collector;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -24,4 +25,5 @@ public interface BusinessParametersBackend<Q> {
 
     public void insert(String groupName, Map<String, String> entry);
 
+    public <R> R exportEntries(String groupName, Collector<? super Map<String, String>, ?, R> collector);
 }

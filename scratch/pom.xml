@@ -57,6 +57,13 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>be.kwakeroni.parameters.management</groupId>
+                <artifactId>parameters-management</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-client</artifactId>
                 <version>1.19.1</version>
@@ -150,6 +157,10 @@
         <dependency>
             <groupId>be.kwakeroni.parameters.adapter</groupId>
             <artifactId>parameters-adapter-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.management</groupId>
+            <artifactId>parameters-management-rest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

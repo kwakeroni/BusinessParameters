@@ -1,9 +1,11 @@
-package be.kwakeroni.scratch.rest;
+package be.kwakeroni.scratch.env.rest;
 
 import be.kwakeroni.parameters.adapter.rest.RestBackendAdapter;
 import be.kwakeroni.parameters.adapter.rest.factory.RestBackendAdapterFactory;
-import be.kwakeroni.scratch.InMemoryTestData;
-import be.kwakeroni.scratch.TestData;
+import be.kwakeroni.parameters.management.rest.RestParameterManagement;
+import be.kwakeroni.parameters.management.rest.factory.RestParameterManagementFactory;
+import be.kwakeroni.scratch.env.TestData;
+import be.kwakeroni.scratch.env.inmemory.InMemoryTestData;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -11,7 +13,8 @@ import org.junit.runners.model.Statement;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.function.Supplier;
 
 /**
@@ -52,16 +55,28 @@ public class RestEnvironment implements TestRule, AutoCloseable {
 
     public RestEnvironment(Supplier<TestData> testDataSupplier) {
         this.testData = testDataSupplier.get();
-        RestBackendAdapterFactory factory = new RestBackendAdapterFactory();
-        factory.setBackendType(this.testData::acceptBackend);
-        RestBackendAdapter adapter = factory.newInstance();
+        RestBackendAdapter adapter = createAdapter(this.testData);
+        RestParameterManagement management = createManagement(this.testData);
 
-        this.restServer = new RestServer("http://localhost:8080/parameters", Collections.singleton(adapter));
+
+        this.restServer = new RestServer("http://localhost:8080/parameters", new HashSet<>(Arrays.asList(adapter, management)));
         try {
             this.restServer.setUp();
         } catch (IOException exc) {
             throw new UncheckedIOException(exc);
         }
+    }
+
+    private static RestBackendAdapter createAdapter(TestData testData) {
+        RestBackendAdapterFactory factory = new RestBackendAdapterFactory();
+        factory.setBackendType(testData::acceptBackend);
+        return factory.newInstance();
+    }
+
+    private static RestParameterManagement createManagement(TestData testData) {
+        RestParameterManagementFactory factory = new RestParameterManagementFactory();
+        factory.setBackendType(testData::acceptBackend);
+        return factory.newInstance();
     }
 
 }

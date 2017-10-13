@@ -1,4 +1,4 @@
-package be.kwakeroni.scratch.rest;
+package be.kwakeroni.scratch.env.rest;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;

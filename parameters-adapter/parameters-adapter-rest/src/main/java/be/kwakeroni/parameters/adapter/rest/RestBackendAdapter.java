@@ -39,7 +39,6 @@ public class RestBackendAdapter {
 
     @Path("/{group}/query")
     @POST
-    @Produces({APPLICATION_JSON, TEXT_PLAIN})
     public Response select(@PathParam("group") String groupName, String query) {
 
         try (MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());

@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.backend.inmemory.service;
 
+import be.kwakeroni.parameters.backend.api.BackendEntry;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
@@ -15,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -94,17 +96,36 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
         groupData.modifyEntry(modification.getEntry(), modification.getModifier());
     }
 
+    @Override
+    public void update(String group, String id, Map<String, String> entry) {
+        GroupData groupData = getGroupData(group);
+        EntryData entryById = groupData.getEntries()
+                .filter(e -> id.equals(e.getId()))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Entry with id " + id + " not found"));
+        EntryModification modification = new EntryModification() {
+            @Override
+            public EntryData getEntry() {
+                return entryById;
+            }
+
+            @Override
+            public Consumer<EntryData> getModifier() {
+                return data -> entry.forEach(data::setValue);
+            }
+        };
+        groupData.modifyEntry(modification.getEntry(), modification.getModifier());
+    }
+
     public void insert(String group, Map<String, String> entry) {
         GroupData groupData = getGroupData(group);
         EntryData entryData = DefaultEntryData.of(entry);
         groupData.addEntry(entryData);
-
     }
 
-    public <R> R exportEntries(String groupName, Collector<? super Map<String, String>, ?, R> collector) {
+    public <R> R exportEntries(String groupName, Collector<? super BackendEntry, ?, R> collector) {
         return getGroupData(groupName)
                 .getEntries()
-                .map(EntryData::asMap)
                 .collect(collector);
     }
 

@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.backend.es.service;
 
+import be.kwakeroni.parameters.backend.api.BackendEntry;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
@@ -109,6 +110,18 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     private <V> void doUpdate(String group, ElasticSearchQuery<V> query, V value) {
         ElasticSearchData groupData = getDataForGroup(group);
         EntryModification modification = query.getEntryModification(value, groupData);
+        doUpdate(group, groupData, modification);
+    }
+
+    @Override
+    public void update(String group, String id, Map<String, String> entry) {
+        ElasticSearchData groupData = getDataForGroup(group);
+        ElasticSearchEntry entryById = null; // TODO
+        EntryModification modification = EntryModification.modifiedBy(e -> e.replace(entry)).apply(entryById);
+        doUpdate(group, groupData, modification);
+    }
+
+    private void doUpdate(String group, ElasticSearchData groupData, EntryModification modification) {
         ElasticSearchEntry original = modification.getOriginalEntry();
         ElasticSearchEntry newEntry = original.copy();
         modification.modify(newEntry);
@@ -125,10 +138,9 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     }
 
     @Override
-    public <R> R exportEntries(String groupName, Collector<? super Map<String, String>, ?, R> collector) {
+    public <R> R exportEntries(String groupName, Collector<? super BackendEntry, ?, R> collector) {
         return getDataForGroup(groupName)
                 .findAll(DEFAULT_PAGESIZE)
-                .map(ElasticSearchEntry::toParameterMap)
                 .collect(collector);
     }
 

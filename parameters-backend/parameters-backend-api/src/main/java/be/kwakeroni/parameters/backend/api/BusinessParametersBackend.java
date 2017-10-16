@@ -23,7 +23,9 @@ public interface BusinessParametersBackend<Q> {
 
     public <V> void update(String groupName, BackendQuery<? extends Q, V> query, V value);
 
+    public void update(String groupName, String id, Map<String, String> entry);
+
     public void insert(String groupName, Map<String, String> entry);
 
-    public <R> R exportEntries(String groupName, Collector<? super Map<String, String>, ?, R> collector);
+    public <R> R exportEntries(String groupName, Collector<? super BackendEntry, ?, R> collector);
 }

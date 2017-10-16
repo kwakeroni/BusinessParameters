@@ -97,12 +97,18 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     }
 
     @Override
-    public void update(String group, String id, Map<String, String> entry) {
+    public EntryData getEntry(String group, String id) {
         GroupData groupData = getGroupData(group);
-        EntryData entryById = groupData.getEntries()
+        return groupData.getEntries()
                 .filter(e -> id.equals(e.getId()))
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("Entry with id " + id + " not found"));
+    }
+
+    @Override
+    public void update(String group, String id, Map<String, String> entry) {
+        GroupData groupData = getGroupData(group);
+        EntryData entryById = getEntry(group, id);
         EntryModification modification = new EntryModification() {
             @Override
             public EntryData getEntry() {

@@ -114,9 +114,16 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     }
 
     @Override
+    public ElasticSearchEntry getEntry(String group, String id) {
+        JSONObject result = this.client.getById(group, id);
+        LOG.info("BY ID RESULT:\r\n" + result.toString(4));
+        return new DefaultElasticSearchEntry(result);
+    }
+
+    @Override
     public void update(String group, String id, Map<String, String> entry) {
+        ElasticSearchEntry entryById = getEntry(group, id);
         ElasticSearchData groupData = getDataForGroup(group);
-        ElasticSearchEntry entryById = null; // TODO
         EntryModification modification = EntryModification.modifiedBy(e -> e.replace(entry)).apply(entryById);
         doUpdate(group, groupData, modification);
     }

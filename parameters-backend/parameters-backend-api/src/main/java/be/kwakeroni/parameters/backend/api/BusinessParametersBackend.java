@@ -27,5 +27,7 @@ public interface BusinessParametersBackend<Q> {
 
     public void insert(String groupName, Map<String, String> entry);
 
+    public BackendEntry getEntry(String groupName, String id);
+
     public <R> R exportEntries(String groupName, Collector<? super BackendEntry, ?, R> collector);
 }

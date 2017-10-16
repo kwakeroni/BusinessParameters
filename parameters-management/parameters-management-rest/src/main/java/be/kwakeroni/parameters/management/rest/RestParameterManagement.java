@@ -61,7 +61,6 @@ public class RestParameterManagement {
         return Response.ok(array.toString(), MediaType.APPLICATION_JSON).build();
     }
 
-
     @Path("/groups/{group}/entries")
     @POST
     public Response insert(@PathParam("group") String groupName, String entry) {
@@ -84,6 +83,16 @@ public class RestParameterManagement {
         }
     }
 
+    @Path("/groups/{group}/entries/{id}")
+    @GET
+    public Response getEntry(@PathParam("group") String groupName, @PathParam("id") String id) {
+        try {
+            BackendEntry entry = backend.getEntry(groupName, id);
+            return Response.ok(toJsonEntry(entry).toString(), MediaType.APPLICATION_JSON).build();
+        } catch (Exception exc) {
+            return responseFor(exc);
+        }
+    }
     @Path("/groups/{group}/entries/{id}")
     @PATCH
     public Response update(@PathParam("group") String groupName, @PathParam("id") String id, String entry) {

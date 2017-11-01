@@ -1,0 +1,10 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'entry-form',
+  templateUrl: './app.component.html',
+})
+
+constructor(definition, entry){
+
+}

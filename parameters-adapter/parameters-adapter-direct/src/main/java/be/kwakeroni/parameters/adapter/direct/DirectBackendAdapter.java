@@ -66,7 +66,7 @@ class DirectBackendAdapter<Q> {
                 MDC.MDCCloseable mdcFlow = MDC.putCloseable("flow", UUID.randomUUID().toString());
                 MDC.MDCCloseable mdcGroup = MDC.putCloseable("group", groupName)) {
 
-            LOG.debug("Add entry on {}: {} <- {}", groupName, entry);
+            LOG.debug("Add entry on {}: {}", groupName, entry);
             backend.insert(groupName, entry);
         }
 

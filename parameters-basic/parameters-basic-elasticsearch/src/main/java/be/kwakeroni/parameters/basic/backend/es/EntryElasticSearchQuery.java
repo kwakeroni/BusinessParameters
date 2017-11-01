@@ -42,9 +42,7 @@ class EntryElasticSearchQuery implements ElasticSearchQuery<Map<String, String>>
     @Override
     public EntryModification getEntryModification(Map<String, String> value, ElasticSearchData data) {
         return getEntryFrom(data)
-                .map(EntryModification.modifiedBy(e -> {
-                    value.forEach(e::setParameter);
-                }))
+                .map(EntryModification.modifiedBy(e -> e.replace(value)))
                 .orElseThrow(() -> new IllegalArgumentException("Not found entry to change"));
     }
 

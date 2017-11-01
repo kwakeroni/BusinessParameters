@@ -24,7 +24,7 @@ public class ElasticSearchMappedGroup
     }
 
     @Override
-    public ElasticSearchQuery<?> getEntryQuery(String keyValue, ElasticSearchQuery<?> subQuery) {
+    public ElasticSearchQuery<?> getMappedQuery(String keyValue, ElasticSearchQuery<?> subQuery) {
         return new ElasticSearchMappedQuery<>(keyValue, subQuery);
     }
 

@@ -1,17 +1,19 @@
 package be.kwakeroni.parameters.backend.es.api;
 
+import be.kwakeroni.parameters.backend.api.BackendEntry;
+
 import java.util.Map;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public interface ElasticSearchEntry {
-
-    public String getId();
+public interface ElasticSearchEntry extends BackendEntry {
 
     public String getParameter(String parameter);
 
     public void setParameter(String parameter, String value);
+
+    public void replace(Map<String, String> parameterMap);
 
     public boolean hasParameter(String parameter);
 

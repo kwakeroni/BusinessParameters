@@ -56,6 +56,37 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.management</groupId>
+                <artifactId>parameters-management</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>1.19.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-core</artifactId>
+                <version>1.19.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-json</artifactId>
+                <version>1.19.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-servlet</artifactId>
+                <version>1.19.1</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -83,6 +114,10 @@
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-wireformat-raw</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-wireformat-json</artifactId>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.adapter</groupId>
@@ -118,6 +153,14 @@
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-jmx</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.adapter</groupId>
+            <artifactId>parameters-adapter-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.management</groupId>
+            <artifactId>parameters-management-rest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -174,15 +217,25 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>1.19.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20160810</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-servlet</artifactId>
         </dependency>
     </dependencies>
 

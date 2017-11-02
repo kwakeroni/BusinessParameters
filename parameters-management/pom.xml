@@ -15,6 +15,7 @@
 
     <modules>
         <module>parameters-management-rest</module>
+        <module>parameters-management-web</module>
     </modules>
 
     <dependencyManagement>

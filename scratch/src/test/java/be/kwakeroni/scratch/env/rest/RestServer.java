@@ -5,10 +5,14 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.container.ContainerFactory;
 import com.sun.jersey.api.container.httpserver.HttpServerFactory;
 import com.sun.jersey.api.core.ApplicationAdapter;
+import com.sun.jersey.spi.container.ContainerRequest;
+import com.sun.jersey.spi.container.ContainerResponse;
+import com.sun.jersey.spi.container.ContainerResponseFilter;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import javax.ws.rs.core.Application;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
@@ -44,6 +48,7 @@ public class RestServer {
         Application application = createApplication();
         ApplicationAdapter config = new ApplicationAdapter(application);
         config.setPropertiesAndFeatures(Collections.singletonMap("com.sun.jersey.api.json.POJOMappingFeature", true));
+        config.getContainerResponseFilters().add(new CORSFilter());
 
         this.server = HttpServerFactory.create(this.baseUrl,
                 ContainerFactory.createContainer(HttpHandler.class, config, null));
@@ -68,5 +73,19 @@ public class RestServer {
                 return resources.get();
             }
         };
+    }
+
+    @Provider
+    private static class CORSFilter implements ContainerResponseFilter {
+        @Override
+        public ContainerResponse filter(ContainerRequest containerRequest, ContainerResponse containerResponse) {
+            containerResponse.getHttpHeaders().add("Access-Control-Allow-Origin", "*");
+//            containerResponse.getHttpHeaders().add("Access-Control-Allow-Origin", "http://localhost");
+//            containerResponse.getHttpHeaders().add("Access-Control-Allow-Origin", "http://127.0.0.1");
+            containerResponse.getHttpHeaders().add("Access-Control-Allow-Headers", "origin,content-type,accept,authorization");
+            containerResponse.getHttpHeaders().add("Access-Control-Allow-Credentials", "true");
+            containerResponse.getHttpHeaders().add("Access-Control-Allow-Methods", "GET,PATCH,POST,PUT,OPTIONS,HEAD");
+            return containerResponse;
+        }
     }
 }

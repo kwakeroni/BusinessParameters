@@ -1,0 +1,89 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div class="container">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <h1>{{title}}</h1>
+      </div>
+    </div>
+  </nav>
+
+  <div *ngIf="group">
+  <div [ngSwitch]="group.type">
+    <div *ngSwitchCase="'none'"></div>
+    <div *ngSwitchDefault>
+      <button class="btn btn-default" (click)="goto(null)">Back</button>
+      <h2>
+        {{group.name}}
+      </h2>
+    </div>
+  </div>
+
+
+  <div [ngSwitch]="group.type">
+    <div *ngSwitchCase="'none'">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Groups</h3>
+        </div>
+        <table class="table table-striped">
+          <tr *ngFor="let subGroup of group.subGroups">
+            <td class="col-md-1 text-right"><i class="glyphicon {{getIcon(subGroup.type)}}"></i></td>
+            <td><a (click)="goto(subGroup.name)">{{subGroup.name}}</a></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <span *ngSwitchCase="'basic.simple'"></span>
+
+    <div class="panel panel-default" *ngSwitchDefault>
+      <div class="panel-heading"><h3 class="panel-title">Entries</h3></div>
+      <entry-table [group]="group" [entries]="entries" [controller]="controller"></entry-table>
+    </div>
+  </div>
+
+  <div class="panel panel-default"
+       *ngIf="(activeId && group.canEditEntries()) || (activeId==null && group.canAddEntries())">
+    <div class="panel-heading">
+      <h3 class="panel-title" *ngIf="activeId">Edit Entry</h3>
+      <h3 class="panel-title" *ngIf="activeId==null">Add Entry</h3>
+    </div>
+    <!--<form class="form-horizontal" role="form">-->
+    <div class="panel-body">
+      <div class="form-horizontal">
+        <div class="form-group" *ngFor="let parameter of group.parameters">
+          <label for="{{parameter}}" class="col-sm-2 control-label">{{parameter}}</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="{{parameter}}" placeholder=""
+                   [(ngModel)]="activeEntry[parameter]">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button class="btn btn-primary" (click)="saveActiveEntry()">{{(activeId)? "Update" : "Add"}}</button>
+            <button class="btn btn-default" *ngIf="activeId && group.canAddEntries()" (click)="resetActiveEntry()">
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--</form>-->
+  </div>
+
+  <!--<img width="300" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">-->
+  </div>
+</div>
+<!--<h2>Here are some links to help you start: </h2>-->
+<!--<ul>-->
+<!--<li>-->
+<!--<h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>-->
+<!--</li>-->
+<!--<li>-->
+<!--<h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>-->
+<!--</li>-->
+<!--<li>-->
+<!--<h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>-->
+<!--</li>-->
+<!--</ul>-->

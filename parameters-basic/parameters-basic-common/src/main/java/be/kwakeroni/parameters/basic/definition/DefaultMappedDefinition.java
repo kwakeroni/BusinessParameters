@@ -7,6 +7,7 @@ import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilder;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
 
+import java.util.Collection;
 import java.util.function.Function;
 
 /**
@@ -24,6 +25,16 @@ final class DefaultMappedDefinition implements MappedDefinitionVisitor.Definitio
     @Override
     public String getName() {
         return subGroupDefinition.getName();
+    }
+
+    @Override
+    public Collection<String> getParameters() {
+        return subGroupDefinition.getParameters();
+    }
+
+    @Override
+    public String getType() {
+        return "basic.mapped";
     }
 
     @Override

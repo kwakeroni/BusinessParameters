@@ -9,7 +9,7 @@
   <tbody>
   <tr *ngFor="let entry of entries" (click)="controller.selectEntry(entry)">
     <td *ngFor="let parameter of group.parameters">
-      {{entry[parameter]}}
+      {{entry.getParameter(parameter)}}
     </td>
   </tr>
   </tbody>

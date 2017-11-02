@@ -1,34 +1,79 @@
 import { Injectable } from '@angular/core';
 import { Group } from './group';
+import { Entry } from './entry';
+import { Headers, Http } from '@angular/http';
+// import 'rxjs/add/operator/toPromise';
+
+  const baseUrl = 'http://localhost:8080/parameters/management';  // URL to web api
 
 @Injectable()
 export class ParametersService {
 
-   getRoot(): Group {
-    return ROOT;
+
+
+    constructor(private http: Http) { }
+
+   getRoot(): Promise<Group> {
+    return this.http.get(baseUrl + '/groups')
+                       .toPromise()
+                       .then(response => this.rootGroup(response.json().groups.map(obj => new Group(obj)) as Group[]))
+                       .catch(this.handleError);
    }
 
-   getGroup(name: string): Group {
-    return GROUPS[name];
+   rootGroup(groups: Group[]): Group{
+    return new Group({
+               name: 'root',
+               type: 'none',
+               subGroups: groups
+             });
    }
 
-  getEntries(groupName: string): object[] {
-    return ENTRIES[groupName];
+   dump(obj: object){
+     let str = "{";
+
+     for (let p in obj){
+       str += p + ": " + obj[p] + "\n";
+     }
+     str += "}";
+     return str;
+   }
+
+   getGroup(name: string): Promise<Group> {
+        return this.http.get(baseUrl + '/groups')
+                           .toPromise()
+                           .then(response => {
+                                let groupData = response.json().groups.filter(obj => obj.name==name);
+                                return (groupData.length > 0)? new Group(groupData[0]) : null;
+                              })
+                           .catch(this.handleError);
+   }
+
+   getEntry(groupName: string, id: string): Promise<Entry> {
+       return this.http.get(baseUrl + "/groups/"+groupName+"/entries/" + id)
+                       .toPromise()
+                       .then(response => new Entry(response.json()))
+                       .catch(this.handleError);
+   }
+
+  getEntries(groupName: string): Promise<Entry[]> {
+    return this.http.get(baseUrl + "/groups/"+groupName+"/entries")
+                    .toPromise()
+                    .then(response => response.json().map(obj => new Entry(obj)) as Entry[])
+                    .catch(this.handleError);
   }
 
-  insertEntry(groupName: string, entry: object): object {
-      let entries:object[] = ENTRIES[groupName];
-      let newEntry = this.cloneEntry(entry);
-
-      newEntry["id"] = (''+(COUNTER++));
-      entries[entries.length] = newEntry;
-
-      return newEntry;
+  insertEntry(groupName: string, entry: object): Promise<void> {
+    return this.http.post(baseUrl + "/groups/"+groupName+"/entries", entry)
+                    .toPromise()
+                    .catch(this.handleError);
   }
-  updateEntry(groupName: string, id: string, entry: object): void {
-    let targetEntry = this.loadEntry(groupName, id);
-    this.copyEntry(entry, targetEntry);
+  updateEntry(groupName: string, id: string, entry: object): Promise<void> {
+    return this.http.patch(baseUrl + "/groups/"+groupName+"/entries/" + id, entry)
+                    .toPromise()
+                    .catch(this.handleError);
   }
+
+
 
   private loadEntry(groupName: string, id: string): object {
     let entries:object[] = ENTRIES[groupName];
@@ -52,6 +97,11 @@ export class ParametersService {
     for(let x in from){
       to[x] = from[x];
     }
+  }
+
+  private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error); // for demo purposes only
+    return Promise.reject(error.message || error);
   }
 }
 

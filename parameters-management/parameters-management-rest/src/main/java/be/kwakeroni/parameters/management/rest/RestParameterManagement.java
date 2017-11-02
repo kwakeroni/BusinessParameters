@@ -2,6 +2,7 @@ package be.kwakeroni.parameters.management.rest;
 
 import be.kwakeroni.parameters.backend.api.BackendEntry;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -43,13 +44,21 @@ public class RestParameterManagement {
     public Response getGroups() {
         JSONArray groups = backend.getGroupNames()
                 .stream()
-                .map(name -> new JSONObject().put("name", name))
+                .map(backend::getDefinition)
+                .map(this::toJSONGroup)
                 .collect(toJsonArray());
 
         JSONObject result = new JSONObject()
                 .put("groups", groups);
 
         return Response.ok(result.toString(), MediaType.APPLICATION_JSON).build();
+    }
+
+    private JSONObject toJSONGroup(ParameterGroupDefinition definition) {
+        return new JSONObject()
+                .put("name", definition.getName())
+                .put("type", definition.getType())
+                .put("parameters", definition.getParameters());
     }
 
     @Path("/groups/{group}/entries")

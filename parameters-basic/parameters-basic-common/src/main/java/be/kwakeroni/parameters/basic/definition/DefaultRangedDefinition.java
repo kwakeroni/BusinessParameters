@@ -9,6 +9,7 @@ import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.BasicType;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.function.Function;
 
@@ -28,6 +29,16 @@ final class DefaultRangedDefinition implements RangedDefinitionVisitor.Definitio
     @Override
     public String getName() {
         return subGroupDefinition.getName();
+    }
+
+    @Override
+    public Collection<String> getParameters() {
+        return subGroupDefinition.getParameters();
+    }
+
+    @Override
+    public String getType() {
+        return "basic.ranged";
     }
 
     public String getRangeParameter() {

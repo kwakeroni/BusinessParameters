@@ -21,9 +21,10 @@
         <module>parameters-deps</module>
         <module>parameters-experimental</module>
         <module>parameters-features</module>
+        <module>parameters-management</module>
         <module>parameters-types</module>
         <module>scratch</module>
-        <module>parameters-management</module>
+        <module>petshop/petshop-definitions</module>
     </modules>
 
     <properties>

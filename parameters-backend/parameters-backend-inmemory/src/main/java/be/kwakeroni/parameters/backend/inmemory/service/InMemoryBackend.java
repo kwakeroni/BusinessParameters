@@ -12,13 +12,11 @@ import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -136,13 +134,16 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     }
 
     private GroupData getGroupData(String name) {
+        if (!data.containsKey(name)) {
+            setGroupData(name, new ArrayList<>());
+        }
         return Optional.ofNullable(data.get(name))
                 .orElseThrow(() -> new IllegalArgumentException("No group defined with name " + name));
     }
 
     @Override
     public Collection<String> getGroupNames() {
-        return data.keySet();
+        return definitions.get().map(ParameterGroupDefinition::getName).collect(Collectors.toSet());
     }
 
     @Override

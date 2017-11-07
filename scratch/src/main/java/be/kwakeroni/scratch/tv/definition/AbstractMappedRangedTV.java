@@ -36,5 +36,4 @@ public interface AbstractMappedRangedTV extends ParameterGroup<Mapped<Dag, Range
                 .build(name);
     }
 
-
 }

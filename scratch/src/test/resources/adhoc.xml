@@ -1,0 +1,66 @@
+<business-parameters>
+    <group name="petshop.sales">
+        <type>
+            <ranged param="period">
+                <mapped param="species">
+                    <simple/>
+                </mapped>
+            </ranged>
+        </type>
+        <parameters>
+            <parameter name="period">
+                <type>
+                    <range>
+                        <local-date/>
+                    </range>
+                </type>
+            </parameter>
+            <parameter name="species">
+                <type>
+                    <string/>
+                </type>
+            </parameter>
+            <parameter name="percentage">
+                <type>
+                    <integer/>
+                </type>
+            </parameter>
+        </parameters>
+    </group>
+    <group name="petshop.sales">
+        <type>
+            <ranged>
+                <parameter name="period">
+                    <type>
+                        <local-date/>
+                    </type>
+                </parameter>
+                <mapped>
+                    <parameter name="species" type="string"/>
+                    <simple>
+                        <parameter name="percentage" type="integer"/>
+                    </simple>
+                </mapped>
+            </ranged>
+        </type>
+        <parameters>
+            <parameter name="period">
+                <type>
+                    <range>
+                        <local-date/>
+                    </range>
+                </type>
+            </parameter>
+            <parameter name="species">
+                <type>
+                    <string/>
+                </type>
+            </parameter>
+            <parameter name="percentage">
+                <type>
+                    <integer/>
+                </type>
+            </parameter>
+        </parameters>
+    </group>
+</business-parameters>

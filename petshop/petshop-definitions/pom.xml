@@ -9,8 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>scratch</artifactId>
-    <packaging>bundle</packaging>
+    <artifactId>petshop-definitions</artifactId>
 
     <dependencyManagement>
         <dependencies>
@@ -237,76 +236,7 @@
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-servlet</artifactId>
         </dependency>
-        <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
-            <artifactId>petshop-definitions</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.kuali.maven.plugins</groupId>
-                <artifactId>graph-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>none</phase>
-                        <goals>
-                            <goal>dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <file>${project.basedir}/../dependency-graph.png</file>
-                            <excludes>be.kwakeroni.parameters:scratch</excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>TestServer</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.6.0</version>
-                        <executions>
-                            <execution>
-                                <id>ElasticSearchTestServer</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <mainClass>be.kwakeroni.scratch.env.es.ElasticSearchTestServer</mainClass>
-                                    <classpathScope>test</classpathScope>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>modulegraph</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.kuali.maven.plugins</groupId>
-                        <artifactId>graph-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>install</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

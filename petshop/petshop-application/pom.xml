@@ -11,7 +11,87 @@
 
     <artifactId>petshop-application</artifactId>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.management</groupId>
+                <artifactId>parameters-management</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.backend</groupId>
+                <artifactId>parameters-backend</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.adapter</groupId>
+                <artifactId>parameters-adapter</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.basic</groupId>
+                <artifactId>parameters-basic-backend</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.client</groupId>
+                <artifactId>parameters-client</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.management</groupId>
+            <artifactId>parameters-management-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.adapter</groupId>
+            <artifactId>parameters-adapter-direct</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.adapter</groupId>
+            <artifactId>parameters-adapter-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.backend</groupId>
+            <artifactId>parameters-backend-inmemory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-backend</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-inmemory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.client</groupId>
+            <artifactId>parameters-client-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-wireformat-raw</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
@@ -81,7 +161,7 @@
                             </goals>
                             <phase>process-sources</phase>
                             <configuration>
-                                <outputDirectory>${project.build.directory}/webapp</outputDirectory>
+                                <outputDirectory>${project.build.directory}/petshop-webapp-src</outputDirectory>
                                 <resources>
                                     <resource>
                                         <directory>src/main/webapp</directory>
@@ -93,63 +173,56 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>com.github.eirslett</groupId>
-                    <artifactId>frontend-maven-plugin</artifactId>
-                    <version>1.6</version>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.0.2</version>
                     <executions>
                         <execution>
-                            <id>install node and npm</id>
+                            <id>unpack-parameters-management-web</id>
+                            <phase>process-sources</phase>
                             <goals>
-                                <goal>install-node-and-npm</goal>
+                                <goal>unpack</goal>
                             </goals>
-                            <phase>generate-resources</phase>
                             <configuration>
-                                <nodeVersion>v8.6.0</nodeVersion>
-                                <!--<npmVersion>2.15.9</npmVersion>-->
-                                <!--<downloadRoot>http://myproxy.example.org/nodejs/</downloadRoot>-->
+                                <artifactItems>
+                                    <artifactItem>
+                                        <groupId>be.kwakeroni.parameters.management</groupId>
+                                        <artifactId>parameters-management-web</artifactId>
+                                        <version>${project.version}</version>
+                                        <type>jar</type>
+                                        <overWrite>false</overWrite>
+                                    </artifactItem>
+                                </artifactItems>
+                                <outputDirectory>${project.build.outputDirectory}/parameters-webapp</outputDirectory>
                             </configuration>
                         </execution>
                         <execution>
-                            <id>npm install</id>
+                            <id>unpack-petshop-web</id>
+                            <phase>process-sources</phase>
                             <goals>
-                                <goal>npm</goal>
+                                <goal>unpack</goal>
                             </goals>
-                            <phase>generate-resources</phase>
                             <configuration>
-                                <arguments>install</arguments>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>ng build</id>
-                            <goals>
-                                <goal>npm</goal>
-                            </goals>
-                            <phase>generate-resources</phase>
-                            <configuration>
-                                <arguments>run build -- --output-path ../classes/petshop-webapp</arguments>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>ng clean</id>
-                            <goals>
-                                <goal>npm</goal>
-                            </goals>
-                            <phase>clean</phase>
-                            <configuration>
-                                <arguments>run clean -- --output-path ../classes/petshop-webapp</arguments>
+                                <artifactItems>
+                                    <artifactItem>
+                                        <groupId>be.kwakeroni.parameters.petshop</groupId>
+                                        <artifactId>petshop-web</artifactId>
+                                        <version>${project.version}</version>
+                                        <type>jar</type>
+                                        <overWrite>false</overWrite>
+                                    </artifactItem>
+                                </artifactItems>
+                                <outputDirectory>${project.build.outputDirectory}/petshop-webapp</outputDirectory>
                             </configuration>
                         </execution>
                     </executions>
-                    <configuration>
-                        <workingDirectory>${project.build.directory}/webapp</workingDirectory>
-                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

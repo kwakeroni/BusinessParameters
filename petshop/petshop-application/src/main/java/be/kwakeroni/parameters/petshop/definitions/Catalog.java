@@ -1,4 +1,4 @@
-package be.kwakeroni.petshop.definitions;
+package be.kwakeroni.parameters.petshop.definitions;
 
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCatalog;

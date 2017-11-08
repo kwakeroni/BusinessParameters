@@ -17,7 +17,7 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 /**
  * Created by kwakeroni on 07/11/17.
  */
-@Path("/petshop")
+@Path("/petshop-ws")
 @Consumes(APPLICATION_JSON)
 @Produces({APPLICATION_JSON, TEXT_PLAIN})
 public class PetshopRestService {

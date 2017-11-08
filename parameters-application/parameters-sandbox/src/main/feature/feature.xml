@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.3.0" name="parameters-sandbox">
+    <repository>mvn:com.eclipsesource.jaxrs/features/5.3.1/xml/features</repository>
+    <feature name="${project.artifactId}-deps" description="" version="${project.version}" hidden="true">
+        <feature>scr</feature>
+        <feature>http</feature>
+        <feature>jax-rs-connector</feature>
+    </feature>
+
+    <feature name="${project.artifactId}" description="${project.description}" version="${project.version}">
+        <feature dependency="true" version="${project.version}">${project.artifactId}-deps</feature>
+    </feature>
+
+    <feature name="${project.artifactId}-definitions" description="sample definitions" version="${project.version}">
+        <bundle>mvn:be.kwakeroni.parameters/petshop-definitions/0.1.0-SNAPSHOT</bundle>
+        <bundle>mvn:be.kwakeroni.parameters/scratch/0.1.0-SNAPSHOT</bundle>
+    </feature>
+</features>

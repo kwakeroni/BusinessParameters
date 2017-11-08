@@ -66,7 +66,6 @@ public class PetshopApplication {
         public Server(int port, String root, Object... resources) throws IOException {
             ResourceConfig config = new ApplicationAdapter(ofSingletons(resources));
             config.setPropertiesAndFeatures(Collections.singletonMap("com.sun.jersey.api.json.POJOMappingFeature", true));
-//        config.getContainerResponseFilters().add(new CORSFilter());
 
             this.server = HttpServerFactory.create("http://127.0.0.1:" + port + root,
                     ContainerFactory.createContainer(HttpHandler.class, config, null));
@@ -84,20 +83,23 @@ public class PetshopApplication {
     }
 
     private static PetshopRestService createPetshopRestService() {
-        BusinessParameters parameters = ServiceLoader.load(BusinessParametersFactory.class).iterator().next().getInstance();
-        return new PetshopRestService(new ParametersPriceCalculator(parameters));
+        return new PetshopRestService(
+                new ParametersPriceCalculator(
+                        createBusinessParameters()));
     }
 
     private static RestBackendAdapter createAdapter() {
         RestBackendAdapterFactory factory = new RestBackendAdapterFactory();
-        // factory.setBackendType(testData::acceptBackend);
         return factory.newInstance();
     }
 
     private static RestParameterManagement createManagement() {
         RestParameterManagementFactory factory = new RestParameterManagementFactory();
-        //factory.setBackendType(testData::acceptBackend);
         return factory.newInstance();
+    }
+
+    private static BusinessParameters createBusinessParameters() {
+        return ServiceLoader.load(BusinessParametersFactory.class).iterator().next().getInstance();
     }
 
     private static Application ofSingletons(Object... singletons) {
@@ -128,16 +130,6 @@ public class PetshopApplication {
                     // .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"" ) //optional
                     .build();
         }
-
-//        private MediaType getMediaType(File file) {
-//            String name = file.getName().toLowerCase();
-//            if (name.endsWith(".html") || name.endsWith(".htm")) {
-//                return MediaType.TEXT_HTML_TYPE;
-//            } else {
-//                return MediaType.APPLICATION_OCTET_STREAM_TYPE;
-//            }
-//        }
-
     }
 
     @Path("/petshop")

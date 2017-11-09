@@ -3,10 +3,17 @@ package be.kwakeroni.parameters.petshop.service;
 import be.kwakeroni.parameters.petshop.model.Animal;
 import be.kwakeroni.parameters.petshop.model.AnimalQuote;
 
+import java.util.Optional;
+
 /**
  * Created by kwakeroni on 08/11/17.
  */
-public class HardcodedPriceCalculator implements PriceCalculator {
+public class HardcodedPriceCalculator extends AbstractPriceCalculator {
+
+    @Override
+    protected Optional<Integer> getSalesPercentage(String species, int quantity) {
+        return (quantity > 3) ? Optional.of(10) : Optional.empty();
+    }
 
     public AnimalQuote getQuote(Animal animal, int quantity) {
 

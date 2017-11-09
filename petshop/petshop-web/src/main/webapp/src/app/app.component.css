@@ -1,0 +1,126 @@
+
+.logo {
+    position: absolute;
+    top: 0;
+    left: 5%;
+    margin: 0px;
+    height: 100px;
+}
+
+.userbar {
+    height: 30px;
+    width: 100%;
+    margin: 0px 5px;
+    padding: 0px 5px;
+    background-color: rgb(240, 236, 255);
+    font-size: small;
+}
+.userbar span {
+    float: right;
+    line-height: 30px;
+}
+.userbar img {
+    height: 18px;
+    margin: 6px 0px;
+    float: right;
+    vertical-align: middle;
+}
+
+.brand {
+    /*position: absolute;
+    top: 0;
+    left: 0; */
+    line-height: 100px;
+    height: 100px;
+    width: 100%;
+    margin: 5px;
+    padding: 5px;
+    text-align: center;
+    font-size: 64px;
+    font-weight: bold;
+    background-color: rgb(140, 138, 196);
+    color: rgb(240, 236, 255);
+}
+
+
+.banner {
+    line-height: 100px;
+    height: 100px;
+    width: 100%;
+    margin: 5px;
+    padding: 5px;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    background-color: rgb(255, 240, 0);
+    color: rgb(0, 0, 0);
+}
+
+.aleft { text-align: left; }
+.acenter { text-align: center; }
+.aright { text-align: right; }
+
+.cart {
+
+    margin: 16px;
+    padding: 16px;
+
+}
+
+.cart table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: large;
+}
+
+.cart table thead tr, .cart table tr.total {
+    background-color: rgb(164, 160, 196);
+    border-bottom: 1px solid rgb(0, 0, 0);
+}
+
+.cart table th, .cart table td {
+    padding: 10px 25px;
+}
+
+.cart table tbody tr, .cart table tbody td {
+    border-bottom: 1px solid rgb(128, 128, 128);
+}
+
+.cart table tr.total td {
+    font-weight: bold;
+}
+
+.cart table tr.total td.total {
+    border-top: 2px solid black.
+}
+
+.sale, .nsprice, .price {
+    margin: 0px 15px;
+}
+
+.sale {
+    border-radius: 10px;
+    background-color: rgb(255, 240, 0);
+    color: rgb(0, 0, 0);
+    padding: 8px;
+    font-weight: bold;
+    font-variant: small-caps;
+}
+
+.nsprice {
+    text-decoration: line-through;
+    text-decoration-style: solid;
+    text-decoration-width: 2px;
+    color: rgb(128, 128, 128);
+}
+
+.saleColumn {
+  min-width: 20ex;
+}
+
+.price {
+}
+
+.quantity {
+  width: 5ex;
+}

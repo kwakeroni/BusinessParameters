@@ -125,6 +125,11 @@
             <version>1.19.1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.petshop</groupId>
+            <artifactId>petshop-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

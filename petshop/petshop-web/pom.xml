@@ -3,13 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>parameters-management</artifactId>
-        <groupId>be.kwakeroni.parameters.management</groupId>
+        <artifactId>petshop</artifactId>
+        <groupId>be.kwakeroni.parameters.petshop</groupId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>parameters-management-web</artifactId>
+    <artifactId>petshop-web</artifactId>
     <packaging>jar</packaging>
 
     <build>
@@ -27,7 +27,7 @@
                             </goals>
                             <phase>process-sources</phase>
                             <configuration>
-                                <outputDirectory>${project.build.directory}/webapp</outputDirectory>
+                                <outputDirectory>${project.build.directory}/petshop-webapp-src</outputDirectory>
                                 <resources>
                                     <resource>
                                         <directory>src/main/webapp</directory>
@@ -72,12 +72,12 @@
                             </goals>
                             <phase>generate-resources</phase>
                             <configuration>
-                                <arguments>run build -- --output-path ../classes</arguments>
+                                <arguments>run build -- --output-path ../classes/</arguments>
                             </configuration>
                         </execution>
                     </executions>
                     <configuration>
-                        <workingDirectory>${project.build.directory}/webapp</workingDirectory>
+                        <workingDirectory>${project.build.directory}/petshop-webapp-src</workingDirectory>
                     </configuration>
                 </plugin>
             </plugins>
@@ -89,5 +89,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

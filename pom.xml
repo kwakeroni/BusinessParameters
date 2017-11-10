@@ -24,7 +24,7 @@
         <module>parameters-management</module>
         <module>parameters-types</module>
         <module>scratch</module>
-        <module>petshop/petshop-definitions</module>
+        <module>petshop</module>
     </modules>
 
     <properties>

@@ -1,14 +1,11 @@
 package be.kwakeroni.parameters.basic.client.query;
 
 
-import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.basic.client.model.Simple;
-import be.kwakeroni.parameters.client.api.model.Parameter;
+import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import be.kwakeroni.parameters.client.api.query.Query;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 /**
@@ -16,15 +13,15 @@ import java.util.Optional;
  */
 public class EntryQuery implements Query<Simple, Entry> {
 
-    private final Collection<Parameter<?>> parameters;
+//    private final Collection<Parameter<?>> parameters;
 
-    public EntryQuery() {
-        this.parameters = Collections.emptySet();
-    }
+//    public EntryQuery() {
+//        this.parameters = Collections.emptySet();
+//    }
 
-    public Collection<Parameter<?>> getParameters() {
-        return this.parameters;
-    }
+//    public Collection<Parameter<?>> getParameters() {
+//        return this.parameters;
+//    }
 
     @Override
     public Object externalize(ClientWireFormatterContext context) {

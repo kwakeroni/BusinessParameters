@@ -22,17 +22,20 @@ public class BasicJMXBackendWireFormatter implements BasicBackendWireFormatter {
     @Override
     public <Q> Optional<Q> tryInternalize(BackendGroup<Q> group, Object actionObject, BackendWireFormatterContext context) {
 
-        JMXInvocation action = (JMXInvocation) actionObject;
+        if (actionObject instanceof JMXInvocation) {
 
-        switch (action.getOperationType()) {
-            case ACTION_TYPE_VALUE:
-                return Optional.of(internalizeValueQuery(action.popParameter(), group, context));
-            case ACTION_TYPE_ENTRY:
-                return Optional.of(internalizeEntryQuery(group, context));
-            case ACTION_TYPE_RANGED:
-                return Optional.of(internalizeRangedQuery(action.popParameter(), action.pop(), group, context));
-            case ACTION_TYPE_MAPPED:
-                return Optional.of(internalizeMappedQuery(action.popParameter(), action.pop(), group, context));
+            JMXInvocation action = (JMXInvocation) actionObject;
+
+            switch (action.getOperationType()) {
+                case ACTION_TYPE_VALUE:
+                    return Optional.of(internalizeValueQuery(action.popParameter(), group, context));
+                case ACTION_TYPE_ENTRY:
+                    return Optional.of(internalizeEntryQuery(group, context));
+                case ACTION_TYPE_RANGED:
+                    return Optional.of(internalizeRangedQuery(action.popParameter(), action.pop(), group, context));
+                case ACTION_TYPE_MAPPED:
+                    return Optional.of(internalizeMappedQuery(action.popParameter(), action.pop(), group, context));
+            }
         }
 
         return Optional.empty();

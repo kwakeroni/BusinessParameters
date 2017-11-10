@@ -5,7 +5,7 @@
     <parent>
         <groupId>be.kwakeroni.parameters.core</groupId>
         <artifactId>parameters-core</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -28,6 +28,13 @@
                 <version>${project.version}</version>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters</groupId>
+                <artifactId>parameters-deps</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -41,6 +48,10 @@
             <groupId>be.kwakeroni.parameters.backend</groupId>
             <artifactId>parameters-backend-api</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
 </project>

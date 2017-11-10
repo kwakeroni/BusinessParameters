@@ -6,7 +6,6 @@ import be.kwakeroni.parameters.basic.backend.es.ElasticSearchPostFilterRangedGro
 import be.kwakeroni.parameters.basic.backend.es.ElasticSearchQueryBasedRangedGroup;
 import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.type.Ranges;
-import be.kwakeroni.parameters.definition.api.DefinitionVisitor;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.BasicType;
 
@@ -18,13 +17,10 @@ import java.util.function.Function;
  */
 public class ElasticSearchRangedGroupFactory implements RangedDefinitionVisitor<ElasticSearchGroup>, ElasticSearchGroupFactory {
 
-
     @Override
-    @SuppressWarnings("rawtypes")
-    public Class<? extends DefinitionVisitor> getProvidedInterface() {
-        return RangedDefinitionVisitor.class;
+    public void visit(Registry registry) {
+        registry.register(RangedDefinitionVisitor.class, this);
     }
-
 
     @Override
     public <T extends Comparable<? super T>> ElasticSearchGroup visit(Definition definition, ParameterType<T> type, ElasticSearchGroup subGroup) {

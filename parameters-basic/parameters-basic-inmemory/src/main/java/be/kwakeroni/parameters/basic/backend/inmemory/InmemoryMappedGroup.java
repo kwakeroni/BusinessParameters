@@ -34,7 +34,7 @@ public class InmemoryMappedGroup
     }
 
     @Override
-    public InMemoryQuery<?> getEntryQuery(String keyValue, InMemoryQuery<?> subQuery) {
+    public InMemoryQuery<?> getMappedQuery(String keyValue, InMemoryQuery<?> subQuery) {
         return IntermediateInMemoryQuery.filter(entryWithKey(keyValue), subQuery);
     }
 

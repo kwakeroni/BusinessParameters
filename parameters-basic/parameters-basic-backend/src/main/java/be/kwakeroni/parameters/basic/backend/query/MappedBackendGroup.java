@@ -7,7 +7,7 @@ import be.kwakeroni.parameters.backend.api.BackendGroup;
  */
 public interface MappedBackendGroup<Q, BG extends BackendGroup<Q>> extends BackendGroup<Q> {
 
-    Q getEntryQuery(String keyValue, Q subQuery);
+    Q getMappedQuery(String keyValue, Q subQuery);
 
     BG getSubGroup();
 

@@ -16,10 +16,14 @@ public class DefaultClientWireFormatterContext extends DefaultRegistry<ClientWir
     }
 
     public void register(ClientWireFormatterFactory registrar) {
-        registrar.visitInstances(this::registerInstance);
+        if (registrar != null) {
+            registrar.visitInstances(this::registerInstance);
+        }
     }
 
     public void unregister(ClientWireFormatterFactory registrar) {
-        registrar.visitInstances(this::unregisterInstance);
+        if (registrar != null) {
+            registrar.visitInstances(this::unregisterInstance);
+        }
     }
 }

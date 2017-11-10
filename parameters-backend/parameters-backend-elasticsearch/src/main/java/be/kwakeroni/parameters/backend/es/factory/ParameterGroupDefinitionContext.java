@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.backend.es.factory;
 
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
+import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCatalog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,18 @@ public class ParameterGroupDefinitionContext implements Supplier<Stream<Paramete
     public void unregister(ParameterGroupDefinition definition) {
         if (definition != null) {
             this.definitions.remove(definition.getName(), definition);
+        }
+    }
+
+    public void register(ParameterGroupDefinitionCatalog catalog) {
+        if (catalog != null) {
+            catalog.stream().forEach(this::register);
+        }
+    }
+
+    public void unregister(ParameterGroupDefinitionCatalog catalog) {
+        if (catalog != null) {
+            catalog.stream().forEach(this::unregister);
         }
     }
 

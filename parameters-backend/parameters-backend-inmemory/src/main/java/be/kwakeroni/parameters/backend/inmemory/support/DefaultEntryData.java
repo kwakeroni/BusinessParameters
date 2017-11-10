@@ -2,20 +2,29 @@ package be.kwakeroni.parameters.backend.inmemory.support;
 
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
 public class DefaultEntryData implements EntryData {
 
-    private Map<String, String> map;
+    private final String id = UUID.randomUUID().toString();
+
+    private final Map<String, String> map;
 
     private DefaultEntryData(Map<String, String> map) {
         this.map = map;
+    }
+
+    @Override
+    public String getId() {
+        return this.id;
+    }
+
+    @Override
+    public Map<String, String> getParameters() {
+        return Collections.unmodifiableMap(this.map);
     }
 
     @Override

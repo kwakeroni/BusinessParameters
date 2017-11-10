@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.backend.inmemory.service;
 
+import be.kwakeroni.parameters.backend.api.BackendEntry;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
@@ -11,11 +12,11 @@ import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -93,21 +94,56 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
         groupData.modifyEntry(modification.getEntry(), modification.getModifier());
     }
 
+    @Override
+    public EntryData getEntry(String group, String id) {
+        GroupData groupData = getGroupData(group);
+        return groupData.getEntries()
+                .filter(e -> id.equals(e.getId()))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Entry with id " + id + " not found"));
+    }
+
+    @Override
+    public void update(String group, String id, Map<String, String> entry) {
+        GroupData groupData = getGroupData(group);
+        EntryData entryById = getEntry(group, id);
+        EntryModification modification = new EntryModification() {
+            @Override
+            public EntryData getEntry() {
+                return entryById;
+            }
+
+            @Override
+            public Consumer<EntryData> getModifier() {
+                return data -> entry.forEach(data::setValue);
+            }
+        };
+        groupData.modifyEntry(modification.getEntry(), modification.getModifier());
+    }
+
     public void insert(String group, Map<String, String> entry) {
         GroupData groupData = getGroupData(group);
         EntryData entryData = DefaultEntryData.of(entry);
         groupData.addEntry(entryData);
+    }
 
+    public <R> R exportEntries(String groupName, Collector<? super BackendEntry, ?, R> collector) {
+        return getGroupData(groupName)
+                .getEntries()
+                .collect(collector);
     }
 
     private GroupData getGroupData(String name) {
+        if (!data.containsKey(name)) {
+            setGroupData(name, new ArrayList<>());
+        }
         return Optional.ofNullable(data.get(name))
                 .orElseThrow(() -> new IllegalArgumentException("No group defined with name " + name));
     }
 
     @Override
     public Collection<String> getGroupNames() {
-        return data.keySet();
+        return definitions.get().map(ParameterGroupDefinition::getName).collect(Collectors.toSet());
     }
 
     @Override

@@ -23,7 +23,7 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
 
     @Override
     public BusinessParametersBackend<InMemoryQuery<?>> getInstance() {
-        return INSTANCE;
+        return getSingletonInstance();
     }
 
     public static synchronized InMemoryBackend getSingletonInstance() {

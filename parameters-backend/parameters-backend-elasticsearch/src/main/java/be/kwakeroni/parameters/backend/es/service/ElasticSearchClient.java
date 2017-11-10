@@ -14,8 +14,6 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toMap;
-
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
@@ -35,6 +33,12 @@ class ElasticSearchClient {
 
         this.index = this.client.resource(url);
         this.search = this.client.resource(url + "/_search");
+    }
+
+    JSONObject getById(String group, String id) {
+        ClientResponse response = index.path(group + "/" + id).get(ClientResponse.class);
+        String entity = extractEntity(response, String.class);
+        return new JSONObject(entity);
     }
 
     Stream<JSONObject> getAggregation(String name, JSONObject terms) {

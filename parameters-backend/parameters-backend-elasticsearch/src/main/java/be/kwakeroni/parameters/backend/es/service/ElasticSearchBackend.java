@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.backend.es.service;
 
+import be.kwakeroni.parameters.backend.api.BackendEntry;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,6 +26,7 @@ import java.util.stream.Stream;
 public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSearchQuery<?>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchBackend.class);
+    private static final int DEFAULT_PAGESIZE = 50;
 
     private final ElasticSearchClient client;
     private final ElasticSearchGroupFactoryContext factoryContext;
@@ -61,11 +64,11 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     public Collection<String> getGroupNames() {
         Stream<JSONObject> stream = client.getAggregation("group_by_type", new JSONObject().put("field", "_type"));
         Collection<String> inDB = stream.map(o -> o.getString("key")).collect(Collectors.toList());
-        return groups.keySet()
-                .stream()
-                .peek(key -> {
-                    if (!inDB.contains(key)) {
-                        LOG.warn("Registered group without data: " + key);
+        return definitions.get()
+                .map(ParameterGroupDefinition::getName)
+                .peek(name -> {
+                    if (!inDB.contains(name)) {
+                        LOG.warn("Registered group without data: " + name);
                     }
                 })
                 .collect(Collectors.toList());
@@ -107,6 +110,25 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     private <V> void doUpdate(String group, ElasticSearchQuery<V> query, V value) {
         ElasticSearchData groupData = getDataForGroup(group);
         EntryModification modification = query.getEntryModification(value, groupData);
+        doUpdate(group, groupData, modification);
+    }
+
+    @Override
+    public ElasticSearchEntry getEntry(String group, String id) {
+        JSONObject result = this.client.getById(group, id);
+        LOG.info("BY ID RESULT:\r\n" + result.toString(4));
+        return new DefaultElasticSearchEntry(result);
+    }
+
+    @Override
+    public void update(String group, String id, Map<String, String> entry) {
+        ElasticSearchEntry entryById = getEntry(group, id);
+        ElasticSearchData groupData = getDataForGroup(group);
+        EntryModification modification = EntryModification.modifiedBy(e -> e.replace(entry)).apply(entryById);
+        doUpdate(group, groupData, modification);
+    }
+
+    private void doUpdate(String group, ElasticSearchData groupData, EntryModification modification) {
         ElasticSearchEntry original = modification.getOriginalEntry();
         ElasticSearchEntry newEntry = original.copy();
         modification.modify(newEntry);
@@ -121,4 +143,12 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
         newEntry = getGroup(group).prepareAndValidateNewEntry(newEntry, groupData);
         client.insert(group, newEntry);
     }
+
+    @Override
+    public <R> R exportEntries(String groupName, Collector<? super BackendEntry, ?, R> collector) {
+        return getDataForGroup(groupName)
+                .findAll(DEFAULT_PAGESIZE)
+                .collect(collector);
+    }
+
 }

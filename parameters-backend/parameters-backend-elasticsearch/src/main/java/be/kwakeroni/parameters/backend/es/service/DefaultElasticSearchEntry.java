@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.collectingAndThen;
  */
 final class DefaultElasticSearchEntry implements ElasticSearchEntry {
     private final JSONObject metadata;
-    private final JSONObject entry;
+    private JSONObject entry;
     private List<String> metaParams;
 
     public DefaultElasticSearchEntry(Map<String, String> map){
@@ -50,6 +50,11 @@ final class DefaultElasticSearchEntry implements ElasticSearchEntry {
     }
 
     @Override
+    public Map<String, String> getParameters() {
+        return toParameterMap();
+    }
+
+    @Override
     public String getParameter(String parameter) {
         return entry.getString(parameter);
     }
@@ -57,6 +62,11 @@ final class DefaultElasticSearchEntry implements ElasticSearchEntry {
     @Override
     public void setParameter(String parameter, String value) {
         entry.put(parameter, value);
+    }
+
+    @Override
+    public void replace(Map<String, String> parameterMap) {
+        this.entry = new JSONObject(parameterMap);
     }
 
     @Override

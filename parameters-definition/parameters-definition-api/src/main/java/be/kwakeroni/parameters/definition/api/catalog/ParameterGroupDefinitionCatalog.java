@@ -2,6 +2,7 @@ package be.kwakeroni.parameters.definition.api.catalog;
 
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
+import java.util.Iterator;
 import java.util.stream.Stream;
 
 /**
@@ -11,4 +12,8 @@ public interface ParameterGroupDefinitionCatalog extends Iterable<ParameterGroup
 
     public Stream<ParameterGroupDefinition> stream();
 
+    @Override
+    public default Iterator<ParameterGroupDefinition> iterator() {
+        return stream().iterator();
+    }
 }

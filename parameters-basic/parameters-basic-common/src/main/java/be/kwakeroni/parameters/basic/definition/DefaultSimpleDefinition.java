@@ -29,6 +29,11 @@ final class DefaultSimpleDefinition implements SimpleDefinitionVisitor.Definitio
     }
 
     @Override
+    public String getType() {
+        return "basic.simple";
+    }
+
+    @Override
     public ParameterGroupDefinition getDefinition() {
         return this;
     }

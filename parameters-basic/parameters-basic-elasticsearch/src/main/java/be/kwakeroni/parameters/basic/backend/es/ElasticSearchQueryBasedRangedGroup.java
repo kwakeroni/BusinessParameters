@@ -37,7 +37,7 @@ public class ElasticSearchQueryBasedRangedGroup
     }
 
     @Override
-    public ElasticSearchQuery<?> getEntryQuery(String value, ElasticSearchQuery<?> subQuery) {
+    public ElasticSearchQuery<?> getRangedQuery(String value, ElasticSearchQuery<?> subQuery) {
         return new ElasticSearchRangedQuery<>(value, subQuery);
     }
 

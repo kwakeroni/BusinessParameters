@@ -3,20 +3,27 @@
            xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
-    <bean id="groupFactoryContext" class="be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendGroupFactoryContext" />
-    <bean id="definitionContext" class="be.kwakeroni.parameters.backend.inmemory.factory.ParameterGroupDefinitionContext" />
+    <bean id="groupFactoryContext"
+          class="be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendGroupFactoryContext"/>
+    <bean id="definitionContext"
+          class="be.kwakeroni.parameters.backend.inmemory.factory.ParameterGroupDefinitionContext"/>
 
     <bean id="inMemoryBackend" class="be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend">
-        <argument ref="groupFactoryContext" />
-        <argument ref="definitionContext" />
+        <argument ref="groupFactoryContext"/>
+        <argument ref="definitionContext"/>
     </bean>
 
     <service ref="inMemoryBackend" interface="be.kwakeroni.parameters.backend.api.BusinessParametersBackend"/>
 
-    <reference-list interface="be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroupFactory" availability="mandatory">
-        <reference-listener ref="groupFactoryContext" bind-method="register" unbind-method="unregister" />
+    <reference-list interface="be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroupFactory"
+                    availability="optional">
+        <reference-listener ref="groupFactoryContext" bind-method="register" unbind-method="unregister"/>
     </reference-list>
     <reference-list interface="be.kwakeroni.parameters.definition.api.ParameterGroupDefinition" availability="optional">
+        <reference-listener ref="definitionContext" bind-method="register" unbind-method="unregister"/>
+    </reference-list>
+    <reference-list interface="be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCatalog"
+                    availability="optional">
         <reference-listener ref="definitionContext" bind-method="register" unbind-method="unregister"/>
     </reference-list>
 </blueprint>

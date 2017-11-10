@@ -14,7 +14,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>petshop-definitions</module>
         <module>petshop-application</module>
         <module>petshop-web</module>
     </modules>

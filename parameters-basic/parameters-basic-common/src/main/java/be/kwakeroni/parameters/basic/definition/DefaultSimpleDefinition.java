@@ -1,7 +1,9 @@
 package be.kwakeroni.parameters.basic.definition;
 
+import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.basic.definition.builder.SimpleDefinitionBuilder;
 import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
+import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
@@ -15,7 +17,7 @@ import java.util.function.Function;
 /**
  * Created by kwakeroni on 11.04.17.
  */
-final class DefaultSimpleDefinition implements SimpleDefinitionVisitor.Definition, ParameterGroupDefinition {
+final class DefaultSimpleDefinition implements SimpleDefinitionVisitor.Definition, ParameterGroupDefinition<Simple> {
 
     private String name;
     private final List<String> parameters = new ArrayList<>();
@@ -34,7 +36,7 @@ final class DefaultSimpleDefinition implements SimpleDefinitionVisitor.Definitio
     }
 
     @Override
-    public ParameterGroupDefinition getDefinition() {
+    public ParameterGroupDefinition<Simple> getDefinition() {
         return this;
     }
 
@@ -46,6 +48,11 @@ final class DefaultSimpleDefinition implements SimpleDefinitionVisitor.Definitio
     @Override
     public <G> G apply(DefinitionVisitorContext<G> context) {
         return SimpleDefinitionVisitor.from(context).visit(this);
+    }
+
+    @Override
+    public Partial<Simple> createPartial(BusinessParameters businessParameters) {
+        return partialQuery -> new DefaultSimpleGroup<>(() -> this.name, businessParameters, partialQuery);
     }
 
     static Builder builder() {
@@ -73,7 +80,7 @@ final class DefaultSimpleDefinition implements SimpleDefinitionVisitor.Definitio
         }
 
         @Override
-        public ParameterGroupDefinition build(String name, Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> finalizer) {
+        public ParameterGroupDefinition<Simple> build(String name, Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> finalizer) {
             DefaultSimpleDefinition.this.name = name;
             finalizer.apply(this);
             return DefaultSimpleDefinition.this;

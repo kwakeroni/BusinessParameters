@@ -3,6 +3,7 @@ package be.kwakeroni.parameters.basic.client.query;
 import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
+import be.kwakeroni.parameters.client.api.query.PartialQuery;
 import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.types.api.ParameterType;
 
@@ -59,6 +60,26 @@ public class MappedQuery<K, ET extends EntryType, T> implements Query<Mapped<K, 
     @Override
     public String toString() {
         return "forKey(" + key + ")." + subQuery;
+    }
+
+    public static class Partial<K, ET extends EntryType> implements PartialQuery<Mapped<K, ET>, ET> {
+
+        private final K key;
+        private final Function<? super K, String> keyStringConverter;
+
+        public Partial(K key, ParameterType<K> keyType) {
+            this(key, keyType::toString);
+        }
+
+        public Partial(K key, Function<? super K, String> keyStringConverter) {
+            this.key = Objects.requireNonNull(key, "key");
+            this.keyStringConverter = Objects.requireNonNull(keyStringConverter, "keyStringConverter");
+        }
+
+        @Override
+        public <T> Query<Mapped<K, ET>, T> andThen(Query<ET, T> subQuery) {
+            return new MappedQuery<>(key, keyStringConverter, subQuery);
+        }
     }
 
 }

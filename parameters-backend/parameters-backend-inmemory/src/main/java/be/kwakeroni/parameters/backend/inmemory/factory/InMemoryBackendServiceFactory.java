@@ -44,7 +44,7 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
         return context;
     }
 
-    private static Supplier<Stream<ParameterGroupDefinition>> loadDefinitions() {
+    private static Supplier<Stream<ParameterGroupDefinition<?>>> loadDefinitions() {
         return () -> loadServices(ParameterGroupDefinitionCatalog.class)
                 .flatMap(ParameterGroupDefinitionCatalog::stream);
     }

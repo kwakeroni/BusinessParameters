@@ -38,14 +38,14 @@ public class InMemoryBackendTest {
 
     private InMemoryBackend backend;
     @Mock
-    private ParameterGroupDefinition group1Definition;
+    private ParameterGroupDefinition<?> group1Definition;
     @Mock
     private EntryData entry1Data;
     @Mock
     private InMemoryGroup group1;
     private String group1Name = "group1";
     @Mock
-    private ParameterGroupDefinition group2Definition;
+    private ParameterGroupDefinition<?> group2Definition;
     @Mock
     private EntryData entry2Data;
     @Mock
@@ -58,7 +58,7 @@ public class InMemoryBackendTest {
     @Mock
     private InMemoryBackendGroupFactoryContext factoryContext;
     @Mock
-    private Supplier<Stream<ParameterGroupDefinition>> definitions;
+    private Supplier<Stream<ParameterGroupDefinition<?>>> definitions;
     @Mock
     private Object value;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)

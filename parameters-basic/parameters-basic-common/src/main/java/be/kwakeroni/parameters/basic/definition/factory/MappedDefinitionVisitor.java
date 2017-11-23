@@ -16,7 +16,7 @@ public interface MappedDefinitionVisitor<G> extends DefinitionVisitor<G> {
     }
 
     public interface Definition {
-        public ParameterGroupDefinition getDefinition();
+        public ParameterGroupDefinition<?> getDefinition();
 
         public String getKeyParameter();
     }

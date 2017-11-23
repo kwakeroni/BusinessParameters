@@ -1,11 +1,15 @@
 package be.kwakeroni.parameters.basic.definition;
 
+import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.basic.definition.builder.MappedDefinitionBuilder;
 import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
+import be.kwakeroni.parameters.client.api.BusinessParameters;
+import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilder;
 import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
+import be.kwakeroni.parameters.types.api.ParameterType;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -13,10 +17,11 @@ import java.util.function.Function;
 /**
  * Created by kwakeroni on 11.04.17.
  */
-final class DefaultMappedDefinition implements MappedDefinitionVisitor.Definition, ParameterGroupDefinition {
+final class DefaultMappedDefinition<KeyType, SubType extends EntryType> implements MappedDefinitionVisitor.Definition, ParameterGroupDefinition<Mapped<KeyType, SubType>> {
 
     private String keyParameter;
-    private ParameterGroupDefinition subGroupDefinition;
+    private ParameterType<KeyType> keyType;
+    private ParameterGroupDefinition<SubType> subGroupDefinition;
 
     private DefaultMappedDefinition() {
 
@@ -43,8 +48,14 @@ final class DefaultMappedDefinition implements MappedDefinitionVisitor.Definitio
     }
 
     @Override
-    public ParameterGroupDefinition getDefinition() {
+    public ParameterGroupDefinition<Mapped<KeyType, SubType>> getDefinition() {
         return this;
+    }
+
+    @Override
+    public Partial<Mapped<KeyType, SubType>> createPartial(BusinessParameters businessParameters) {
+        Partial<SubType> subDefinition = subGroupDefinition.createPartial(businessParameters);
+        return partialQuery -> new DefaultMappedGroup<>(subDefinition, keyType, partialQuery);
     }
 
     @Override
@@ -53,27 +64,28 @@ final class DefaultMappedDefinition implements MappedDefinitionVisitor.Definitio
         return MappedDefinitionVisitor.from(context).visit(this, subGroup);
     }
 
-    static Builder builder() {
-        return new DefaultMappedDefinition().new Builder();
+    static DefaultMappedDefinition<?, ?>.Builder builder() {
+        return new DefaultMappedDefinition<>().new Builder();
     }
 
-    private final class Builder implements MappedDefinitionBuilder {
-        private DefinitionBuilder subGroup;
+    private final class Builder implements MappedDefinitionBuilder<KeyType, SubType> {
+        private DefinitionBuilder<SubType> subGroup;
 
         @Override
-        public MappedDefinitionBuilder withKeyParameter(String name) {
+        public <NewKeyType> MappedDefinitionBuilder<NewKeyType, SubType> withKeyParameter(String name, ParameterType<NewKeyType> type) {
             keyParameter = name;
-            return this;
+            keyType = (ParameterType<KeyType>) type;
+            return (MappedDefinitionBuilder<NewKeyType, SubType>) this;
         }
 
         @Override
-        public MappedDefinitionBuilder mappingTo(DefinitionBuilder subGroup) {
-            this.subGroup = subGroup;
-            return this;
+        public <NewSubType extends EntryType> MappedDefinitionBuilder<KeyType, NewSubType> mappingTo(DefinitionBuilder<NewSubType> subGroup) {
+            this.subGroup = (DefinitionBuilder<SubType>) subGroup;
+            return (MappedDefinitionBuilder<KeyType, NewSubType>) this;
         }
 
         @Override
-        public ParameterGroupDefinition build(String name, Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> theirFinalizer) {
+        public ParameterGroupDefinition<Mapped<KeyType, SubType>> build(String name, Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> theirFinalizer) {
             subGroupDefinition = subGroup.build(name, myFinalizer().andThen(theirFinalizer));
             return DefaultMappedDefinition.this;
         }

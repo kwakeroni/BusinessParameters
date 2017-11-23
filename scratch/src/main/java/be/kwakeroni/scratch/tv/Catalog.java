@@ -12,7 +12,7 @@ import java.util.stream.Stream;
  */
 public class Catalog implements ParameterGroupDefinitionCatalog {
 
-    private static final ParameterGroupDefinition[] DEFINITIONS = {
+    private static final ParameterGroupDefinition<?>[] DEFINITIONS = {
             SimpleTV.DEFINITION,
             MappedTV.DEFINITION,
             RangedFilterTV.DEFINITION,
@@ -22,7 +22,7 @@ public class Catalog implements ParameterGroupDefinitionCatalog {
     };
 
     @Override
-    public Stream<ParameterGroupDefinition> stream() {
+    public Stream<ParameterGroupDefinition<?>> stream() {
         return Arrays.stream(DEFINITIONS);
     }
 

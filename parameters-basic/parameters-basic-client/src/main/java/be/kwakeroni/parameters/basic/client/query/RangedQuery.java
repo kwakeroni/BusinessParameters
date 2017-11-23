@@ -3,6 +3,7 @@ package be.kwakeroni.parameters.basic.client.query;
 import be.kwakeroni.parameters.basic.client.model.Ranged;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
+import be.kwakeroni.parameters.client.api.query.PartialQuery;
 import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.types.api.ParameterType;
 
@@ -61,4 +62,22 @@ public class RangedQuery<V, ET extends EntryType, T> implements Query<Ranged<V, 
         return "at(" + value + ")." + subQuery;
     }
 
+    public static class Partial<V, ET extends EntryType> implements PartialQuery<Ranged<V, ET>, ET> {
+        private final V value;
+        private final Function<? super V, String> type;
+
+        public Partial(V value, ParameterType<V> type) {
+            this(value, type::toString);
+        }
+
+        public Partial(V value, Function<? super V, String> type) {
+            this.value = value;
+            this.type = type;
+        }
+
+        @Override
+        public <T> Query<Ranged<V, ET>, T> andThen(Query<ET, T> subQuery) {
+            return new RangedQuery<V, ET, T>(value, type, subQuery);
+        }
+    }
 }

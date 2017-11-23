@@ -11,4 +11,12 @@
 
     <artifactId>parameters-definition-api</artifactId>
     <packaging>bundle</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.client</groupId>
+            <artifactId>parameters-client-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -102,6 +102,7 @@ public class RestParameterManagement {
             return responseFor(exc);
         }
     }
+
     @Path("/groups/{group}/entries/{id}")
     @PATCH
     public Response update(@PathParam("group") String groupName, @PathParam("id") String id, String entry) {

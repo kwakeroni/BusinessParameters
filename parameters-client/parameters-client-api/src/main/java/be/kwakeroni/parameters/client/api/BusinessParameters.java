@@ -1,8 +1,8 @@
 package be.kwakeroni.parameters.client.api;
 
-import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
+import be.kwakeroni.parameters.client.api.query.Query;
 
 import java.util.Optional;
 
@@ -28,4 +28,5 @@ public interface BusinessParameters {
 
         return new GroupWrapper();
     }
+
 }

@@ -28,14 +28,14 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
 
     private final Map<String, GroupData> data;
     private final InMemoryBackendGroupFactoryContext factoryContext;
-    private final Supplier<Stream<ParameterGroupDefinition>> definitions;
+    private final Supplier<Stream<ParameterGroupDefinition<?>>> definitions;
 
 
-    public InMemoryBackend(InMemoryBackendGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition>> definitions) {
+    public InMemoryBackend(InMemoryBackendGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition<?>>> definitions) {
         this(new HashMap<>(), factoryContext, definitions);
     }
 
-    private InMemoryBackend(Map<String, GroupData> data, InMemoryBackendGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition>> definitions) {
+    private InMemoryBackend(Map<String, GroupData> data, InMemoryBackendGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition<?>>> definitions) {
         this.data = data;
         this.factoryContext = factoryContext;
         this.definitions = definitions;
@@ -58,7 +58,7 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
                 .orElseThrow(() -> new IllegalStateException("No definition found for group " + name));
     }
 
-    private InMemoryGroup defineGroup(ParameterGroupDefinition definition) {
+    private InMemoryGroup defineGroup(ParameterGroupDefinition<?> definition) {
         return definition.apply(this.factoryContext);
     }
 
@@ -147,7 +147,7 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     }
 
     @Override
-    public ParameterGroupDefinition getDefinition(String groupName) {
+    public ParameterGroupDefinition<?> getDefinition(String groupName) {
         return getGroupData(groupName).getGroup().getDefinition();
     }
 }

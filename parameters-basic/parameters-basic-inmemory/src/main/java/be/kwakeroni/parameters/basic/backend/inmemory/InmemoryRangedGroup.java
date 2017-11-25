@@ -20,12 +20,12 @@ import java.util.function.Predicate;
  */
 public class InmemoryRangedGroup implements InMemoryGroup, RangedBackendGroup<InMemoryQuery<?>, InMemoryGroup> {
 
-    private final ParameterGroupDefinition definition;
+    private final ParameterGroupDefinition<?> definition;
     private final String rangeParameterName;
     private final ParameterType<Range<String>> rangeType;
     private final InMemoryGroup subGroup;
 
-    public InmemoryRangedGroup(String rangeParameterName, ParameterType<Range<String>> rangeType, ParameterGroupDefinition definition, InMemoryGroup subGroup) {
+    public InmemoryRangedGroup(String rangeParameterName, ParameterType<Range<String>> rangeType, ParameterGroupDefinition<?> definition, InMemoryGroup subGroup) {
         this.rangeParameterName = rangeParameterName;
         this.rangeType = rangeType;
         this.definition = definition;
@@ -64,7 +64,7 @@ public class InmemoryRangedGroup implements InMemoryGroup, RangedBackendGroup<In
     }
 
     @Override
-    public ParameterGroupDefinition getDefinition() {
+    public ParameterGroupDefinition<?> getDefinition() {
         return this.definition;
     }
 

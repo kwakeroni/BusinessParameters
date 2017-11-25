@@ -27,9 +27,9 @@ public interface AbstractMappedRangedTV extends ParameterGroup<Mapped<Dag, Range
     public static Parameter<Range<Slot>> SLOT = new DefaultParameter<>("slot", Ranges.rangeTypeOf(Slot.type));
     public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
 
-    public static ParameterGroupDefinition definition(String name, Function<RangedDefinitionBuilder, RangedDefinitionBuilder> withRangeParameter) {
+    public static ParameterGroupDefinition<Mapped<Dag, Ranged<Slot, Simple>>> definition(String name, Function<RangedDefinitionBuilder<?, ?>, RangedDefinitionBuilder<Slot, ?>> withRangeParameter) {
         return mappedGroup()
-                .withKeyParameter(DAY.getName())
+                .withKeyParameter(DAY.getName(), Dag.type)
                 .mappingTo(withRangeParameter.apply(rangedGroup())
                         .mappingTo(group()
                                 .withParameter(PROGRAM.getName())))

@@ -33,7 +33,7 @@ public interface AbstractRangedTVGroup extends AbstractRangedTV {
     }
 
     // For test purposes
-    ParameterGroupDefinition getDefinition();
+    ParameterGroupDefinition<Ranged<Slot, Simple>> getDefinition();
 
     public static EntryData entryData(Slot from, Slot to, String program) {
         return DefaultEntryData.of(

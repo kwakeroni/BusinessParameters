@@ -25,7 +25,7 @@ public interface AbstractRangedTV extends ParameterGroup<Ranged<Slot, Simple>> {
     public static Parameter<Range<Slot>> SLOT = new DefaultParameter<>("slot", Ranges.rangeTypeOf(Slot.type));
     public static Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
 
-    public static ParameterGroupDefinition definition(String name, Function<RangedDefinitionBuilder, RangedDefinitionBuilder> withRangeParameter) {
+    public static ParameterGroupDefinition<Ranged<Slot, Simple>> definition(String name, Function<RangedDefinitionBuilder<?, ?>, RangedDefinitionBuilder<Slot, ?>> withRangeParameter) {
         return withRangeParameter.apply(rangedGroup())
                 .mappingTo(group()
                         .withParameter(PROGRAM.getName()))

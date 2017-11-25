@@ -12,7 +12,8 @@
     <artifactId>parameters-basic-client</artifactId>
     <packaging>bundle</packaging>
 
-    <description>Provides a Business Parameters client connector that connects directly to a Backend with a Java API.</description>
+    <description>Provides a Business Parameters client connector that connects directly to a Backend with a Java API.
+    </description>
 
     <dependencyManagement>
         <dependencies>

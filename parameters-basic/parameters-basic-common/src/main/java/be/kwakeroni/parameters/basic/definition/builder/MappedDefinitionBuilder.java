@@ -2,7 +2,7 @@ package be.kwakeroni.parameters.basic.definition.builder;
 
 import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.client.api.model.EntryType;
-import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilder;
+import be.kwakeroni.parameters.definition.ext.DefinitionBuilder;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.ParameterTypes;
 

@@ -4,25 +4,40 @@ import be.kwakeroni.parameters.basic.client.model.Ranged;
 import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.query.PartialQuery;
-import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
+import be.kwakeroni.parameters.definition.ext.PartialGroup;
 import be.kwakeroni.parameters.types.api.ParameterType;
 
-public class DefaultRangedGroup<ValueType, SubType extends EntryType> implements Ranged<ValueType, SubType> {
+final class DefaultRangedGroup<GroupType extends EntryType, ValueType, SubType extends EntryType> implements PartialGroup<GroupType, Ranged<ValueType, SubType>> {
 
-    private final ParameterGroupDefinition.Partial<SubType> subDefinition;
+    private final PartialGroup<GroupType, SubType> subGroupDefinition;
     private final ParameterType<ValueType> valueType;
-    private final PartialQuery<?, Ranged<ValueType, SubType>> partialQuery;
 
-    public DefaultRangedGroup(ParameterGroupDefinition.Partial<SubType> subDefinition, ParameterType<ValueType> valueType, PartialQuery<?, Ranged<ValueType, SubType>> partialQuery) {
-        this.subDefinition = subDefinition;
+    DefaultRangedGroup(ParameterType<ValueType> valueType, PartialGroup<GroupType, SubType> subGroupDefinition) {
+        this.subGroupDefinition = subGroupDefinition;
         this.valueType = valueType;
-        this.partialQuery = partialQuery;
     }
 
     @Override
-    public SubType at(ValueType value) {
-        PartialQuery<Ranged<ValueType, SubType>, SubType> rangedQuery = new RangedQuery.Partial<>(value, valueType);
-        PartialQuery<?, SubType> query = partialQuery.andThen(rangedQuery);
-        return subDefinition.createGroup(query);
+    public Ranged<ValueType, SubType> resolve(PartialQuery<GroupType, Ranged<ValueType, SubType>> parentQuery) {
+        return new Resolved(parentQuery);
+    }
+
+    private final /* value */ class Resolved implements Ranged<ValueType, SubType> {
+        private final PartialQuery<GroupType, Ranged<ValueType, SubType>> parentQuery;
+
+        Resolved(PartialQuery<GroupType, Ranged<ValueType, SubType>> parentQuery) {
+            this.parentQuery = parentQuery;
+        }
+
+        @Override
+        public SubType at(ValueType value) {
+            return resolveSubGroup(new RangedQuery.Partial<>(value, valueType));
+        }
+
+        private SubType resolveSubGroup(PartialQuery<Ranged<ValueType, SubType>, SubType> myQueryPart) {
+            PartialQuery<GroupType, SubType> myQuery = parentQuery.andThen(myQueryPart);
+            return subGroupDefinition.resolve(myQuery);
+        }
+
     }
 }

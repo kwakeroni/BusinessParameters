@@ -3,34 +3,26 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>parameters-client</artifactId>
-        <groupId>be.kwakeroni.parameters.client</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <artifactId>parameters-definition</artifactId>
+        <groupId>be.kwakeroni.parameters.definition</groupId>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>parameters-client-support</artifactId>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>be.kwakeroni.parameters.definition</groupId>
-                <artifactId>parameters-definition</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <artifactId>parameters-definition-ext-api</artifactId>
+    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
             <groupId>be.kwakeroni.parameters.client</groupId>
             <artifactId>parameters-client-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.definition</groupId>
             <artifactId>parameters-definition-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
+
 </project>

@@ -10,15 +10,15 @@ import be.kwakeroni.parameters.basic.definition.builder.SimpleDefinitionBuilder;
 public interface BasicGroup {
 
     public default SimpleDefinitionBuilder simple() {
-        return DefaultSimpleDefinition.builder();
+        return new DefaultSimpleDefinitionBuilder();
     }
 
     public default MappedDefinitionBuilder<?, ?> mapped() {
-        return DefaultMappedDefinition.builder();
+        return new DefaultMappedDefinitionBuilder<>();
     }
 
     public default RangedDefinitionBuilder<?, ?> ranged() {
-        return DefaultRangedDefinition.builder();
+        return new DefaultRangedDefinitionBuilder<>();
     }
 
     public static BasicGroup builder() {

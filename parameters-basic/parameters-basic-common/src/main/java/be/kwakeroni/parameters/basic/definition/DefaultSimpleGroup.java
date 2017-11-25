@@ -3,32 +3,41 @@ package be.kwakeroni.parameters.basic.definition;
 import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.model.EntryType;
-import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.PartialQuery;
 import be.kwakeroni.parameters.client.api.query.Query;
+import be.kwakeroni.parameters.definition.ext.PartialGroup;
 
 import java.util.Optional;
 
-/**
- * Created by kwakeroni on 20/11/17.
- */
-final class DefaultSimpleGroup<GroupType extends EntryType> implements Simple {
+final class DefaultSimpleGroup<GroupType extends EntryType> implements PartialGroup<GroupType, Simple> {
 
-    private final ParameterGroup<GroupType> group;
+    private final String name;
     private final BusinessParameters businessParameters;
-    private final PartialQuery<GroupType, Simple> partial;
 
-
-    public DefaultSimpleGroup(ParameterGroup<GroupType> group, BusinessParameters businessParameters, PartialQuery<GroupType, Simple> partial) {
-        this.group = group;
+    DefaultSimpleGroup(String name, BusinessParameters businessParameters) {
+        this.name = name;
         this.businessParameters = businessParameters;
-        this.partial = partial;
     }
 
     @Override
-    public <T> Optional<T> get(Query<Simple, T> finalQuery) {
-        Query<GroupType, T> query = partial.andThen(finalQuery);
-        return businessParameters.get(group, query);
+    public Simple resolve(PartialQuery<GroupType, Simple> parentQuery) {
+        return new Resolved(parentQuery);
+    }
+
+    private final /* value */ class Resolved implements Simple {
+
+        private final PartialQuery<GroupType, Simple> parentQuery;
+
+        Resolved(PartialQuery<GroupType, Simple> parentQuery) {
+            this.parentQuery = parentQuery;
+        }
+
+        @Override
+        public <T> Optional<T> get(Query<Simple, T> finalQueryPart) {
+            Query<GroupType, T> myQuery = parentQuery.andThen(finalQueryPart);
+            return businessParameters.get(() -> name, myQuery);
+        }
+
     }
 
 }

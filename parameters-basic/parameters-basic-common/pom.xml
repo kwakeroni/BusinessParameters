@@ -55,6 +55,11 @@
             <artifactId>parameters-definition-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>be.kwakeroni.parameters.definition</groupId>
+            <artifactId>parameters-definition-ext-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>be.kwakeroni.parameters.types</groupId>
             <artifactId>parameters-types-api</artifactId>
         </dependency>

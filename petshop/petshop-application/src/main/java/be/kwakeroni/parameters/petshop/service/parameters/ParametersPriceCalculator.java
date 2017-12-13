@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.petshop.service;
+package be.kwakeroni.parameters.petshop.service.parameters;
 
 import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.basic.client.model.Ranged;
@@ -8,6 +8,7 @@ import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.query.Query;
+import be.kwakeroni.parameters.petshop.service.AbstractPriceCalculator;
 import be.kwakeroni.parameters.types.support.ParameterTypes;
 
 import java.util.Optional;

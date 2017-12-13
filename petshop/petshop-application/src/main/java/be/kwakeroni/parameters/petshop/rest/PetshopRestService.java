@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.petshop.rest;
 
 import be.kwakeroni.parameters.petshop.model.Animal;
+import be.kwakeroni.parameters.petshop.service.ContactService;
 import be.kwakeroni.parameters.petshop.service.PriceCalculator;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,10 +23,12 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 @Produces({APPLICATION_JSON, TEXT_PLAIN})
 public class PetshopRestService {
 
-    private PriceCalculator priceCalculator;
+    private final PriceCalculator priceCalculator;
+    private final ContactService contactService;
 
-    public PetshopRestService(PriceCalculator priceCalculator) {
+    public PetshopRestService(PriceCalculator priceCalculator, ContactService contactService) {
         this.priceCalculator = priceCalculator;
+        this.contactService = contactService;
     }
 
     private static TreeSet<Animal> ANIMALS = new TreeSet<>(Comparator.comparing(Animal::getSpecies));
@@ -36,6 +39,20 @@ public class PetshopRestService {
         ANIMALS.add(new Animal("Goldfish", 10));
         ANIMALS.add(new Animal("Gerbil", 35));
         ANIMALS.add(new Animal("Phoenix", 250));
+    }
+
+    @Path("/")
+    @GET
+    @Produces({TEXT_PLAIN})
+    public String getInfo() {
+        return "Business Parameters - Petshop Demo Rest Service";
+    }
+
+    @Path("/contact")
+    @GET
+    @Produces({APPLICATION_JSON})
+    public String getContactInfo() {
+        return contactService.getContactInformation().toJson().toString();
     }
 
     @Path("/animals")

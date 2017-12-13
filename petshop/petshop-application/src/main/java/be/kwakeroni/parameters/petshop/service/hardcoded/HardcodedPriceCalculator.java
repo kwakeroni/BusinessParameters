@@ -1,7 +1,8 @@
-package be.kwakeroni.parameters.petshop.service;
+package be.kwakeroni.parameters.petshop.service.hardcoded;
 
 import be.kwakeroni.parameters.petshop.model.Animal;
 import be.kwakeroni.parameters.petshop.model.AnimalQuote;
+import be.kwakeroni.parameters.petshop.service.AbstractPriceCalculator;
 
 import java.util.Optional;
 

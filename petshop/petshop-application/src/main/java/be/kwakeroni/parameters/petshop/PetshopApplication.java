@@ -7,8 +7,8 @@ import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
 import be.kwakeroni.parameters.management.rest.RestParameterManagement;
 import be.kwakeroni.parameters.management.rest.factory.RestParameterManagementFactory;
 import be.kwakeroni.parameters.petshop.rest.PetshopRestService;
-import be.kwakeroni.parameters.petshop.service.hardcoded.HardcodedContactService;
 import be.kwakeroni.parameters.petshop.service.hardcoded.HardcodedPriceCalculator;
+import be.kwakeroni.parameters.petshop.service.parameters.ParametersContactService;
 import com.sun.jersey.api.container.ContainerFactory;
 import com.sun.jersey.api.container.httpserver.HttpServerFactory;
 import com.sun.jersey.api.core.ApplicationAdapter;
@@ -25,7 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.ServiceLoader;
+import java.util.Set;
 
 /**
  * Created by kwakeroni on 07/11/17.
@@ -88,7 +92,7 @@ public class PetshopApplication {
     private static PetshopRestService createPetshopRestService() {
         return new PetshopRestService(
                 new HardcodedPriceCalculator(),
-                new HardcodedContactService());
+                new ParametersContactService(createBusinessParameters()));
     }
 
     private static RestBackendAdapter createAdapter() {

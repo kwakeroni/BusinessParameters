@@ -4,7 +4,11 @@ import be.kwakeroni.parameters.backend.api.BackendEntry;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
-import be.kwakeroni.parameters.backend.inmemory.api.*;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
+import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendGroupFactoryContext;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultGroupData;
@@ -12,7 +16,11 @@ import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
@@ -46,6 +54,10 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     }
 
     private GroupData createGroupData(String groupName, Collection<EntryData> entries) {
+        InMemoryGroup group = defineGroup(groupName);
+        if (entries == null) {
+            entries = new ArrayList<>(group.initialData());
+        }
         return new DefaultGroupData(defineGroup(groupName), entries);
     }
 
@@ -135,7 +147,7 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
 
     private GroupData getGroupData(String name) {
         if (!data.containsKey(name)) {
-            setGroupData(name, new ArrayList<>());
+            setGroupData(name, null);
         }
         return Optional.ofNullable(data.get(name))
                 .orElseThrow(() -> new IllegalArgumentException("No group defined with name " + name));

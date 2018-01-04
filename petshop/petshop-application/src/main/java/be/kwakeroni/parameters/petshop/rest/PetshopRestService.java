@@ -1,15 +1,19 @@
 package be.kwakeroni.parameters.petshop.rest;
 
 import be.kwakeroni.parameters.petshop.model.Animal;
+import be.kwakeroni.parameters.petshop.service.AnimalCatalog;
 import be.kwakeroni.parameters.petshop.service.ContactService;
 import be.kwakeroni.parameters.petshop.service.PriceCalculator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.ws.rs.*;
-import java.util.Comparator;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import java.util.Objects;
-import java.util.TreeSet;
 import java.util.stream.Collector;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -23,22 +27,14 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 @Produces({APPLICATION_JSON, TEXT_PLAIN})
 public class PetshopRestService {
 
+    private final AnimalCatalog animalCatalog;
     private final PriceCalculator priceCalculator;
     private final ContactService contactService;
 
-    public PetshopRestService(PriceCalculator priceCalculator, ContactService contactService) {
+    public PetshopRestService(AnimalCatalog animalCatalog, PriceCalculator priceCalculator, ContactService contactService) {
+        this.animalCatalog = animalCatalog;
         this.priceCalculator = priceCalculator;
         this.contactService = contactService;
-    }
-
-    private static TreeSet<Animal> ANIMALS = new TreeSet<>(Comparator.comparing(Animal::getSpecies));
-
-    {
-        ANIMALS.add(new Animal("Cat", 80));
-        ANIMALS.add(new Animal("Dog", 70));
-        ANIMALS.add(new Animal("Goldfish", 10));
-        ANIMALS.add(new Animal("Gerbil", 35));
-        ANIMALS.add(new Animal("Phoenix", 250));
     }
 
     @Path("/")
@@ -59,7 +55,7 @@ public class PetshopRestService {
     @GET
     @Produces({APPLICATION_JSON})
     public String getAnimals() {
-        return ANIMALS.stream()
+        return animalCatalog.getAnimals()
                 .map(Animal::toJson)
                 .collect(toJsonArray())
                 .toString();
@@ -74,11 +70,7 @@ public class PetshopRestService {
         if (qty < 0) {
             throw new IllegalArgumentException("quantity must be bigger than zero");
         }
-        Animal animal = ANIMALS.stream()
-                .filter(a -> species.equalsIgnoreCase(a.getSpecies()))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("No such animal: " + species));
-
+        Animal animal = animalCatalog.getAnimal(species);
         return priceCalculator.getQuote(animal, qty).toJson().toString();
     }
 

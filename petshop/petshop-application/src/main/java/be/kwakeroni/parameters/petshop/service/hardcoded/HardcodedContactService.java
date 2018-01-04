@@ -3,7 +3,7 @@ package be.kwakeroni.parameters.petshop.service.hardcoded;
 import be.kwakeroni.parameters.petshop.model.ContactInformation;
 import be.kwakeroni.parameters.petshop.service.ContactService;
 
-public class HardcodedContactService implements ContactService {
+class HardcodedContactService extends ContactService {
 
     @Override
     public ContactInformation getContactInformation() {

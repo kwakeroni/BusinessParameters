@@ -7,7 +7,7 @@ import be.kwakeroni.parameters.petshop.definitions.ContactDetails;
 import be.kwakeroni.parameters.petshop.model.ContactInformation;
 import be.kwakeroni.parameters.petshop.service.ContactService;
 
-public class ParametersContactService implements ContactService {
+class ParametersContactService extends ContactService {
 
     private final Simple contactDetails;
 

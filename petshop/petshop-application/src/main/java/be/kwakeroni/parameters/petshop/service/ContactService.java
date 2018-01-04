@@ -2,8 +2,9 @@ package be.kwakeroni.parameters.petshop.service;
 
 import be.kwakeroni.parameters.petshop.model.ContactInformation;
 
-public interface ContactService {
+public class ContactService {
 
-    public ContactInformation getContactInformation();
-
+    public ContactInformation getContactInformation() {
+        return new ContactInformation("Demo Petshop", "Cuckoo Street 70, Melbourne, Australia", "+01 555 6789");
+    }
 }

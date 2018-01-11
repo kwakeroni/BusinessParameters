@@ -91,8 +91,9 @@ public class PetshopApplication {
     }
 
     private static PetshopRestService createPetshopRestService() {
+        BusinessParameters parameters = createBusinessParameters();
         return new PetshopRestService(
-                new AnimalCatalog(),
+                new AnimalCatalog(parameters),
                 new PriceCalculator(),
                 new ContactService());
     }

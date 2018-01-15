@@ -12,10 +12,7 @@ public class Catalog implements ParameterGroupDefinitionCatalog {
 
     @Override
     public Stream<ParameterGroupDefinition<?>> stream() {
-        return Stream.of(
-                ContactDetails.DEFINITION,
-                AnimalPrice.DEFINITION
-        );
+        return Stream.of();
     }
 
 }

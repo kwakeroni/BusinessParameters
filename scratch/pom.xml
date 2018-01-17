@@ -122,32 +122,26 @@
         <dependency>
             <groupId>be.kwakeroni.parameters.adapter</groupId>
             <artifactId>parameters-adapter-direct</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.backend</groupId>
             <artifactId>parameters-backend-inmemory</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.backend</groupId>
             <artifactId>parameters-backend-elasticsearch</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-inmemory</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
             <artifactId>parameters-basic-elasticsearch</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.adapter</groupId>
             <artifactId>parameters-adapter-jmx</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
@@ -236,11 +230,6 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-servlet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.kwakeroni.parameters</groupId>
-            <artifactId>petshop-definitions</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

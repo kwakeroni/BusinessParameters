@@ -37,6 +37,13 @@ public class RestBackendAdapter {
         this.wireFormatterContext = Objects.requireNonNull(wireFormatterContext, "wireFormatterContext");
     }
 
+    @Path("/")
+    @GET
+    @Produces({TEXT_PLAIN})
+    public String getInfo() {
+        return "Business Parameters Rest Adapter";
+    }
+
     @Path("/{group}/query")
     @POST
     public Response select(@PathParam("group") String groupName, String query) {

@@ -4,9 +4,13 @@ import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
+import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.basic.backend.query.support.SimpleBackendGroupSupport;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,11 +20,11 @@ import java.util.Set;
 public class InmemorySimpleGroup extends SimpleBackendGroupSupport<InMemoryQuery<?>, GroupData, EntryData>
         implements InMemoryGroup {
 
-    public InmemorySimpleGroup(String name, ParameterGroupDefinition definition, String... parameters) {
+    public InmemorySimpleGroup(String name, ParameterGroupDefinition<?> definition, String... parameters) {
         super(name, definition, parameters);
     }
 
-    public InmemorySimpleGroup(String name, ParameterGroupDefinition definition, Set<String> parameters) {
+    public InmemorySimpleGroup(String name, ParameterGroupDefinition<?> definition, Set<String> parameters) {
         super(name, definition, parameters);
     }
 
@@ -54,4 +58,12 @@ public class InmemorySimpleGroup extends SimpleBackendGroupSupport<InMemoryQuery
         return "simple(InMemory " + getParameterNames() + ")";
     }
 
+    @Override
+    public Collection<EntryData> initialData() {
+        Map<String, String> entry = new HashMap<>();
+        for (String param : getParameterNames()) {
+            entry.put(param, "");
+        }
+        return Collections.singleton(DefaultEntryData.of(entry));
+    }
 }

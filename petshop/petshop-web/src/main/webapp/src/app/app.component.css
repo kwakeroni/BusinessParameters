@@ -26,20 +26,28 @@
     vertical-align: middle;
 }
 
-.brand {
-    /*position: absolute;
-    top: 0;
-    left: 0; */
-    line-height: 100px;
-    height: 100px;
+.brand, .footer {
     width: 100%;
     margin: 5px;
     padding: 5px;
-    text-align: center;
-    font-size: 64px;
-    font-weight: bold;
     background-color: rgb(140, 138, 196);
     color: rgb(240, 236, 255);
+    text-align: center;
+}
+
+.brand {
+    line-height: 100px;
+    height: 100px;
+    font-size: 64px;
+    font-weight: bold;
+}
+
+.footer .contact {
+  display: inline-block;
+}
+
+.footer .contact div {
+  text-align: center;
 }
 
 

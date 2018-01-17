@@ -38,6 +38,13 @@ public class RestParameterManagement {
         this.backend = backend;
     }
 
+    @Path("/")
+    @GET
+    @Produces({TEXT_PLAIN})
+    public String getInfo() {
+        return "Business Parameters Management Rest Service";
+    }
+
     @Path("/groups")
     @GET
     @Produces({APPLICATION_JSON})

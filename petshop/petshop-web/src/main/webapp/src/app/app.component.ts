@@ -12,6 +12,7 @@ export class AppComponent implements OnInit {
   title = 'Demo Pet Shop';
   animals = [];
   total = 0;
+  contact = {};
 
   private petshopService: PetshopService;
 
@@ -21,6 +22,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.petshopService.getContactInformation().then($info => {
+      this.contact = $info;
+    });
     this.petshopService.getAnimals().then($animals => {
       let appComp : AppComponent = this;
       this.animals = $animals;

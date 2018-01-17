@@ -37,6 +37,17 @@ import java.util.Set;
  */
 public class PetshopApplication {
 
+    public PetshopApplication() {
+
+    }
+
+    private static PetshopRestService createPetshopRestService() {
+        return new PetshopRestService(
+                new AnimalCatalog(),
+                new PriceCalculator(),
+                new ContactService());
+    }
+
     public static void main(String[] args) throws Exception {
         try (
                 Server parameters = new Server(8080, "/parameters",
@@ -59,11 +70,6 @@ public class PetshopApplication {
                 }
             }
         }
-
-    }
-
-
-    public PetshopApplication() {
 
     }
 
@@ -90,12 +96,6 @@ public class PetshopApplication {
         }
     }
 
-    private static PetshopRestService createPetshopRestService() {
-        return new PetshopRestService(
-                new AnimalCatalog(),
-                new PriceCalculator(),
-                new ContactService());
-    }
 
     private static RestBackendAdapter createAdapter() {
         RestBackendAdapterFactory factory = new RestBackendAdapterFactory();

@@ -15,7 +15,7 @@ public interface BusinessParametersBackend<Q> {
 
     public Collection<String> getGroupNames();
 
-    public ParameterGroupDefinition getDefinition(String groupName);
+    public ParameterGroupDefinition<?> getDefinition(String groupName);
 
     public BackendQuery<? extends Q, ?> internalizeQuery(String groupName, Object queryObject, BackendWireFormatterContext context);
 

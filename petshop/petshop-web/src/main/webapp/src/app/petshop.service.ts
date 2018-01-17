@@ -10,6 +10,13 @@ export class PetshopService {
 
     constructor(private http: Http) { }
 
+  getContactInformation(): Promise<Object> {
+    return this.http.get(baseUrl + "/contact")
+                    .toPromise()
+                    .then(response => response.json() as Object)
+                    .catch(this.handleError);
+  }
+
   getAnimals(): Promise<Animal[]> {
     return this.http.get(baseUrl + "/animals")
                     .toPromise()

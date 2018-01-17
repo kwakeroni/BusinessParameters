@@ -20,7 +20,7 @@ public class SimpleTV implements ParameterGroup<Simple> {
     public static Parameter<Slot> SLOT = new DefaultParameter<>("slot", Slot.type);
     public static final String NAME = "tv.simple";
 
-    public static final ParameterGroupDefinition DEFINITION =
+    public static final ParameterGroupDefinition<Simple> DEFINITION =
             group()
                     .withParameter(DAY.getName())
                     .withParameter(SLOT.getName())

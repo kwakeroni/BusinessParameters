@@ -31,9 +31,9 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     private final ElasticSearchClient client;
     private final ElasticSearchGroupFactoryContext factoryContext;
     private final Map<String, ElasticSearchGroup> groups;
-    private final Supplier<Stream<ParameterGroupDefinition>> definitions;
+    private final Supplier<Stream<ParameterGroupDefinition<?>>> definitions;
 
-    public ElasticSearchBackend(Configuration configuration, ElasticSearchGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition>> definitions) {
+    public ElasticSearchBackend(Configuration configuration, ElasticSearchGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition<?>>> definitions) {
         this.client = new ElasticSearchClient(configuration);
         this.factoryContext = factoryContext;
         this.definitions = definitions;
@@ -52,7 +52,7 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
                 .orElseThrow(() -> new IllegalStateException("No definition found for group " + name));
     }
 
-    private ElasticSearchGroup defineGroup(ParameterGroupDefinition definition) {
+    private ElasticSearchGroup defineGroup(ParameterGroupDefinition<?> definition) {
         return definition.apply(this.factoryContext);
     }
 
@@ -75,7 +75,7 @@ public class ElasticSearchBackend implements BusinessParametersBackend<ElasticSe
     }
 
     @Override
-    public ParameterGroupDefinition getDefinition(String groupName) {
+    public ParameterGroupDefinition<?> getDefinition(String groupName) {
         return getGroup(groupName).getDefinition();
     }
 

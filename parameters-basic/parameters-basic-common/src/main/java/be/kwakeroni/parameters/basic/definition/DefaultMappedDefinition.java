@@ -1,25 +1,30 @@
 package be.kwakeroni.parameters.basic.definition;
 
-import be.kwakeroni.parameters.basic.definition.builder.MappedDefinitionBuilder;
+import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
+import be.kwakeroni.parameters.client.api.BusinessParameters;
+import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilder;
-import be.kwakeroni.parameters.definition.api.builder.DefinitionBuilderFinalizer;
+import be.kwakeroni.parameters.definition.ext.PartialDefinition;
+import be.kwakeroni.parameters.definition.ext.PartialGroup;
+import be.kwakeroni.parameters.types.api.ParameterType;
 
 import java.util.Collection;
-import java.util.function.Function;
 
 /**
  * Created by kwakeroni on 11.04.17.
  */
-final class DefaultMappedDefinition implements MappedDefinitionVisitor.Definition, ParameterGroupDefinition {
+final class DefaultMappedDefinition<GroupType extends EntryType, KeyType, SubType extends EntryType> implements MappedDefinitionVisitor.Definition, PartialDefinition<GroupType, Mapped<KeyType, SubType>> {
 
-    private String keyParameter;
-    private ParameterGroupDefinition subGroupDefinition;
+    private final String keyParameter;
+    private final ParameterType<KeyType> keyType;
+    private final PartialDefinition<GroupType, SubType> subGroupDefinition;
 
-    private DefaultMappedDefinition() {
-
+    DefaultMappedDefinition(String keyParameter, ParameterType<KeyType> keyType, PartialDefinition<GroupType, SubType> subGroupDefinition) {
+        this.keyParameter = keyParameter;
+        this.keyType = keyType;
+        this.subGroupDefinition = subGroupDefinition;
     }
 
     @Override
@@ -43,8 +48,19 @@ final class DefaultMappedDefinition implements MappedDefinitionVisitor.Definitio
     }
 
     @Override
-    public ParameterGroupDefinition getDefinition() {
+    public ParameterGroupDefinition<Mapped<KeyType, SubType>> getDefinition() {
         return this;
+    }
+
+    @Override
+    public Mapped<KeyType, SubType> createGroup(BusinessParameters businessParameters) {
+        return createPartial(businessParameters).resolve();
+    }
+
+    @Override
+    public PartialGroup<GroupType, Mapped<KeyType, SubType>> createPartial(BusinessParameters businessParameters) {
+        PartialGroup<GroupType, SubType> subGroup = subGroupDefinition.createPartial(businessParameters);
+        return new DefaultMappedGroup<>(keyType, subGroup);
     }
 
     @Override
@@ -53,33 +69,4 @@ final class DefaultMappedDefinition implements MappedDefinitionVisitor.Definitio
         return MappedDefinitionVisitor.from(context).visit(this, subGroup);
     }
 
-    static Builder builder() {
-        return new DefaultMappedDefinition().new Builder();
-    }
-
-    private final class Builder implements MappedDefinitionBuilder {
-        private DefinitionBuilder subGroup;
-
-        @Override
-        public MappedDefinitionBuilder withKeyParameter(String name) {
-            keyParameter = name;
-            return this;
-        }
-
-        @Override
-        public MappedDefinitionBuilder mappingTo(DefinitionBuilder subGroup) {
-            this.subGroup = subGroup;
-            return this;
-        }
-
-        @Override
-        public ParameterGroupDefinition build(String name, Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> theirFinalizer) {
-            subGroupDefinition = subGroup.build(name, myFinalizer().andThen(theirFinalizer));
-            return DefaultMappedDefinition.this;
-        }
-
-        private Function<DefinitionBuilderFinalizer, DefinitionBuilderFinalizer> myFinalizer() {
-            return builder -> builder.prependParameter(keyParameter);
-        }
-    }
 }

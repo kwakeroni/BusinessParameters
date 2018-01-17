@@ -18,13 +18,13 @@ public class Services {
 
     }
 
-    public static Optional<ParameterGroupDefinition> loadDefinition(String name) {
+    public static Optional<ParameterGroupDefinition<?>> loadDefinition(String name) {
         return loadDefinitions()
                 .filter(definition -> name.equals(definition.getName()))
                 .findAny();
     }
 
-    public static Stream<ParameterGroupDefinition> loadDefinitions() {
+    public static Stream<ParameterGroupDefinition<?>> loadDefinitions() {
         return loadServices(ParameterGroupDefinitionCatalog.class)
                 .flatMap(ParameterGroupDefinitionCatalog::stream);
     }

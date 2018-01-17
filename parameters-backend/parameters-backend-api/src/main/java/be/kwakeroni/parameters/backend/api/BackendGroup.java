@@ -14,7 +14,8 @@ public interface BackendGroup<Q> {
     }
 
     public String getName();
-    public ParameterGroupDefinition getDefinition();
+
+    public ParameterGroupDefinition<?> getDefinition();
 
     public BackendQuery<? extends Q, ?> internalize(Object query, BackendWireFormatterContext context);
 

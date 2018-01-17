@@ -15,6 +15,7 @@
 
     <modules>
         <module>parameters-definition-api</module>
+        <module>parameters-definition-ext-api</module>
     </modules>
 
     <dependencyManagement>

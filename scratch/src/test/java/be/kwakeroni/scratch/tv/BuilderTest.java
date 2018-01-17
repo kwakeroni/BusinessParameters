@@ -30,7 +30,7 @@ public class BuilderTest<G extends BackendGroup<?>> {
     @Parameterized.Parameter(1)
     public G constant;
     @Parameterized.Parameter(2)
-    public ParameterGroupDefinition definition;
+    public ParameterGroupDefinition<?> definition;
     @Parameterized.Parameter(3)
     public DefinitionVisitorContext<G> context;
 
@@ -69,7 +69,7 @@ public class BuilderTest<G extends BackendGroup<?>> {
 
     @Test
     public void isGroupDefined() {
-        Optional<ParameterGroupDefinition> opt = Services.loadDefinition(constant.getName());
+        Optional<ParameterGroupDefinition<?>> opt = Services.loadDefinition(constant.getName());
         G built = opt.get().apply(context);
         assertEqualGroups(built);
     }
@@ -88,16 +88,16 @@ public class BuilderTest<G extends BackendGroup<?>> {
         assertThat(built.getDefinition()).isSameAs(definition);
     }
 
-    private static <G extends ParameterGroup<?>> Param param(Class<G> definitionClass, BackendGroup<?> group, ParameterGroupDefinition definition) {
+    private static <G extends ParameterGroup<?>> Param param(Class<G> definitionClass, BackendGroup<?> group, ParameterGroupDefinition<?> definition) {
         return new Param(definitionClass, group, definition);
     }
 
     private static class Param {
         public final Class<?> definitionClass;
         public final BackendGroup<?> group;
-        public final ParameterGroupDefinition definition;
+        public final ParameterGroupDefinition<?> definition;
 
-        public Param(Class<?> definitionClass, BackendGroup<?> group, ParameterGroupDefinition definition) {
+        public Param(Class<?> definitionClass, BackendGroup<?> group, ParameterGroupDefinition<?> definition) {
             this.definitionClass = definitionClass;
             this.group = group;
             this.definition = definition;

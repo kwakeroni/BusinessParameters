@@ -87,7 +87,11 @@ public class Environment implements TestRule, AutoCloseable {
     }
 
     public void runTestForGroup(ParameterGroup<?> group) {
-        Assume.assumeTrue(this.testData.hasDataForGroup(group.getName()));
+        runTestForGroup(group.getName());
+    }
+
+    public void runTestForGroup(String groupName) {
+        Assume.assumeTrue(this.testData.hasDataForGroup(groupName));
     }
 
 

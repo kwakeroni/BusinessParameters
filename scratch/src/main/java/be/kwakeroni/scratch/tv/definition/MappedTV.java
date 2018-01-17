@@ -26,9 +26,9 @@ public class MappedTV implements ParameterGroup<Mapped<Dag, Simple>> {
     public static final Parameter<String> PROGRAM = new DefaultParameter<>("program", STRING);
 
     public static final String NAME = "tv.mapped";
-    public static final ParameterGroupDefinition DEFINITION =
+    public static final ParameterGroupDefinition<Mapped<Dag, Simple>> DEFINITION =
             mappedGroup()
-                    .withKeyParameter(DAY.getName())
+                    .withKeyParameter(DAY.getName(), Dag.type)
                     .mappingTo(group()
                             .withParameter(PROGRAM.getName()))
                     .build(NAME);

@@ -16,14 +16,21 @@
         <dependencies>
             <dependency>
                 <groupId>be.kwakeroni.parameters.client</groupId>
-                <artifactId>parameters-client-api</artifactId>
+                <artifactId>parameters-client</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.types</groupId>
+                <artifactId>parameters-types</artifactId>
                 <type>pom</type>
                 <version>${project.version}</version>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>be.kwakeroni.parameters.backend</groupId>
-                <artifactId>parameters-backend-api</artifactId>
+                <artifactId>parameters-backend</artifactId>
                 <type>pom</type>
                 <version>${project.version}</version>
                 <scope>import</scope>
@@ -48,6 +55,10 @@
             <groupId>be.kwakeroni.parameters.backend</groupId>
             <artifactId>parameters-backend-api</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.types</groupId>
+            <artifactId>parameters-types-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

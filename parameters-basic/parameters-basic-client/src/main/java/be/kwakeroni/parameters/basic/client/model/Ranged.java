@@ -7,6 +7,6 @@ import be.kwakeroni.parameters.client.api.model.EntryType;
  */
 public interface Ranged<V, ET extends EntryType> extends EntryType {
 
-//    public ET at(V value);
+    public ET at(V value);
 
 }

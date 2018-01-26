@@ -1,5 +1,6 @@
-package be.kwakeroni.evelyn.model.parser;
+package be.kwakeroni.evelyn.model.test;
 
+import be.kwakeroni.evelyn.model.ParseException;
 import org.assertj.core.api.AbstractThrowableAssert;
 import org.assertj.core.api.ThrowableAssert;
 import org.assertj.core.internal.Failures;
@@ -10,14 +11,11 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 
 public class ParseExceptionAssert extends AbstractThrowableAssert<ParseExceptionAssert, Throwable> {
 
-    private Failures failures = Failures.instance();
-
-
     public ParseExceptionAssert(Throwable actual) {
         super(actual, ParseExceptionAssert.class);
     }
 
-    public static ParseExceptionAssert assertThatParseExceptionThrownBy(ThrowableAssert.ThrowingCallable shouldRaiseThrowable) {
+    public static ParseExceptionAssert assertThatThrownBy(ThrowableAssert.ThrowingCallable shouldRaiseThrowable) {
         return new ParseExceptionAssert(catchThrowable(shouldRaiseThrowable))
                 .hasBeenThrown()
                 .isInstanceOf(ParseException.class);

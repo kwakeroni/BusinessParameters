@@ -1,7 +1,6 @@
 package be.kwakeroni.evelyn.model;
 
 
-import be.kwakeroni.evelyn.model.parser.ParseException;
 import be.kwakeroni.evelyn.storage.Storage;
 import be.kwakeroni.evelyn.storage.StorageExistsException;
 import be.kwakeroni.evelyn.storage.StorageProvider;

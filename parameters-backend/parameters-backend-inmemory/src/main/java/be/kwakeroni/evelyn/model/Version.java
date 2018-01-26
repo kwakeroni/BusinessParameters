@@ -1,7 +1,6 @@
 package be.kwakeroni.evelyn.model;
 
-import be.kwakeroni.evelyn.model.parser.ParseException;
-import be.kwakeroni.evelyn.model.versions.DatabaseAccessorSupport;
+import be.kwakeroni.evelyn.model.impl.DefaultDatabaseAccessor;
 import be.kwakeroni.evelyn.storage.Storage;
 import be.kwakeroni.evelyn.storage.StorageExistsException;
 import be.kwakeroni.evelyn.storage.StorageProvider;
@@ -14,7 +13,7 @@ public enum Version implements DatabaseProvider {
 
     private final String number;
 
-    private Version(String number) {
+    Version(String number) {
         this.number = number;
     }
 
@@ -27,7 +26,7 @@ public enum Version implements DatabaseProvider {
         Storage storage;
         try {
             storage = storageProvider.create(databaseName);
-            return new DatabaseAccessorSupport(this.number, databaseName, storage);
+            return new DefaultDatabaseAccessor(this.number, databaseName, storage);
         } catch (StorageExistsException exc) {
             throw new DatabaseException("Could not create database " + databaseName, exc);
         }
@@ -36,7 +35,7 @@ public enum Version implements DatabaseProvider {
     @Override
     public DatabaseAccessor read(Storage storage) throws DatabaseException {
         try {
-            return DatabaseAccessorSupport.createFrom(storage);
+            return DefaultDatabaseAccessor.createFrom(storage);
         } catch (ParseException exc) {
             throw new DatabaseException(exc.getMessage(), exc);
         }

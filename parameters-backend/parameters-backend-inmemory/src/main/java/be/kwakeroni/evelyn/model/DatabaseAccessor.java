@@ -1,5 +1,7 @@
 package be.kwakeroni.evelyn.model;
 
+import java.util.stream.Stream;
+
 public interface DatabaseAccessor {
 
     public String getSpecVersion();
@@ -10,4 +12,5 @@ public interface DatabaseAccessor {
 
     public void createDatabase();
 
+    public Stream<Event> getData() throws ParseException;
 }

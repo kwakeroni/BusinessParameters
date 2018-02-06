@@ -5,6 +5,7 @@ import org.assertj.core.api.AbstractThrowableAssert;
 import org.assertj.core.api.ThrowableAssert;
 import org.assertj.core.internal.Failures;
 
+import java.util.Optional;
 import java.util.OptionalInt;
 
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -39,8 +40,19 @@ public class ParseExceptionAssert extends AbstractThrowableAssert<ParseException
         return this;
     }
 
+    public ParseExceptionAssert hasSource(String expected) {
+        if (!hasValue(actual().getSource(), expected)) {
+            throw Failures.instance().failure("Expected source: " + expected + " in " + this.actual);
+        }
+        return this;
+    }
+
     private boolean hasValue(OptionalInt optional, int value) {
         return optional.isPresent() && optional.getAsInt() == value;
+    }
+
+    private <T> boolean hasValue(Optional<T> optional, T value) {
+        return optional.isPresent() && value.equals(optional.get());
     }
 
 }

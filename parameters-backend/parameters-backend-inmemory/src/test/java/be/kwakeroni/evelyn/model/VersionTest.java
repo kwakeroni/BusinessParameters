@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -100,7 +101,7 @@ public class VersionTest {
             @As Version version,
             @Mock Storage storage
     ) throws Exception {
-        when(storage.read()).thenAnswer(no -> Stream.of(
+        when(storage.read(any())).thenAnswer(no -> Stream.of(
                 "!evelyn-db",
                 "!version=x.y",
                 "!name=myDatabase"
@@ -119,7 +120,7 @@ public class VersionTest {
             @As Version version,
             @Mock Storage storage
     ) throws Exception {
-        when(storage.read()).thenAnswer(no -> Stream.of());
+        when(storage.read(any())).thenAnswer(no -> Stream.of());
 
         assertThatThrownBy(() -> version.read(storage))
                 .isInstanceOf(DatabaseException.class)

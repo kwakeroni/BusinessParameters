@@ -13,12 +13,14 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import static be.kwakeroni.evelyn.model.test.Assertions.*;
-import static be.kwakeroni.evelyn.model.test.TestStorage.asStorage;
+import static be.kwakeroni.evelyn.model.test.TestModel.STORAGE_SOURCE;
+import static be.kwakeroni.evelyn.model.test.TestModel.asStorage;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -55,20 +57,21 @@ public class FileStructureTest {
     @Test
     @DisplayName("Reads no data if there is none")
     public void testNoData() throws Exception {
-        Stream<String> stream = readDataFrom(
+        FileStructure.StreamData streamData = readDataFrom(
                 "!evelyn-db",
                 "!version=x.y",
                 "!name=myDb",
                 "!data"
         );
 
-        assertThat(stream).isEmpty();
+        assertThat(streamData.dataStream).isEmpty();
+        assertThat(streamData.linePointer).isEqualTo(4);
     }
 
     @Test
     @DisplayName("Reads data")
     public void testWithData() throws Exception {
-        Stream<String> stream = readDataFrom(
+        FileStructure.StreamData streamData = readDataFrom(
                 "!evelyn-db",
                 "!version=x.y",
                 "!name=myDb",
@@ -77,7 +80,8 @@ public class FileStructureTest {
                 "DEF"
         );
 
-        assertThat(stream).containsExactly("ABC", "DEF");
+        assertThat(streamData.dataStream).containsExactly("ABC", "DEF");
+        assertThat(streamData.linePointer).isEqualTo(4);
     }
 
     @Nested
@@ -88,7 +92,8 @@ public class FileStructureTest {
         public void testEmptyFileError() {
             assertThatParseExceptionThrownBy(reading(/* no data */))
                     .hasLine(1)
-                    .hasPosition(1);
+                    .hasPosition(1)
+                    .hasSource(STORAGE_SOURCE);
         }
 
         @Test
@@ -97,7 +102,8 @@ public class FileStructureTest {
             assertThatParseExceptionThrownBy(
                     reading("!version=x.y"
                     ))
-                    .hasLine(1);
+                    .hasLine(1)
+                    .hasSource(STORAGE_SOURCE);
         }
 
 
@@ -110,7 +116,8 @@ public class FileStructureTest {
                             "@name=myDb"
                     ))
                     .hasLine(3)
-                    .hasPosition(1);
+                    .hasPosition(1)
+                    .hasSource(STORAGE_SOURCE);
         }
 
         @Test
@@ -122,7 +129,8 @@ public class FileStructureTest {
                             "!name=myDb"
                     ))
                     .hasLine(2)
-                    .hasPosition(12);
+                    .hasPosition(12)
+                    .hasSource(STORAGE_SOURCE);
         }
 
         @Test
@@ -134,7 +142,8 @@ public class FileStructureTest {
                             "!name=my=Db"
                     ))
                     .hasLine(3)
-                    .hasPosition(9);
+                    .hasPosition(9)
+                    .hasSource(STORAGE_SOURCE);
         }
 
         @Test
@@ -146,7 +155,8 @@ public class FileStructureTest {
                             "!att=value",
                             "!version=x.y"
                     ))
-                    .hasLine(4);
+                    .hasLine(4)
+                    .hasSource(STORAGE_SOURCE);
         }
 
     }
@@ -172,7 +182,7 @@ public class FileStructureTest {
         @Test
         @DisplayName("after closing data stream")
         public void closesAfterDataStream(@Mock SilentCloseable resource) throws Exception {
-            Stream<String> dataStream = readDataFrom(resource,
+            FileStructure.StreamData streamData = readDataFrom(resource,
                     "!evelyn-db",
                     "!version=x.y",
                     "!name=myDb",
@@ -180,7 +190,7 @@ public class FileStructureTest {
                     "ABC",
                     "DEF");
 
-            try (Stream<String> toClose = dataStream) {
+            try (Stream<String> toClose = streamData.dataStream) {
                 verify(resource, never()).close();
             }
 
@@ -222,12 +232,12 @@ public class FileStructureTest {
         return getInstance().readAttributes(asStorage(resource, contents));
     }
 
-    private Stream<String> readDataFrom(String... contents) throws ParseException {
-        return getInstance().readData(asStorage(contents));
+    private FileStructure.StreamData readDataFrom(String... contents) throws ParseException {
+        return getInstance().readData(asStorage(contents), Charset.defaultCharset());
     }
 
-    private Stream<String> readDataFrom(SilentCloseable resource, String... contents) throws ParseException {
-        return getInstance().readData(asStorage(resource, contents));
+    private FileStructure.StreamData readDataFrom(SilentCloseable resource, String... contents) throws ParseException {
+        return getInstance().readData(asStorage(resource, contents), Charset.defaultCharset());
     }
 
     private ThrowableAssert.ThrowingCallable reading(String... contents) {

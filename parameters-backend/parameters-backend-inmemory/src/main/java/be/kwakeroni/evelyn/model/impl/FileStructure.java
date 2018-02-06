@@ -2,10 +2,12 @@ package be.kwakeroni.evelyn.model.impl;
 
 import be.kwakeroni.evelyn.model.ParseException;
 import be.kwakeroni.evelyn.storage.Storage;
+import be.kwakeroni.evelyn.storage.StorageExistsException;
+import be.kwakeroni.evelyn.storage.impl.HeaderStructure;
 
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -22,20 +24,20 @@ class FileStructure {
         return INSTANCE;
     }
 
-    public Stream<String> readData(Storage storage) throws ParseException {
-        return parse(storage, null);
+    public StreamData readData(Storage storage, Charset charset) throws ParseException {
+        return parse(storage, charset, null);
     }
 
     public Map<String, String> readAttributes(Storage storage) throws ParseException {
         Map<String, String> attributes = new HashMap<>();
         AttributeHandler handler = (key, value) -> checkPutAttribute(attributes, key, value);
 
-        try (Stream<String> dataStream = parse(storage, handler)) {
+        try (Stream<String> dataStream = parse(storage, Charset.defaultCharset(), handler).dataStream) {
             return Collections.unmodifiableMap(attributes);
         }
     }
 
-    public void initializeStorage(Storage storage, Map<String, String> attributes, String versionAttribute) {
+    public void initializeStorage(Storage storage, Map<String, String> attributes, String versionAttribute) throws StorageExistsException {
         String version = Objects.requireNonNull(attributes.get(versionAttribute), "version not specified");
         storage.writeHeader(version);
 
@@ -48,14 +50,12 @@ class FileStructure {
         storage.append("!data");
     }
 
-    private Stream<String> parse(Storage storage, AttributeHandler attributeHandler) throws ParseException {
-        try (CloseableStreamIterator<String> iterator = new CloseableStreamIterator<>(storage::read)) {
-            int line = 1;
+    private StreamData parse(Storage storage, Charset charset, AttributeHandler attributeHandler) throws ParseException {
+        try (CloseableStreamIterator<String> iterator = new CloseableStreamIterator<>(() -> storage.read(charset))) {
+
+            int line = HeaderStructure.readToAttributes(iterator);
 
             try {
-
-                checkNotEmpty(iterator);
-                checkHeader(iterator.next());
 
                 while (iterator.hasNext()) {
                     line++;
@@ -69,24 +69,13 @@ class FileStructure {
                     }
                 }
 
-                return iterator.getRemainingStream();
+                return new StreamData(iterator.getRemainingStream(), line);
 
             } catch (ParseException exc) {
                 throw exc.atLine(line);
             }
-        }
-    }
-
-
-    private void checkNotEmpty(Iterator<String> iterator) throws ParseException {
-        if (!iterator.hasNext()) {
-            throw new ParseException("Unexpected end of input").atPosition(1);
-        }
-    }
-
-    private void checkHeader(String string) throws ParseException {
-        if (!"!evelyn-db".equals(string)) {
-            throw new ParseException("Input not recognized").atLine(1);
+        } catch (ParseException exc) {
+            throw exc.inSource(storage.getReference());
         }
     }
 
@@ -122,6 +111,16 @@ class FileStructure {
 
     private interface AttributeHandler {
         void put(String attribute, String value) throws ParseException;
+    }
+
+    public static class StreamData {
+        public final Stream<String> dataStream;
+        public final int linePointer;
+
+        StreamData(Stream<String> dataStream, int linePointer) {
+            this.dataStream = dataStream;
+            this.linePointer = linePointer;
+        }
     }
 
 }

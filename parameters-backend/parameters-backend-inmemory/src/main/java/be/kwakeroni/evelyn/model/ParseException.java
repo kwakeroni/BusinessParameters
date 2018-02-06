@@ -5,9 +5,9 @@ import java.util.OptionalInt;
 
 public class ParseException extends Exception {
 
-    private Optional<String> source = Optional.empty();
-    private OptionalInt line = OptionalInt.empty();
-    private OptionalInt position = OptionalInt.empty();
+    private String source = null;
+    private Integer line = null;
+    private Integer position = null;
 
     public ParseException(String message) {
         super(message);
@@ -16,43 +16,43 @@ public class ParseException extends Exception {
     @Override
     public String getMessage() {
         String message = super.getMessage();
-        if (line.isPresent()) {
-            if (position.isPresent()) {
-                message += " at position " + line.getAsInt() + ":" + position.getAsInt();
+        if (line != null) {
+            if (position != null) {
+                message += " at position " + line + ":" + position;
             } else {
-                message += " at line " + line.getAsInt();
+                message += " at line " + line;
             }
         }
-        if (source.isPresent()) {
-            message += " in source " + source.get();
+        if (source != null) {
+            message += " in source " + source;
         }
         return message;
     }
 
     public ParseException atLine(int line) {
-        this.line = OptionalInt.of(line);
+        this.line = line;
         return this;
     }
 
     public ParseException atPosition(int pos) {
-        this.position = OptionalInt.of(pos);
+        this.position = pos;
         return this;
     }
 
     public ParseException inSource(String source) {
-        this.source = Optional.of(source);
+        this.source = source;
         return this;
     }
 
     public OptionalInt getLine() {
-        return line;
+        return (line == null) ? OptionalInt.empty() : OptionalInt.of(line);
     }
 
     public OptionalInt getPosition() {
-        return position;
+        return (position == null) ? OptionalInt.empty() : OptionalInt.of(position);
     }
 
     public Optional<String> getSource() {
-        return source;
+        return Optional.ofNullable(source);
     }
 }

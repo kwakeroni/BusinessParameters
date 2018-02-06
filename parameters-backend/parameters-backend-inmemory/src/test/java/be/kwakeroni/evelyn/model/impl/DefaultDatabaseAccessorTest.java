@@ -2,6 +2,7 @@ package be.kwakeroni.evelyn.model.impl;
 
 import be.kwakeroni.evelyn.model.Event;
 import be.kwakeroni.evelyn.model.ParseException;
+import be.kwakeroni.evelyn.model.RuntimeParseException;
 import be.kwakeroni.evelyn.storage.Storage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,6 +12,8 @@ import org.junit.jupiter.extension.mockito.MockitoExtension;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
+import java.nio.charset.Charset;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,11 +21,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static be.kwakeroni.evelyn.model.test.Assertions.assertThat;
 import static be.kwakeroni.evelyn.model.test.Assertions.assertThatParseExceptionThrownBy;
+import static be.kwakeroni.evelyn.model.test.TestModel.event;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.AdditionalAnswers.answer;
@@ -80,13 +86,42 @@ public class DefaultDatabaseAccessorTest {
         @Test
         @DisplayName("with data")
         public void testWithData() throws Exception {
-            DefaultDatabaseAccessor accessor = createFromStorageWith(requiredAttributes(),
+            String timestamp0 = "T0";
+            LocalDateTime time0 = LocalDateTime.of(81, 12, 14, 16, 18);
+            String timestamp1 = "T1";
+            LocalDateTime time1 = LocalDateTime.now();
+
+
+            DefaultDatabaseAccessor accessor = createFromStorageWith(
                     data(
-                            "ABC",
-                            "DEF"
+                            event("anonymous", "a1", "INSERT", "ABC", timestamp0, time0),
+                            event("myUser", "b2", "UPDATE", "DEF", timestamp1, time1)
                     ));
 
-            assertThat(accessor.getData().map(Event::getData)).containsExactly("ABC", "DEF");
+            List<Event> events = accessor.getData().collect(Collectors.toList());
+            assertThat(events.get(0).getObjectId()).isEqualTo("a1");
+            assertThat(events.get(0).getData()).isEqualTo("ABC");
+            assertThat(events.get(0).getOperation()).isEqualTo("INSERT");
+            assertThat(events.get(0).getUser()).isEqualTo("anonymous");
+            assertThat(events.get(0).getTimestamp()).isEqualTo(timestamp0);
+            assertThat(events.get(0).getTime()).isEqualTo(time0);
+            assertThat(events.get(1).getObjectId()).isEqualTo("b2");
+            assertThat(events.get(1).getData()).isEqualTo("DEF");
+            assertThat(events.get(1).getOperation()).isEqualTo("UPDATE");
+            assertThat(events.get(1).getUser()).isEqualTo("myUser");
+            assertThat(events.get(1).getTimestamp()).isEqualTo(timestamp1);
+            assertThat(events.get(1).getTime()).isEqualTo(time1);
+
+        }
+
+        @Test
+        @DisplayName("with specific charset")
+        public void testWithCharset(@Mock Storage storage, @Mock FileStructure fileStructure) throws Exception {
+            DefaultDatabaseAccessor accessor = createFromStorageWith(storage, fileStructure, extraAttributes("charset", "ISO-8859-3"), noData());
+
+            accessor.getData();
+
+            verify(fileStructure).readData(storage, Charset.forName("ISO-8859-3"));
         }
     }
 
@@ -100,6 +135,32 @@ public class DefaultDatabaseAccessorTest {
             assertThatParseExceptionThrownBy(() ->
                     createFromStorageWith(attributes("version", "x.y"), noData())
             );
+        }
+
+        @Test
+        @DisplayName("in case of data mapping issues")
+        public void testDataMappingException(@Mock Storage storage, @Mock FileStructure fileStructure, @Mock RecordStructure recordStructure) throws Exception {
+
+            ParseException parseException = new ParseException("Test");
+            when(recordStructure.toEvent(anyString())).thenAnswer(answer((String data) -> {
+                if ("a2".equals(data)) {
+                    throw parseException;
+                } else {
+                    return event(data);
+                }
+            }));
+
+            when(fileStructure.readData(eq(storage), any())).then(answer(no -> new FileStructure.StreamData(Stream.of("a1", "a2", "a3"), 10)));
+            when(storage.getReference()).thenReturn("SOURCE-FILE");
+
+            DefaultDatabaseAccessor accessor = new DefaultDatabaseAccessor("", "", storage, requiredAttributes(), fileStructure, recordStructure);
+            assertThatThrownBy(() -> accessor.getData().filter(Objects::isNull).findAny())
+                    .isInstanceOf(RuntimeParseException.class)
+                    .hasCause(parseException);
+
+            assertThat(parseException)
+                    .hasLine(12)
+                    .hasSource("SOURCE-FILE");
         }
     }
 
@@ -119,9 +180,9 @@ public class DefaultDatabaseAccessorTest {
 
     @Test
     @DisplayName("Creates an empty database")
-    public void testCreate(@Mock Storage storage, @Mock FileStructure fileStructure) {
+    public void testCreate(@Mock Storage storage, @Mock FileStructure fileStructure, @Mock RecordStructure recordStructure) throws Exception {
 
-        DefaultDatabaseAccessor accessor = new DefaultDatabaseAccessor("x.y", "myDb", storage, extraAttributes("custom", "myValue"), fileStructure);
+        DefaultDatabaseAccessor accessor = new DefaultDatabaseAccessor("x.y", "myDb", storage, extraAttributes("custom", "myValue"), fileStructure, recordStructure);
 
         accessor.createDatabase();
 
@@ -132,18 +193,38 @@ public class DefaultDatabaseAccessorTest {
         assertThat(actualAtts.getValue()).containsOnly(
                 entry("version", "x.y"),
                 entry("name", "myDb"),
+                entry("charset", Charset.defaultCharset().name()),
                 entry("custom", "myValue")
         );
     }
 
     private DefaultDatabaseAccessor createFromStorageWith(Map<String, String> attributes, Supplier<Stream<String>> data) throws ParseException {
-        Storage storage = mock(Storage.class);
-        FileStructure fileStructure = mock(FileStructure.class);
+        return createFromStorageWith(mock(Storage.class), mock(FileStructure.class), attributes, data);
+    }
+
+    private DefaultDatabaseAccessor createFromStorageWith(Storage storage, FileStructure fileStructure, Map<String, String> attributes, Supplier<Stream<String>> data) throws ParseException {
 
         when(fileStructure.readAttributes(storage)).thenReturn(attributes);
-        when(fileStructure.readData(storage)).then(answer(no -> data.get()));
+        when(fileStructure.readData(eq(storage), any())).then(answer(no -> new FileStructure.StreamData(data.get(), 0)));
 
         return DefaultDatabaseAccessor.createFrom(storage, fileStructure);
+    }
+
+    private DefaultDatabaseAccessor createFromStorageWith(Supplier<Stream<Event>> data) throws ParseException {
+        Storage storage = mock(Storage.class);
+        FileStructure fileStructure = mock(FileStructure.class);
+        RecordStructure recordStructure = mock(RecordStructure.class);
+
+        when(recordStructure.toEvent(anyString())).then(answer(line ->
+                data.get()
+                        .filter(event -> line.equals(event.getData()))
+                        .findAny()
+                        .orElseThrow(() -> new IllegalArgumentException("No matching test event found for '" + line + "'"))
+        ));
+
+        when(fileStructure.readData(eq(storage), any())).then(answer(no -> new FileStructure.StreamData(data.get().map(Event::getData), 0)));
+
+        return new DefaultDatabaseAccessor("", "", storage, requiredAttributes(), fileStructure, recordStructure);
     }
 
     private Map<String, String> requiredAttributes() {
@@ -175,6 +256,10 @@ public class DefaultDatabaseAccessorTest {
     }
 
     private Supplier<Stream<String>> data(String... data) {
+        return () -> Stream.of(data);
+    }
+
+    private Supplier<Stream<Event>> data(Event... data) {
         return () -> Stream.of(data);
     }
 

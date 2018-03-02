@@ -60,11 +60,5 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
         </dependency>
-        <dependency>
-            <groupId>be.kwakeroni.parameters.basic</groupId>
-            <artifactId>parameters-basic-inmemory</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>

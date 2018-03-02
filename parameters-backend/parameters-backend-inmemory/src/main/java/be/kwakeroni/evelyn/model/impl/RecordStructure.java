@@ -69,7 +69,7 @@ class RecordStructure {
         }
 
         return new Event() {
-            @Override
+
             public String getTimestamp() {
                 return split[0];
             }

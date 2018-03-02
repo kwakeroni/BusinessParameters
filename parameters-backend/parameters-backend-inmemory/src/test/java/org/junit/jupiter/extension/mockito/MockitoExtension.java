@@ -45,10 +45,10 @@ public class MockitoExtension implements TestInstancePostProcessor, ParameterRes
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
-        return getMock(parameterContext.getParameter(), extensionContext);
+        return getMock(parameterContext.getParameter(), parameterContext.getIndex(), extensionContext);
     }
 
-    private Object getMock(Parameter parameter, ExtensionContext extensionContext) {
+    private Object getMock(Parameter parameter, int index, ExtensionContext extensionContext) {
         Class<?> mockType = parameter.getType();
         Store mocks = extensionContext.getStore(Namespace.create(MockitoExtension.class, mockType));
         String mockName = getMockName(parameter);
@@ -56,7 +56,7 @@ public class MockitoExtension implements TestInstancePostProcessor, ParameterRes
         if (mockName != null) {
             return mocks.getOrComputeIfAbsent(mockName, key -> mock(mockType, mockName));
         } else {
-            return mocks.getOrComputeIfAbsent(mockType.getCanonicalName(), key -> mock(mockType));
+            return mocks.getOrComputeIfAbsent(mockType.getCanonicalName() + index, key -> mock(mockType));
         }
     }
 

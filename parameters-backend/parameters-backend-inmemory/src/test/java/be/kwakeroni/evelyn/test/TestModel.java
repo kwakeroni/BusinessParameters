@@ -1,4 +1,4 @@
-package be.kwakeroni.evelyn.model.test;
+package be.kwakeroni.evelyn.test;
 
 import be.kwakeroni.evelyn.model.Event;
 import be.kwakeroni.evelyn.storage.Storage;
@@ -38,16 +38,11 @@ public final class TestModel {
 
 
     public static Event event(String objectId) {
-        return event("anonymous", objectId, "INSERT", "abc", "123", LocalDateTime.now());
+        return event("anonymous", objectId, "INSERT", "abc", LocalDateTime.now());
     }
 
-    public static Event event(String user, String objectId, String operation, String data, String timestamp, LocalDateTime time) {
+    public static Event event(String user, String objectId, String operation, String data, LocalDateTime time) {
         return new Event() {
-            @Override
-            public String getTimestamp() {
-                return timestamp;
-            }
-
             @Override
             public LocalDateTime getTime() {
                 return time;
@@ -71,6 +66,15 @@ public final class TestModel {
             @Override
             public String getData() {
                 return data;
+            }
+
+            @Override
+            public String toString() {
+                return "event{" +
+                        "objectId='" + objectId + '\'' +
+                        ", operation='" + operation + '\'' +
+                        ", data='" + data + '\'' +
+                        '}';
             }
         };
     }

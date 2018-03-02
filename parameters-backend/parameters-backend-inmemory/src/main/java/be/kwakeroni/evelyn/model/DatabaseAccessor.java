@@ -14,5 +14,7 @@ public interface DatabaseAccessor {
 
     public void createDatabase() throws StorageExistsException;
 
+    public void append(Event event);
+
     public Stream<Event> getData() throws ParseException;
 }

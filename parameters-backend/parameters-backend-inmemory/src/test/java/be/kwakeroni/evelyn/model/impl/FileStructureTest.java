@@ -1,8 +1,8 @@
 package be.kwakeroni.evelyn.model.impl;
 
 import be.kwakeroni.evelyn.model.ParseException;
-import be.kwakeroni.evelyn.model.test.SilentCloseable;
 import be.kwakeroni.evelyn.storage.Storage;
+import be.kwakeroni.evelyn.test.SilentCloseable;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,9 +18,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static be.kwakeroni.evelyn.model.test.Assertions.*;
-import static be.kwakeroni.evelyn.model.test.TestModel.STORAGE_SOURCE;
-import static be.kwakeroni.evelyn.model.test.TestModel.asStorage;
+import static be.kwakeroni.evelyn.test.Assertions.*;
+import static be.kwakeroni.evelyn.test.TestModel.STORAGE_SOURCE;
+import static be.kwakeroni.evelyn.test.TestModel.asStorage;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 

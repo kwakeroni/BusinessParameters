@@ -1,4 +1,4 @@
-package be.kwakeroni.evelyn.model.test;
+package be.kwakeroni.evelyn.test;
 
 import be.kwakeroni.evelyn.model.ParseException;
 import org.assertj.core.api.AbstractThrowableAssert;

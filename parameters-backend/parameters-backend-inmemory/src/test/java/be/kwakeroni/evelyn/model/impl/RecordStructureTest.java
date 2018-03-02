@@ -2,7 +2,7 @@ package be.kwakeroni.evelyn.model.impl;
 
 import be.kwakeroni.evelyn.model.Event;
 import be.kwakeroni.evelyn.model.ParseException;
-import be.kwakeroni.evelyn.model.test.TestModel;
+import be.kwakeroni.evelyn.test.TestModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,6 @@ public class RecordStructureTest {
             assertThat(event.getData()).isEqualTo("ABC-DATA");
             assertThat(event.getObjectId()).isEqualTo("123-abc");
             assertThat(event.getUser()).isEqualTo("myUser");
-            assertThat(event.getTimestamp()).isEqualTo("19811214161820");
             assertThat(event.getTime()).isEqualTo(LocalDateTime.of(1981, 12, 14, 16, 18, 20));
             assertThat(event.getOperation()).isEqualTo("INSERT");
         }
@@ -104,14 +103,14 @@ public class RecordStructureTest {
         @Test
         @DisplayName("without special characters")
         public void testSimple() {
-            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{a=1}", "XYZ", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
+            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{a=1}", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
             assertThat(data).isEqualTo(" 19811214161820|abc-789|myUser|REPLACE|{a=1}");
         }
 
         @Test
         @DisplayName("without escaped slash")
         public void testDontEscapeSlash() {
-            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{a=\\}", "XYZ", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
+            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{a=\\}", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
             assertThat(data).isEqualTo(" 19811214161820|abc-789|myUser|REPLACE|{a=\\}");
         }
 
@@ -119,7 +118,7 @@ public class RecordStructureTest {
         @Test
         @DisplayName("with escaped pipe")
         public void testEscapePipe() {
-            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{a=|}", "XYZ", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
+            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{a=|}", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
             assertThat(data).isEqualTo("\\19811214161820|abc-789|myUser|REPLACE|{a=\\|}");
         }
 
@@ -127,21 +126,21 @@ public class RecordStructureTest {
         @Test
         @DisplayName("with escaped slash")
         public void testEscapeSlash() {
-            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{a=\\|}", "XYZ", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
+            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{a=\\|}", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
             assertThat(data).isEqualTo("\\19811214161820|abc-789|myUser|REPLACE|{a=\\\\\\|}");
         }
 
         @Test
         @DisplayName("with escaped newline (CR)")
         public void testEscapeCR() {
-            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{\ra=1\r}", "XYZ", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
+            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{\ra=1\r}", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
             assertThat(data).isEqualTo("\\19811214161820|abc-789|myUser|REPLACE|{\\na=1\\n}");
         }
 
         @Test
         @DisplayName("with escaped newline (LF)")
         public void testEscapeLF() {
-            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{\na=1\n}", "XYZ", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
+            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{\na=1\n}", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
             assertThat(data).isEqualTo("\\19811214161820|abc-789|myUser|REPLACE|{\\na=1\\n}");
         }
 
@@ -149,7 +148,7 @@ public class RecordStructureTest {
         @Test
         @DisplayName("with escaped newline (CRLF)")
         public void testEscapeCRLF() {
-            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{\r\na=1\r\n}", "XYZ", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
+            String data = toData(TestModel.event("myUser", "abc-789", "REPLACE", "{\r\na=1\r\n}", LocalDateTime.of(1981, 12, 14, 16, 18, 20)));
             assertThat(data).isEqualTo("\\19811214161820|abc-789|myUser|REPLACE|{\\na=1\\n}");
         }
 

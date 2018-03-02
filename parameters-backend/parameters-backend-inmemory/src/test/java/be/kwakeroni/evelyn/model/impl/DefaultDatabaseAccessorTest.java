@@ -26,9 +26,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static be.kwakeroni.evelyn.model.test.Assertions.assertThat;
-import static be.kwakeroni.evelyn.model.test.Assertions.assertThatParseExceptionThrownBy;
-import static be.kwakeroni.evelyn.model.test.TestModel.event;
+import static be.kwakeroni.evelyn.test.Assertions.assertThat;
+import static be.kwakeroni.evelyn.test.Assertions.assertThatParseExceptionThrownBy;
+import static be.kwakeroni.evelyn.test.TestModel.event;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.AdditionalAnswers.answer;
@@ -36,6 +36,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class DefaultDatabaseAccessorTest {
+
+    private final LocalDateTime time0 = LocalDateTime.of(81, 12, 14, 16, 18);
+    private final LocalDateTime time1 = LocalDateTime.now();
 
     @Nested
     @DisplayName("Constructs instances")
@@ -86,16 +89,10 @@ public class DefaultDatabaseAccessorTest {
         @Test
         @DisplayName("with data")
         public void testWithData() throws Exception {
-            String timestamp0 = "T0";
-            LocalDateTime time0 = LocalDateTime.of(81, 12, 14, 16, 18);
-            String timestamp1 = "T1";
-            LocalDateTime time1 = LocalDateTime.now();
-
-
             DefaultDatabaseAccessor accessor = createFromStorageWith(
                     data(
-                            event("anonymous", "a1", "INSERT", "ABC", timestamp0, time0),
-                            event("myUser", "b2", "UPDATE", "DEF", timestamp1, time1)
+                            event("anonymous", "a1", "INSERT", "ABC", time0),
+                            event("myUser", "b2", "UPDATE", "DEF", time1)
                     ));
 
             List<Event> events = accessor.getData().collect(Collectors.toList());
@@ -103,13 +100,11 @@ public class DefaultDatabaseAccessorTest {
             assertThat(events.get(0).getData()).isEqualTo("ABC");
             assertThat(events.get(0).getOperation()).isEqualTo("INSERT");
             assertThat(events.get(0).getUser()).isEqualTo("anonymous");
-            assertThat(events.get(0).getTimestamp()).isEqualTo(timestamp0);
             assertThat(events.get(0).getTime()).isEqualTo(time0);
             assertThat(events.get(1).getObjectId()).isEqualTo("b2");
             assertThat(events.get(1).getData()).isEqualTo("DEF");
             assertThat(events.get(1).getOperation()).isEqualTo("UPDATE");
             assertThat(events.get(1).getUser()).isEqualTo("myUser");
-            assertThat(events.get(1).getTimestamp()).isEqualTo(timestamp1);
             assertThat(events.get(1).getTime()).isEqualTo(time1);
 
         }
@@ -196,6 +191,21 @@ public class DefaultDatabaseAccessorTest {
                 entry("charset", Charset.defaultCharset().name()),
                 entry("custom", "myValue")
         );
+    }
+
+    @Test
+    @DisplayName("Appends data")
+    public void testAppend(@Mock Storage storage, @Mock FileStructure fileStructure, @Mock RecordStructure recordStructure) throws Exception {
+
+        when(recordStructure.toData(any())).thenReturn("myData");
+
+        DefaultDatabaseAccessor accessor = new DefaultDatabaseAccessor("x.y", "myDb", storage, requiredAttributes(), fileStructure, recordStructure);
+
+        Event event = event("myUser", "a1", "REPLACE", "GHI", LocalDateTime.now());
+        accessor.append(event);
+
+        verify(recordStructure).toData(event);
+        verify(storage).append("myData");
     }
 
     private DefaultDatabaseAccessor createFromStorageWith(Map<String, String> attributes, Supplier<Stream<String>> data) throws ParseException {

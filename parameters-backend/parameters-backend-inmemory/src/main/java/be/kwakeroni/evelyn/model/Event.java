@@ -6,8 +6,6 @@ public interface Event {
 
     public String getUser();
 
-    public String getTimestamp();
-
     public LocalDateTime getTime();
 
     public String getOperation();

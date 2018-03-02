@@ -1,6 +1,5 @@
 package be.kwakeroni.evelyn.storage.impl;
 
-import be.kwakeroni.evelyn.storage.StorageExistsException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +19,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
 
 @ExtendWith(MockitoExtension.class)
-public class StorageSupportTest {
+class StorageSupportTest {
 
     private static final String VERSION = "2.c";
     private static final String[] DATA = new String[]{
@@ -91,7 +90,7 @@ public class StorageSupportTest {
         }
 
         @Override
-        protected void initialize() throws StorageExistsException {
+        protected void initialize() {
             this.initialized = true;
         }
     }

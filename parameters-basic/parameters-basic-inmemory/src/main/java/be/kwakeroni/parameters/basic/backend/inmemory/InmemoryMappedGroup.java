@@ -23,11 +23,11 @@ public class InmemoryMappedGroup
     private final String keyParameterName;
     private final BiPredicate<String, String> equalizer;
 
-    public InmemoryMappedGroup(String keyParameterName, ParameterGroupDefinition definition, InMemoryGroup subGroup) {
+    public InmemoryMappedGroup(String keyParameterName, ParameterGroupDefinition<?> definition, InMemoryGroup subGroup) {
         this(keyParameterName, String::equals, definition, subGroup);
     }
 
-    public InmemoryMappedGroup(String keyParameterName, BiPredicate<String, String> equalizer, ParameterGroupDefinition definition, InMemoryGroup subGroup) {
+    public InmemoryMappedGroup(String keyParameterName, BiPredicate<String, String> equalizer, ParameterGroupDefinition<?> definition, InMemoryGroup subGroup) {
         super(definition, subGroup);
         this.keyParameterName = keyParameterName;
         this.equalizer = equalizer;
@@ -49,7 +49,7 @@ public class InmemoryMappedGroup
         try {
             return getSubGroup().validateNewEntry(entry, new FilteredGroupData(storage, data -> data.filter(entryWithKey(key))));
         } catch (IllegalStateException exc) {
-            throw new IllegalStateException(exc.getMessage() + " with key: " + this.keyParameterName + "=" + key);
+            throw new IllegalStateException(exc.getMessage() + " with key: " + this.keyParameterName + "=" + key, exc);
         }
 
     }

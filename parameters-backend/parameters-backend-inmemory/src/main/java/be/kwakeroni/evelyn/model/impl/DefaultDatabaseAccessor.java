@@ -78,6 +78,11 @@ public final class DefaultDatabaseAccessor implements DatabaseAccessor {
     }
 
     @Override
+    public void append(Event event) {
+        this.storage.append(recordStructure.toData(event));
+    }
+
+    @Override
     public Stream<Event> getData() throws ParseException {
         FileStructure.StreamData streamData = fileStructure.readData(storage, charset);
         try {

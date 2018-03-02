@@ -1,6 +1,6 @@
 package be.kwakeroni.evelyn.storage.impl;
 
-import be.kwakeroni.evelyn.model.test.Assertions;
+import be.kwakeroni.evelyn.test.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class HeaderStructureTest {
+class HeaderStructureTest {
 
     private static final String VERSION = "2.c";
     private static final String[] DATA = new String[]{

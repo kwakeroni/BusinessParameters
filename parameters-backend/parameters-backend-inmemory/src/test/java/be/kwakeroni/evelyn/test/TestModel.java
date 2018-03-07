@@ -5,6 +5,7 @@ import be.kwakeroni.evelyn.storage.Storage;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -34,6 +35,17 @@ public final class TestModel {
                             }
                         }));
         return storage;
+    }
+
+    public static Storage asStorage(String version, String name, Event... events) {
+        return asStorage(Stream.concat(
+                Stream.of("!evelyn-db", "!version=" + version, "!name=" + name, "!data"),
+                Stream.of(events).map(TestModel::toStorageLine)
+        ).toArray(String[]::new));
+    }
+
+    private static String toStorageLine(Event event) {
+        return String.format(" %s|%s|%s|%s|%s", event.getTime(), event.getObjectId(), event.getUser(), event.getOperation(), event.getData());
     }
 
 

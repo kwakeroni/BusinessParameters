@@ -2,6 +2,10 @@ package be.kwakeroni.parameters.backend.inmemory.persistence;
 
 import be.kwakeroni.evelyn.test.TestModel;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
+import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
+import be.kwakeroni.parameters.backend.inmemory.support.JsonEntryData;
+import be.kwakeroni.test.TestMap;
+import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +31,7 @@ class GroupTableOperationTest {
 
         @DisplayName("Creates a new entry")
         @Test
-        public void testCreateNewEntry() {
+        void testCreateNewEntry() {
             EntryData entry = ADD.operate(null, TestModel.event("myUser", "myId", "ADD", "{\"param\":\"value\"}", LocalDateTime.now()));
             assertThat(entry).isNotNull();
             assertThat(entry.getId()).isEqualTo("myId");
@@ -36,7 +40,7 @@ class GroupTableOperationTest {
 
         @DisplayName("Fails if an entry already exists")
         @Test
-        public void testThrowOnExistingEntry(@Mock EntryData entryData) {
+        void testThrowOnExistingEntry(@Mock EntryData entryData) {
 
             when(entryData.getId()).thenReturn("myEntryId");
 
@@ -48,7 +52,7 @@ class GroupTableOperationTest {
 
         @DisplayName("Fails if the event provides no id")
         @Test
-        public void testThrowOnNullId() {
+        void testThrowOnNullId() {
             assertThatThrownBy(() ->
                     ADD.operate(null, TestModel.event("myUser", null, "ADD", "myData", LocalDateTime.now())))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -60,7 +64,7 @@ class GroupTableOperationTest {
     class ReplaceTest {
         @DisplayName("Replaces an entry")
         @Test
-        public void testReplaceEntry(@Mock EntryData original) {
+        void testReplaceEntry(@Mock EntryData original) {
             when(original.getId()).thenReturn("myId");
             when(original.asMap()).thenReturn(Collections.singletonMap("param", "original value"));
 
@@ -73,7 +77,7 @@ class GroupTableOperationTest {
 
         @DisplayName("Fails when replacing with a different id")
         @Test
-        public void testThrowOnDifferentId(@Mock EntryData original) {
+        void testThrowOnDifferentId(@Mock EntryData original) {
             when(original.getId()).thenReturn("originalId");
             assertThatThrownBy(() -> REPLACE.operate(original, TestModel.event("myUser", "myId", "REPLACE", "{\"param\":\"value\"}", LocalDateTime.now())))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -83,11 +87,39 @@ class GroupTableOperationTest {
 
         @DisplayName("Fails if the entry does not exist")
         @Test
-        public void testThrowOnNonExistingEntry() {
+        void testThrowOnNonExistingEntry() {
             assertThatThrownBy(() -> REPLACE.operate(null, TestModel.event("myUser", "myId", "REPLACE", "{\"param\":\"value\"}", LocalDateTime.now())))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("myId");
         }
+    }
+
+    @Nested
+    @DisplayName("Transforms from and to String")
+    class StringTest {
+        @DisplayName("Creates an entry from a JSON String")
+        @Test
+        void testFromString() {
+            EntryData entry = GroupTableOperation.fromString("myId", "{\"param\":\"value\"}");
+            assertThat(entry.getId()).isEqualTo("myId");
+            assertThat(entry.getValue("param")).isEqualTo("value");
+        }
+
+        @DisplayName("Transforms a JSON Entry to a JSON String")
+        @Test
+        void testJsonEntryToString() {
+            JsonEntryData entry = JsonEntryData.of("myId", new JSONObject(TestMap.of("param", "value")));
+            assertThat(GroupTableOperation.toString(entry)).isEqualTo("{\"param\":\"value\"}");
+        }
+
+        @DisplayName("Transforms any Entry to a JSON String")
+        @Test
+        void testAnyEntryToString() {
+            DefaultEntryData entry = DefaultEntryData.of("myId", TestMap.of("param", "value"));
+            assertThat(GroupTableOperation.toString(entry)).isEqualTo("{\"param\":\"value\"}");
+        }
+
+
     }
 
 }

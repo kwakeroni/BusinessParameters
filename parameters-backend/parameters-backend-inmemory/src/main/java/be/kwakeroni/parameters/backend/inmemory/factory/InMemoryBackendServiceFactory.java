@@ -4,11 +4,12 @@ import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
 import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroupFactory;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
+import be.kwakeroni.parameters.backend.inmemory.fallback.TransientGroupDataStore;
+import be.kwakeroni.parameters.backend.inmemory.service.GroupDataStore;
 import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCatalog;
 
-import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -19,22 +20,19 @@ import java.util.stream.StreamSupport;
  */
 public class InMemoryBackendServiceFactory implements BusinessParametersBackendFactory {
 
-    private static InMemoryBackend INSTANCE;
+    private static Supplier<GroupDataStore> DATA_STORE_SUPPLIER = TransientGroupDataStore::new;
+
+    public static void setDataStoreSupplier(Supplier<GroupDataStore> supplier) {
+        DATA_STORE_SUPPLIER = supplier;
+    }
 
     @Override
     public BusinessParametersBackend<InMemoryQuery<?>> getInstance() {
-        return getSingletonInstance();
+        return getInstance(DATA_STORE_SUPPLIER.get());
     }
 
-    public static synchronized InMemoryBackend getSingletonInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = createNewInstance();
-        }
-        return INSTANCE;
-    }
-
-    private static InMemoryBackend createNewInstance() {
-        return new InMemoryBackend(loadFactories(), loadDefinitions());
+    public BusinessParametersBackend<InMemoryQuery<?>> getInstance(GroupDataStore dataStore) {
+        return new InMemoryBackend(loadFactories(), loadDefinitions(), dataStore);
     }
 
     private static InMemoryBackendGroupFactoryContext loadFactories() {
@@ -49,22 +47,9 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
                 .flatMap(ParameterGroupDefinitionCatalog::stream);
     }
 
-    public static <S> Stream<S> loadServices(Class<S> serviceType) {
+    private static <S> Stream<S> loadServices(Class<S> serviceType) {
         ServiceLoader<S> services = ServiceLoader.load(serviceType);
         return StreamSupport.stream(services::spliterator, 0, false);
     }
 
-
-    public static <S> S loadService(Class<S> serviceType) {
-        ServiceLoader<S> loader = ServiceLoader.load(serviceType);
-        Iterator<S> services = loader.iterator();
-        if (!services.hasNext()) {
-            throw new IllegalStateException("Service not found: " + serviceType.getName());
-        }
-        S service = services.next();
-        if (services.hasNext()) {
-            throw new IllegalStateException("Multiple services of type " + serviceType.getName() + ": " + service.getClass().getName() + " & " + services.next().getClass().getName());
-        }
-        return service;
-    }
 }

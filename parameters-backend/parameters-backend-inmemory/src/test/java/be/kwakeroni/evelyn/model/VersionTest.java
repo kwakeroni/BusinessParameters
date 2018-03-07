@@ -1,6 +1,7 @@
 package be.kwakeroni.evelyn.model;
 
 
+import be.kwakeroni.evelyn.model.impl.Version;
 import be.kwakeroni.evelyn.storage.Storage;
 import be.kwakeroni.evelyn.storage.StorageExistsException;
 import be.kwakeroni.evelyn.storage.StorageProvider;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 @DisplayName("Database version")
 @ExtendWith(MockitoExtension.class)
-public class VersionTest {
+class VersionTest {
     @ValueSource(strings = {
             "0.1"
     })
@@ -49,14 +50,14 @@ public class VersionTest {
 
     @TestAllVersions
     @DisplayName("supports versions")
-    public void testVersionSupported(String versionNumber) {
+    void testVersionSupported(String versionNumber) {
         Version version = Version.byNumber(versionNumber);
         assertThat(version).isNotNull();
     }
 
     @Test
     @DisplayName("throws exception for unsupported versions")
-    public void testUnsupported() {
+    void testUnsupported() {
         assertThatThrownBy(() -> Version.byNumber("unsupported"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("unsupported");
@@ -64,7 +65,7 @@ public class VersionTest {
 
     @TestAllVersions
     @DisplayName("creates a database")
-    public void testCreateDatabase(
+    void testCreateDatabase(
             @As Version version,
             @Mock StorageProvider storageProvider,
             @Mock Storage storage
@@ -78,11 +79,12 @@ public class VersionTest {
         assertThat(accessor.getDatabaseName()).isEqualTo("myDatabase");
 
         verify(storageProvider).create("myDatabase");
+        verify(storage).writeHeader(version.getVersionNumber());
     }
 
     @TestAllVersions
     @DisplayName("handles database creation exceptions")
-    public void testCreateDatabaseException(
+    void testCreateDatabaseException(
             @As Version version,
             @Mock StorageProvider storageProvider
     ) throws Exception {
@@ -97,7 +99,7 @@ public class VersionTest {
 
     @TestAllVersions
     @DisplayName("reads a database")
-    public void testReadDatabase(
+    void testReadDatabase(
             @As Version version,
             @Mock Storage storage
     ) throws Exception {
@@ -116,10 +118,10 @@ public class VersionTest {
 
     @TestAllVersions
     @DisplayName("handles database read exceptions")
-    public void testReadDatabaseException(
+    void testReadDatabaseException(
             @As Version version,
             @Mock Storage storage
-    ) throws Exception {
+    ) {
         when(storage.read(any())).thenAnswer(no -> Stream.of());
 
         assertThatThrownBy(() -> version.read(storage))

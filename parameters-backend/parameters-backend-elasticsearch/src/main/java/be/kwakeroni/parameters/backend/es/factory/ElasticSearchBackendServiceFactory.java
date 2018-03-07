@@ -12,7 +12,6 @@ import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCa
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
@@ -24,7 +23,7 @@ import java.util.stream.StreamSupport;
  */
 public class ElasticSearchBackendServiceFactory implements BusinessParametersBackendFactory {
 
-    public static final String CONFIG_FILE = "/parameters-backend-elasticsearch.properties";
+    private static final String CONFIG_FILE = "/parameters-backend-elasticsearch.properties";
 
     @Override
     public BusinessParametersBackend<ElasticSearchQuery<?>> getInstance() {
@@ -52,7 +51,7 @@ public class ElasticSearchBackendServiceFactory implements BusinessParametersBac
 
     private static ElasticSearchBackend INSTANCE;
 
-    public static synchronized ElasticSearchBackend getSingletonInstance() {
+    private static synchronized ElasticSearchBackend getSingletonInstance() {
         if (INSTANCE == null) {
             INSTANCE = createNewInstance();
         }
@@ -75,22 +74,9 @@ public class ElasticSearchBackendServiceFactory implements BusinessParametersBac
                 .flatMap(ParameterGroupDefinitionCatalog::stream);
     }
 
-    public static <S> Stream<S> loadServices(Class<S> serviceType) {
+    private static <S> Stream<S> loadServices(Class<S> serviceType) {
         ServiceLoader<S> services = ServiceLoader.load(serviceType);
         return StreamSupport.stream(services::spliterator, 0, false);
     }
 
-
-    public static <S> S loadService(Class<S> serviceType) {
-        ServiceLoader<S> loader = ServiceLoader.load(serviceType);
-        Iterator<S> services = loader.iterator();
-        if (!services.hasNext()) {
-            throw new IllegalStateException("Service not found: " + serviceType.getName());
-        }
-        S service = services.next();
-        if (services.hasNext()) {
-            throw new IllegalStateException("Multiple services of type " + serviceType.getName() + ": " + service.getClass().getName() + " & " + services.next().getClass().getName());
-        }
-        return service;
-    }
 }

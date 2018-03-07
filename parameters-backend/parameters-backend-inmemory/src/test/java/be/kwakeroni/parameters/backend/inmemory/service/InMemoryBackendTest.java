@@ -6,6 +6,7 @@ import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendGroupFactoryContext;
+import be.kwakeroni.parameters.backend.inmemory.fallback.TransientGroupData;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -37,6 +38,8 @@ import static org.mockito.Mockito.*;
 public class InMemoryBackendTest {
 
     private InMemoryBackend backend;
+    @Mock
+    private GroupDataStore dataStore;
     @Mock
     private ParameterGroupDefinition<?> group1Definition;
     @Mock
@@ -71,16 +74,16 @@ public class InMemoryBackendTest {
         when(group1Definition.apply(factoryContext)).thenReturn(group1);
         when(group2Definition.apply(factoryContext)).thenReturn(group2);
         when(definitions.get()).thenAnswer((i) -> Stream.of(group1Definition, group2Definition));
+        when(dataStore.getGroupData(group1)).thenReturn(new TransientGroupData(group1, Collections.singleton(entry1Data)));
+        when(dataStore.getGroupData(group2)).thenReturn(new TransientGroupData(group2, Collections.singleton(entry2Data)));
 
-        backend = new InMemoryBackend(factoryContext, definitions);
-        backend.setGroupData(group1Name, Collections.singleton(entry1Data));
-        backend.setGroupData(group2Name, Collections.singleton(entry2Data));
+        backend = new InMemoryBackend(factoryContext, definitions, dataStore);
 
         doReturn(inMemoryQuery).when(backendQuery).raw();
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         doReturn(Optional.of(value)).when(inMemoryQuery).apply(streamWithOnly(entry1Data));
 
         Object result = backend.select(group1Name, backendQuery);
@@ -91,7 +94,7 @@ public class InMemoryBackendTest {
     }
 
     @Test
-    public void testGetReturnsNullWhenNoResult() throws Exception {
+    public void testGetReturnsNullWhenNoResult() {
         doReturn(Optional.empty()).when(inMemoryQuery).apply(streamWithOnly(entry1Data));
 
         Object result = backend.select(group1Name, backendQuery);
@@ -100,7 +103,7 @@ public class InMemoryBackendTest {
     }
 
     @Test
-    public void testGetFailsWhenQueryReturnsNull() throws Exception {
+    public void testGetFailsWhenQueryReturnsNull() {
         doReturn(null).when(inMemoryQuery).apply(streamWithOnly(entry1Data));
 
         assertThatThrownBy(() -> backend.select(group1Name, backendQuery))
@@ -108,19 +111,16 @@ public class InMemoryBackendTest {
     }
 
     @Test
-    public void testSet() throws Exception {
+    public void testSet() {
         when(inMemoryQuery.getEntryModification(eq(value), streamWithOnly(entry1Data))).thenReturn(entryModification);
 
         backend.update(group1Name, backendQuery, value);
-
-//        verify(inMemoryQuery).getEntryModification(eq(value), streamWithOnly(entry1Data));
-//        verify(group1Data).modifyEntry(entryModification.getEntry(), entryModification.getModifier());
 
         verifyZeroInteractions(entry2Data);
     }
 
     @Test
-    public void testGetGroupNames() throws Exception {
+    public void testGetGroupNames() {
         assertThat(backend.getGroupNames()).containsExactlyInAnyOrder(group1Name, group2Name);
     }
 

@@ -28,7 +28,7 @@ public final class DefaultDatabaseAccessor implements DatabaseAccessor {
     private final RecordStructure recordStructure;
     private final Charset charset;
 
-    public DefaultDatabaseAccessor(String version, String databaseName, Storage storage) {
+    DefaultDatabaseAccessor(String version, String databaseName, Storage storage) {
         this(version, databaseName, storage, new HashMap<>(), FileStructure.getInstance(), RecordStructure.getInstance());
     }
 
@@ -68,7 +68,6 @@ public final class DefaultDatabaseAccessor implements DatabaseAccessor {
         return this.databaseName;
     }
 
-    @Override
     public void createDatabase() throws StorageExistsException {
         this.fileStructure.initializeStorage(storage, attributes, ATTRIBUTE_VERSION);
     }

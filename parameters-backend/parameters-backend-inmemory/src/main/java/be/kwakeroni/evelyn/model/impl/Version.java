@@ -1,6 +1,9 @@
-package be.kwakeroni.evelyn.model;
+package be.kwakeroni.evelyn.model.impl;
 
-import be.kwakeroni.evelyn.model.impl.DefaultDatabaseAccessor;
+import be.kwakeroni.evelyn.model.DatabaseAccessor;
+import be.kwakeroni.evelyn.model.DatabaseException;
+import be.kwakeroni.evelyn.model.DatabaseProvider;
+import be.kwakeroni.evelyn.model.ParseException;
 import be.kwakeroni.evelyn.storage.Storage;
 import be.kwakeroni.evelyn.storage.StorageExistsException;
 import be.kwakeroni.evelyn.storage.StorageProvider;
@@ -68,6 +71,8 @@ public enum Version implements DatabaseProvider {
      */
     V0_1("0.1");
 
+    public static final Version LATEST = V0_1;
+
     private final String number;
 
     Version(String number) {
@@ -83,7 +88,9 @@ public enum Version implements DatabaseProvider {
         Storage storage;
         try {
             storage = storageProvider.create(databaseName);
-            return new DefaultDatabaseAccessor(this.number, databaseName, storage);
+            DefaultDatabaseAccessor accessor = new DefaultDatabaseAccessor(this.number, databaseName, storage);
+            accessor.createDatabase();
+            return accessor;
         } catch (StorageExistsException exc) {
             throw new DatabaseException("Could not create database " + databaseName, exc);
         }
@@ -106,4 +113,5 @@ public enum Version implements DatabaseProvider {
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("Unsupported version: " + number));
     }
+
 }

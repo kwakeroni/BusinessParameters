@@ -1,18 +1,24 @@
 package be.kwakeroni.it;
 
 import be.kwakeroni.evelyn.client.ClientTable;
+import be.kwakeroni.evelyn.client.DefaultClientTable;
 import be.kwakeroni.evelyn.model.DatabaseAccessor;
-import be.kwakeroni.evelyn.model.Version;
+import be.kwakeroni.evelyn.model.impl.Version;
 import be.kwakeroni.evelyn.storage.Storage;
-import be.kwakeroni.evelyn.storage.StorageExistsException;
 import be.kwakeroni.evelyn.storage.StorageProvider;
 import be.kwakeroni.evelyn.storage.impl.TestStorageSupport;
+import be.kwakeroni.parameters.backend.api.query.BackendQuery;
+import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
+import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
-import be.kwakeroni.parameters.backend.inmemory.persistence.GroupTableFactory;
+import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
+import be.kwakeroni.parameters.backend.inmemory.persistence.GroupTableOperation;
 import be.kwakeroni.parameters.backend.inmemory.persistence.PersistedGroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
+import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.test.TestMap;
+import org.junit.jupiter.api.Test;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -21,15 +27,14 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PersistedGroupDataIT {
+class PersistedGroupDataIT {
 
 
-    public void testBlankDB() throws Exception {
-        InMemoryGroup group = null; // new InmemoryMappedGroup("name", null, new InmemorySimpleGroup("test", null, "name", "age"));
-        ClientTable<EntryData> table = createTable(group);
+    @Test
+    void testBlankDB() throws Exception {
+        InMemoryGroup group = testGroup();
 
-
-        PersistedGroupData data = new PersistedGroupData(group, table);
+        PersistedGroupData data = new PersistedGroupData(group, createTable(group));
 
         EntryData tom = entry("Tom", 20);
         EntryData lance = entry("Lance", 30);
@@ -54,10 +59,28 @@ public class PersistedGroupDataIT {
     }
 
     private static ClientTable<EntryData> createTable(InMemoryGroup group) throws Exception {
-        StorageProvider storageProvider = PersistedGroupDataIT::mockStorage;
+        StorageProvider storageProvider = mockStorageProvider();
         DatabaseAccessor accessor = Version.V0_1.create(storageProvider, group.getName());
-        accessor.createDatabase();
-        return new GroupTableFactory(groupName -> accessor).createTable(group);
+        return new DefaultClientTable<>(accessor, GroupTableOperation::valueOf);
+    }
+
+    private static StorageProvider mockStorageProvider() {
+        return new StorageProvider() {
+            @Override
+            public Storage create(String name) {
+                return mockStorage(name);
+            }
+
+            @Override
+            public Storage read(String name) {
+                return null;
+            }
+
+            @Override
+            public boolean exists(String name) {
+                return false;
+            }
+        };
     }
 
     private static Storage mockStorage(String name) {
@@ -66,7 +89,7 @@ public class PersistedGroupDataIT {
             private List<String> list;
 
             @Override
-            protected void initialize() throws StorageExistsException {
+            protected void initialize() {
                 this.list = new ArrayList<>();
             }
 
@@ -89,6 +112,30 @@ public class PersistedGroupDataIT {
 
     private static EntryData entry(String name, int age) {
         return DefaultEntryData.of(TestMap.of("name", name, "age", String.valueOf(age)));
+    }
+
+    private static InMemoryGroup testGroup() {
+        return new InMemoryGroup() {
+            @Override
+            public EntryData validateNewEntry(EntryData entry, GroupData storage) {
+                return entry;
+            }
+
+            @Override
+            public String getName() {
+                return "myGroup";
+            }
+
+            @Override
+            public ParameterGroupDefinition<?> getDefinition() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public BackendQuery<? extends InMemoryQuery<?>, ?> internalize(Object query, BackendWireFormatterContext context) {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
 }

@@ -1,10 +1,12 @@
-package be.kwakeroni.parameters.backend.inmemory.support;
+package be.kwakeroni.parameters.backend.inmemory.fallback;
 
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
+import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
+import be.kwakeroni.parameters.backend.inmemory.support.FilteredGroupData;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,12 +16,12 @@ import java.util.stream.Stream;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class DefaultGroupData implements GroupData {
+public class TransientGroupData implements GroupData {
 
     private final InMemoryGroup group;
     private final List<EntryData> data;
 
-    public DefaultGroupData(InMemoryGroup group, Collection<EntryData> data) {
+    public TransientGroupData(InMemoryGroup group, Collection<EntryData> data) {
         this.group = group;
         this.data = new java.util.ArrayList<>(data);
     }

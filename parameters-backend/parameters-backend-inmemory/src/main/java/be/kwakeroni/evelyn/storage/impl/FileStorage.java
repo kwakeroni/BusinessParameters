@@ -20,6 +20,10 @@ public final class FileStorage extends StorageSupport {
         this.location = location;
     }
 
+    Path getStorageLocation() {
+        return location;
+    }
+
     @Override
     public String getReference() {
         return location.toUri().toString();

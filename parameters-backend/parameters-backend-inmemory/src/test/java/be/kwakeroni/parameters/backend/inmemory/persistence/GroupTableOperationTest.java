@@ -4,7 +4,7 @@ import be.kwakeroni.evelyn.test.TestModel;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.backend.inmemory.support.JsonEntryData;
-import be.kwakeroni.test.TestMap;
+import be.kwakeroni.test.factory.TestMap;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

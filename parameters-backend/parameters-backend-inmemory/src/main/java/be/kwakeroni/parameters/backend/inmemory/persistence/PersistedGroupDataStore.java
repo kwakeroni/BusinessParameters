@@ -5,6 +5,7 @@ import be.kwakeroni.evelyn.client.DefaultClientTable;
 import be.kwakeroni.evelyn.model.DatabaseAccessor;
 import be.kwakeroni.evelyn.model.DatabaseException;
 import be.kwakeroni.evelyn.model.DatabaseProvider;
+import be.kwakeroni.evelyn.model.DefaultDatabaseProvider;
 import be.kwakeroni.evelyn.storage.StorageProvider;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
@@ -16,6 +17,9 @@ public class PersistedGroupDataStore implements GroupDataStore {
     private final StorageProvider storageProvider;
     private final DatabaseProvider provider;
 
+    public PersistedGroupDataStore(StorageProvider storageProvider) {
+        this(storageProvider, DefaultDatabaseProvider.getInstance());
+    }
     public PersistedGroupDataStore(StorageProvider storageProvider, DatabaseProvider provider) {
         this.storageProvider = storageProvider;
         this.provider = provider;

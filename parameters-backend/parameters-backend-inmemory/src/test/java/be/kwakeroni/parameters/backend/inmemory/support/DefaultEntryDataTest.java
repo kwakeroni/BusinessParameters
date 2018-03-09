@@ -1,7 +1,7 @@
 package be.kwakeroni.parameters.backend.inmemory.support;
 
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
-import be.kwakeroni.test.TestMap;
+import be.kwakeroni.test.factory.TestMap;
 
 public class DefaultEntryDataTest extends AbstractEntryDataTest {
     @Override

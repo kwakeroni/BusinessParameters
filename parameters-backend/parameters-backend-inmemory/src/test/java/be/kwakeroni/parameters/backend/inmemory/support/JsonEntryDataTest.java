@@ -1,6 +1,6 @@
 package be.kwakeroni.parameters.backend.inmemory.support;
 
-import be.kwakeroni.test.TestMap;
+import be.kwakeroni.test.factory.TestMap;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ class JsonEntryDataTest extends AbstractEntryDataTest {
     protected JsonEntryData createEntry(String parameter, String value, String... andSoOn) {
         JSONObject jsonObject = new JSONObject();
 
-        TestMap.forEach(jsonObject::put, parameter, value, andSoOn);
+        TestMap.of(parameter, value, andSoOn).forEach(jsonObject::put);
 
         return JsonEntryData.of(jsonObject);
     }

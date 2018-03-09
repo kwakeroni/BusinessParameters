@@ -17,7 +17,7 @@ import be.kwakeroni.parameters.backend.inmemory.persistence.GroupTableOperation;
 import be.kwakeroni.parameters.backend.inmemory.persistence.PersistedGroupData;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
-import be.kwakeroni.test.TestMap;
+import be.kwakeroni.test.factory.TestMap;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.Charset;

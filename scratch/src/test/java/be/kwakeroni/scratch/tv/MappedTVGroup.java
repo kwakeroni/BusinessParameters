@@ -16,7 +16,7 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.scratch.tv.definition.MappedTV;
-import be.kwakeroni.test.TestMap;
+import be.kwakeroni.test.factory.TestMap;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck

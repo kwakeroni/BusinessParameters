@@ -22,6 +22,13 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>be.kwakeroni.parameters.core</groupId>
+                <artifactId>parameters-core</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>be.kwakeroni.parameters.client</groupId>
                 <artifactId>parameters-client</artifactId>
                 <version>${project.version}</version>
@@ -155,6 +162,10 @@
         <dependency>
             <groupId>be.kwakeroni.parameters.management</groupId>
             <artifactId>parameters-management-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.core</groupId>
+            <artifactId>parameters-test-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

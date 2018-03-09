@@ -7,7 +7,7 @@ import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
 import be.kwakeroni.parameters.basic.client.support.Entries;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.scratch.tv.definition.SimpleTV;
-import be.kwakeroni.test.TestMap;
+import be.kwakeroni.test.factory.TestMap;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck

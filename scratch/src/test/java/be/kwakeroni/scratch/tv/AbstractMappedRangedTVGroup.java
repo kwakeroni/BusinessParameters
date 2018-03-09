@@ -20,7 +20,7 @@ import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.scratch.tv.definition.AbstractMappedRangedTV;
-import be.kwakeroni.test.TestMap;
+import be.kwakeroni.test.factory.TestMap;
 
 import java.util.HashMap;
 import java.util.Map;

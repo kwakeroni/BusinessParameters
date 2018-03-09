@@ -1,4 +1,4 @@
-package be.kwakeroni.test;
+package be.kwakeroni.test.factory;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,11 +24,7 @@ public final class TestMap {
         return Collections.unmodifiableMap(map);
     }
 
-    public static void forEach(BiConsumer<String, String> action, String key, String value, String... andSoOn) {
-        forEach(action, key, value, (Object[]) andSoOn);
-    }
-
-    public static <K, V> void forEach(BiConsumer<K, V> action, K key, V value, Object... andSoOn) {
+    private static <K, V> void forEach(BiConsumer<K, V> action, K key, V value, Object... andSoOn) {
         if (andSoOn.length % 2 != 0) {
             throw new IllegalArgumentException("Expected parameter-value pairs: " + Arrays.toString(andSoOn));
         }
@@ -38,5 +34,4 @@ public final class TestMap {
             action.accept((K) andSoOn[i], (V) andSoOn[i + 1]);
         }
     }
-
 }

@@ -38,9 +38,10 @@ public final class DefaultClientTable<E> implements ClientTable<E> {
     }
 
     @Override
-    public void append(String user, String operation, String objectId, String data) {
+    public Event append(String user, String operation, String objectId, String data) {
         Event event = new DefaultEvent(user, operation, objectId, LocalDateTime.now(clock), data);
         this.accessor.append(event);
+        return event;
     }
 
     @Override

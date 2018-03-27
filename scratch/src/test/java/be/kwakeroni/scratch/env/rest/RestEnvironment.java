@@ -5,7 +5,7 @@ import be.kwakeroni.parameters.adapter.rest.factory.RestBackendAdapterFactory;
 import be.kwakeroni.parameters.management.rest.RestParameterManagement;
 import be.kwakeroni.parameters.management.rest.factory.RestParameterManagementFactory;
 import be.kwakeroni.scratch.env.TestData;
-import be.kwakeroni.scratch.env.inmemory.InMemoryTestData;
+import be.kwakeroni.scratch.env.inmemory.TransientInMemoryTestData;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -24,7 +24,7 @@ public class RestEnvironment implements TestRule, AutoCloseable {
 
     public static void main(String[] args) throws Exception {
 //        try (RestEnvironment env = new RestEnvironment(ElasticSearchTestData::new)) {
-        try (RestEnvironment env = new RestEnvironment(InMemoryTestData::new)) {
+        try (RestEnvironment env = new RestEnvironment(TransientInMemoryTestData::new)) {
             JOptionPane.showMessageDialog(null, "Rest server running.\n\nClose window to stop server.", "Rest Server", JOptionPane.INFORMATION_MESSAGE);
         }
     }
@@ -51,7 +51,7 @@ public class RestEnvironment implements TestRule, AutoCloseable {
     private final RestServer restServer;
 
     public RestEnvironment() {
-        this(InMemoryTestData::new);
+        this(TransientInMemoryTestData::new);
     }
 
     public RestEnvironment(Supplier<TestData> testDataSupplier) {

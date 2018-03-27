@@ -1,0 +1,6 @@
+!evelyn-db
+!version=0.1
+!charset=UTF-8
+!name=petshop.contact
+!data
+ 20180319072425|4cbd0f0d-452e-476c-a843-f018e2984e1f|anonymous|ADD|{"address":"Cuckoo Street 70, Melbourne, Australia","phone":"+01 555 6789","companyName":"Demo Petshop"}

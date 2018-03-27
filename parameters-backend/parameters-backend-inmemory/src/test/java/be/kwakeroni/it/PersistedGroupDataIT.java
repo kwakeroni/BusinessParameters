@@ -1,5 +1,6 @@
 package be.kwakeroni.it;
 
+import be.kwakeroni.evelyn.client.CachingClientTable;
 import be.kwakeroni.evelyn.client.ClientTable;
 import be.kwakeroni.evelyn.client.DefaultClientTable;
 import be.kwakeroni.evelyn.model.DatabaseAccessor;
@@ -39,7 +40,9 @@ class PersistedGroupDataIT {
         EntryData tom = entry("Tom", 20);
         EntryData lance = entry("Lance", 30);
         data.addEntry(tom);
+        assertThat(data.getEntries().map(entry -> entry.getValue("name"))).containsOnly("Tom");
         data.addEntry(lance);
+        assertThat(data.getEntries().map(entry -> entry.getValue("name"))).containsOnly("Tom", "Lance");
         data.modifyEntry(tom, entry -> entry.setValue("age", "22"));
         data.addEntry(entry("With\\backslash", 1));
         data.addEntry(entry("With\"quotes\"", 2));
@@ -61,7 +64,8 @@ class PersistedGroupDataIT {
     private static ClientTable<EntryData> createTable(InMemoryGroup group) throws Exception {
         StorageProvider storageProvider = mockStorageProvider();
         DatabaseAccessor accessor = Version.V0_1.create(storageProvider, group.getName());
-        return new DefaultClientTable<>(accessor, GroupTableOperation::valueOf);
+        ClientTable<EntryData> delegate = new DefaultClientTable<>(accessor, GroupTableOperation::valueOf);
+        return new CachingClientTable<EntryData>(accessor, GroupTableOperation::valueOf, EntryData::getId);
     }
 
     private static StorageProvider mockStorageProvider() {

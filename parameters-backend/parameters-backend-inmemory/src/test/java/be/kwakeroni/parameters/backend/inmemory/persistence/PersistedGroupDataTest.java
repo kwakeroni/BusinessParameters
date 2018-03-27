@@ -11,8 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.extension.mockito.MockitoExtension;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -22,11 +25,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PersistedGroupDataTest {
+class PersistedGroupDataTest {
 
     @Mock
     private InMemoryGroup group;
@@ -35,24 +37,24 @@ public class PersistedGroupDataTest {
     private PersistedGroupData groupData;
 
     @BeforeEach
-    public void setupMocks() {
+    void setupMocks() {
         when(group.validateNewEntry(any(), any())).then(returnsFirstArg());
     }
 
     @BeforeEach
-    public void setupFields() {
+    void setupFields() {
         this.groupData = new PersistedGroupData(group, table);
     }
 
     @Test
     @DisplayName("Provides the backing group model")
-    public void testGetGroup() {
+    void testGetGroup() {
         assertThat(groupData.getGroup()).isSameAs(group);
     }
 
     @Test
     @DisplayName("Provides entries from backing table")
-    public void testGetEntries(@Mock Stream<EntryData> stream) {
+    void testGetEntries(@Mock Stream<EntryData> stream) {
         when(table.findAll()).thenReturn(stream);
         assertThat(groupData.getEntries()).isSameAs(stream);
     }
@@ -62,7 +64,7 @@ public class PersistedGroupDataTest {
     class AddEntryTest {
         @Test
         @DisplayName("With validation")
-        public void testAddEntryValidation(@Mock EntryData entry) {
+        void testAddEntryValidation(@Mock EntryData entry) {
             groupData.addEntry(entry);
 
             verify(group).validateNewEntry(entry, groupData);
@@ -70,7 +72,7 @@ public class PersistedGroupDataTest {
 
         @Test
         @DisplayName("By appending an operation")
-        public void testAddEntryAppending(@Mock EntryData entry) {
+        void testAddEntryAppending(@Mock EntryData entry) {
 
             Map<String, String> map = new LinkedHashMap<>();
             map.put("param1", "value-A");
@@ -89,23 +91,35 @@ public class PersistedGroupDataTest {
     class ModifyEntryTest {
         @Test
         @DisplayName("With validation")
-        public void testModifyEntryValidation(@Mock EntryData entry, @Mock Consumer<EntryData> modifier, @Mock EntryData otherEntry1, @Mock EntryData otherEntry2) {
+        void testModifyEntryValidation(@Mock EntryData entry, @Mock Consumer<EntryData> modifier, @Mock EntryData otherEntry1, @Mock EntryData otherEntry2) {
             when(table.findAll()).thenAnswer(inv -> Stream.of(otherEntry1, entry, otherEntry2));
             when(entry.getId()).thenReturn("myObjectId");
+            when(entry.asMap()).thenReturn(Collections.singletonMap("mapKey", "mapValue"));
             when(otherEntry1.getId()).thenReturn("theirObjectId");
             when(otherEntry2.getId()).thenReturn("otherObjectId");
 
             groupData.modifyEntry(entry, modifier);
 
-            ArgumentCaptor<GroupData> passedData = ArgumentCaptor.forClass(GroupData.class);
-            verify(group).validateNewEntry(eq(entry), passedData.capture());
+            InOrder inOrder = Mockito.inOrder(modifier, group);
 
+            ArgumentCaptor<EntryData> modifiedEntry = ArgumentCaptor.forClass(EntryData.class);
+            ArgumentCaptor<EntryData> passedEntry = ArgumentCaptor.forClass(EntryData.class);
+            ArgumentCaptor<GroupData> passedData = ArgumentCaptor.forClass(GroupData.class);
+
+            inOrder.verify(modifier).accept(modifiedEntry.capture());
+            assertThat(modifiedEntry.getValue()).isNotSameAs(entry);
+            assertThat(modifiedEntry.getValue().getValue("mapKey")).isEqualTo("mapValue");
+
+            inOrder.verify(group).validateNewEntry(passedEntry.capture(), passedData.capture());
+
+            inOrder.verify(modifier).accept(entry);
+            assertThat(passedEntry.getValue()).isNotSameAs(entry);
             assertThat(passedData.getValue().getEntries()).containsOnly(otherEntry1, otherEntry2);
         }
 
         @Test
         @DisplayName("By appending an operation")
-        public void testAddEntryAppending(@Mock EntryData entry, @Mock Consumer<EntryData> modifier) {
+        void testAddEntryAppending(@Mock EntryData entry, @Mock Consumer<EntryData> modifier) {
 
             Map<String, String> map = new LinkedHashMap<>();
             map.put("param1", "value-A");

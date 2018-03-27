@@ -33,12 +33,12 @@ import java.util.List;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class InMemoryTestData implements TestData {
+public class TransientInMemoryTestData implements TestData {
 
     private final TransientGroupDataStore dataStore = new TransientGroupDataStore();
     private final List<String> groups = new ArrayList<>();
 
-    public InMemoryTestData() {
+    public TransientInMemoryTestData() {
         InMemoryBackendServiceFactory.setDataStoreSupplier(() -> this.dataStore);
         reset();
     }

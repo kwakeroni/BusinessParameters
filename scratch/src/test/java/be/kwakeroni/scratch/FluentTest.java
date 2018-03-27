@@ -8,8 +8,16 @@ import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.scratch.env.Environment;
-import be.kwakeroni.scratch.env.inmemory.InMemoryTestData;
-import be.kwakeroni.scratch.tv.*;
+import be.kwakeroni.scratch.env.inmemory.TransientInMemoryTestData;
+import be.kwakeroni.scratch.tv.AbstractRangedTVGroup;
+import be.kwakeroni.scratch.tv.Dag;
+import be.kwakeroni.scratch.tv.MappedRangedFilterTVGroup;
+import be.kwakeroni.scratch.tv.MappedRangedQueryTVGroup;
+import be.kwakeroni.scratch.tv.MappedTVGroup;
+import be.kwakeroni.scratch.tv.RangedFilterTVGroup;
+import be.kwakeroni.scratch.tv.RangedQueryTVGroup;
+import be.kwakeroni.scratch.tv.SimpleTVGroup;
+import be.kwakeroni.scratch.tv.Slot;
 import be.kwakeroni.scratch.tv.definition.AbstractMappedRangedTV;
 import org.junit.Before;
 import org.junit.Rule;
@@ -23,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 public class FluentTest {
 
     @Rule
-    public Environment environment = new Environment(InMemoryTestData::new);
+    public Environment environment = new Environment(TransientInMemoryTestData::new);
     private BusinessParameters businessParameters;
 
     @Before

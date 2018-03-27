@@ -1,0 +1,10 @@
+!evelyn-db
+!version=0.1
+!charset=UTF-8
+!name=petshop.price
+!data
+ 20180319072539|cf5da687-adaa-4a7d-93b7-3d6cc3212a80|anonymous|ADD|{"price":"80","animal":"Cat"}
+ 20180319072556|76571cc8-7230-407c-8257-c944ccabdbc9|anonymous|ADD|{"price":"70","animal":"Dog"}
+ 20180319072620|94cfe721-5284-4b3e-860c-627886c8d2d6|anonymous|ADD|{"price":"10","animal":"Goldfish"}
+ 20180319072639|9f9edf4c-be83-4849-8aea-3b32cbb64bbf|anonymous|ADD|{"price":"35","animal":"Gerbil"}
+ 20180319072652|5d9d0bb6-0d70-431a-b437-46adc2940f3b|anonymous|ADD|{"price":"250","animal":"Phoenix"}

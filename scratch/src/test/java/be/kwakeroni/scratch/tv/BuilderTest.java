@@ -7,7 +7,7 @@ import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.scratch.env.Services;
 import be.kwakeroni.scratch.env.es.ElasticSearchTestData;
-import be.kwakeroni.scratch.env.inmemory.InMemoryTestData;
+import be.kwakeroni.scratch.env.inmemory.TransientInMemoryTestData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -58,7 +58,7 @@ public class BuilderTest<G extends BackendGroup<?>> {
 
         return Stream.concat(
                 inMemory.stream()
-                        .map(param -> param.toArray("InMemory", InMemoryTestData.FACTORY_CONTEXT)),
+                        .map(param -> param.toArray("InMemory", TransientInMemoryTestData.FACTORY_CONTEXT)),
                 Stream.concat(
                         esQuery.stream()
                                 .map(param -> param.toArray("ElasticSearch : Query", ElasticSearchTestData.FACTORY_CONTEXT)),

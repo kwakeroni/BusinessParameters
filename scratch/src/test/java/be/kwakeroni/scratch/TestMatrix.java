@@ -2,9 +2,14 @@ package be.kwakeroni.scratch;
 
 import be.kwakeroni.scratch.env.TestData;
 import be.kwakeroni.scratch.env.es.ElasticSearchTestData;
-import be.kwakeroni.scratch.env.inmemory.InMemoryTestData;
+import be.kwakeroni.scratch.env.inmemory.PersistedInMemoryTestData;
+import be.kwakeroni.scratch.env.inmemory.TransientInMemoryTestData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -14,7 +19,8 @@ import java.util.stream.Stream;
 public class TestMatrix {
 
     private static final List<TestParameter<Supplier<TestData>>> BACKENDS = Arrays.asList(
-            data("InMemory", InMemoryTestData::new),
+            data("TransientInMemory", TransientInMemoryTestData::new),
+            data("PersistedInMemory", PersistedInMemoryTestData::new),
             data("ElasticSearch", ElasticSearchTestData::new)
     );
 

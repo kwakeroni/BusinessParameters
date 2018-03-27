@@ -1,11 +1,12 @@
 package be.kwakeroni.parameters.backend.inmemory.persistence;
 
-import be.kwakeroni.evelyn.client.DefaultClientTable;
+import be.kwakeroni.evelyn.client.CachingClientTable;
 import be.kwakeroni.evelyn.model.DatabaseAccessor;
 import be.kwakeroni.evelyn.model.DatabaseException;
 import be.kwakeroni.evelyn.model.DatabaseProvider;
 import be.kwakeroni.evelyn.model.DefaultDatabaseProvider;
 import be.kwakeroni.evelyn.storage.StorageProvider;
+import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.service.GroupDataStore;
@@ -51,7 +52,7 @@ public class PersistedGroupDataStore implements GroupDataStore {
     }
 
     private GroupData getGroupData(InMemoryGroup group, DatabaseAccessor accessor) {
-        return new PersistedGroupData(group, new DefaultClientTable<>(accessor, GroupTableOperation::valueOf));
+        return new PersistedGroupData(group, new CachingClientTable<>(accessor, GroupTableOperation::valueOf, EntryData::getId));
     }
 
 }

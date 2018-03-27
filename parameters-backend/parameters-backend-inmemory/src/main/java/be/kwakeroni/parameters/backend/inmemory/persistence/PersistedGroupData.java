@@ -6,6 +6,7 @@ import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
+import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
 import be.kwakeroni.parameters.backend.inmemory.support.FilteredGroupData;
 
 import java.util.Objects;
@@ -36,7 +37,9 @@ public class PersistedGroupData implements GroupData {
 
     @Override
     public void modifyEntry(EntryData data, Consumer<EntryData> modifier) {
-        group.validateNewEntry(data, new FilteredGroupData(this, stream -> stream.filter(other -> !data.getId().equals(other.getId()))));
+        EntryData copy = DefaultEntryData.of(data.asMap());
+        modifier.accept(copy);
+        group.validateNewEntry(copy, new FilteredGroupData(this, stream -> stream.filter(other -> !data.getId().equals(other.getId()))));
         modifier.accept(data);
         table.append("anonymous", GroupTableOperation.REPLACE.name(), data.getId(), GroupTableOperation.toString(data));
     }

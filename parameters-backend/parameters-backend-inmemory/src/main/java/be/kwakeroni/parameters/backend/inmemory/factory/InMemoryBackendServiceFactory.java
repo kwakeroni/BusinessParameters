@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -33,18 +34,25 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryBackendServiceFactory.class);
 
+    static BusinessParametersBackend<InMemoryQuery<?>> INSTANCE = null;
+
     static Supplier<GroupDataStore> DATA_STORE_SUPPLIER = InMemoryBackendServiceFactory::getDefaultDataStoreSupplier;
 
-    public static void setDataStoreSupplier(Supplier<GroupDataStore> supplier) {
+    public static synchronized void setDataStoreSupplier(Supplier<GroupDataStore> supplier) {
         DATA_STORE_SUPPLIER = supplier;
     }
 
     @Override
     public BusinessParametersBackend<InMemoryQuery<?>> getInstance() {
-        return getInstance(DATA_STORE_SUPPLIER.get());
+        synchronized (InMemoryBackendServiceFactory.class) {
+            if (INSTANCE == null){
+                INSTANCE = getInstance(DATA_STORE_SUPPLIER.get());
+            }
+        }
+        return INSTANCE;
     }
 
-    public BusinessParametersBackend<InMemoryQuery<?>> getInstance(GroupDataStore dataStore) {
+    BusinessParametersBackend<InMemoryQuery<?>> getInstance(GroupDataStore dataStore) {
         return getInstance(loadFactories(), loadDefinitions(), dataStore);
     }
 

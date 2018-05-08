@@ -59,7 +59,7 @@ class InMemoryBackendServiceFactoryTest {
     private UnaryOperator<Properties> propertiesOperator;
 
     @BeforeEach
-    void replaceContextClassLoader() throws Exception {
+    void setupContext() throws Exception {
         folder.create();
         folder.newFolder("META-INF", "services");
         previousClassLoader.set(Thread.currentThread().getContextClassLoader());
@@ -67,19 +67,24 @@ class InMemoryBackendServiceFactoryTest {
         URL url = folder.getRoot().toURI().toURL();
         URLClassLoader classLoader = new URLClassLoader(new URL[]{url}, Thread.currentThread().getContextClassLoader());
         Thread.currentThread().setContextClassLoader(classLoader);
+
+        InMemoryBackendServiceFactory.INSTANCE = null;
     }
 
     @AfterEach
-    void resetContextClassLoader() {
+    void resetContext() {
         Thread.currentThread().setContextClassLoader(previousClassLoader.get());
         previousClassLoader.remove();
         folder.delete();
+
+        InMemoryBackendServiceFactory.INSTANCE = null;
     }
 
     @BeforeEach
     void backupState() {
         testState.set(new TestState());
         dataStoreSupplier.set(InMemoryBackendServiceFactory.DATA_STORE_SUPPLIER);
+
     }
 
     @AfterEach
@@ -114,6 +119,17 @@ class InMemoryBackendServiceFactoryTest {
     }
 
     @Test
+    @DisplayName("Creates only one InMemoryBackend (singleton)")
+    void testGetInstanceIsSingleton() {
+
+        BusinessParametersBackend<?> backend = factory.getInstance();
+        BusinessParametersBackend<?> backend2 = factory.getInstance();
+
+        assertThat(backend).isSameAs(backend2);
+    }
+
+
+    @Test
     @DisplayName("Supplies definitions from ServiceLoader")
     void testGetInstanceWithDefinitions(@Mock ParameterGroupDefinition<?> definition1, @Mock ParameterGroupDefinition<?> definition2) throws Exception {
 
@@ -144,15 +160,6 @@ class InMemoryBackendServiceFactoryTest {
         verify(backendConstructor).create(context.capture(), any(), any());
 
         assertThat(context.getValue().getVisitor(TestGroupFactory.class)).isNotNull();
-    }
-
-    @Test
-    @DisplayName("Supplies provided group data store")
-    void testUsesProvidedGroupDataStore(@Mock GroupDataStore store) {
-
-        factory.getInstance(store);
-
-        verify(backendConstructor).create(any(), any(), same(store));
     }
 
     @Nested

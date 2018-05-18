@@ -4,7 +4,7 @@ import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFact
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendServiceFactory;
-import be.kwakeroni.parameters.backend.inmemory.service.InMemoryBackend;
+import be.kwakeroni.parameters.backend.inmemory.fallback.TransientGroupDataStore;
 import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
@@ -14,7 +14,16 @@ import be.kwakeroni.parameters.basic.definition.inmemory.InMemorySimpleGroupFact
 import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.scratch.Contexts;
 import be.kwakeroni.scratch.env.TestData;
-import be.kwakeroni.scratch.tv.*;
+import be.kwakeroni.scratch.tv.AbstractMappedRangedTVGroup;
+import be.kwakeroni.scratch.tv.AbstractRangedTVGroup;
+import be.kwakeroni.scratch.tv.Dag;
+import be.kwakeroni.scratch.tv.MappedRangedFilterTVGroup;
+import be.kwakeroni.scratch.tv.MappedRangedQueryTVGroup;
+import be.kwakeroni.scratch.tv.MappedTVGroup;
+import be.kwakeroni.scratch.tv.RangedFilterTVGroup;
+import be.kwakeroni.scratch.tv.RangedQueryTVGroup;
+import be.kwakeroni.scratch.tv.SimpleTVGroup;
+import be.kwakeroni.scratch.tv.Slot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,18 +33,18 @@ import java.util.List;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class InMemoryTestData implements TestData {
+public class TransientInMemoryTestData implements TestData {
 
-    private final InMemoryBackend backend;
+    private final TransientGroupDataStore dataStore = new TransientGroupDataStore();
     private final List<String> groups = new ArrayList<>();
 
-    public InMemoryTestData() {
-        this.backend = InMemoryBackendServiceFactory.getSingletonInstance();
+    public TransientInMemoryTestData() {
+        InMemoryBackendServiceFactory.setDataStoreSupplier(() -> this.dataStore);
         reset();
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
 
     }
 
@@ -59,7 +68,7 @@ public class InMemoryTestData implements TestData {
     }
 
     private void setGroupData(String groupName, Collection<EntryData> data) {
-        this.backend.setGroupData(groupName, data);
+        this.dataStore.setEntries(groupName, data);
         this.groups.add(groupName);
     }
 

@@ -1,0 +1,10 @@
+!evelyn-db
+!version=0.1
+!charset=UTF-8
+!name=petshop.bulk-discount
+!data
+ 20180319072844|1a373ddf-750e-438a-add8-ff305682a0c6|anonymous|ADD|{"quantity":"[4,9999]","discount":"10","animal":"Cat"}
+ 20180319072852|42128a13-e579-4d93-a9ed-7441db197c52|anonymous|ADD|{"quantity":"[4,9999]","discount":"10","animal":"Dog"}
+ 20180319072859|ac387bfe-5d5c-4c45-a73b-b3db3a6f6165|anonymous|ADD|{"quantity":"[4,9999]","discount":"10","animal":"Goldfish"}
+ 20180319072905|2ac6a4d0-cc58-412a-85a9-0be6c78feb52|anonymous|ADD|{"quantity":"[4,9999]","discount":"10","animal":"Gerbil"}
+ 20180319072913|358d5d44-d277-48a8-a2e4-b20af090dc8a|anonymous|ADD|{"quantity":"[4,9999]","discount":"10","animal":"Phoenix"}

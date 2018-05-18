@@ -7,6 +7,7 @@ import be.kwakeroni.parameters.basic.backend.inmemory.InmemorySimpleGroup;
 import be.kwakeroni.parameters.basic.client.support.Entries;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.scratch.tv.definition.SimpleTV;
+import be.kwakeroni.test.factory.TestMap;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -25,10 +26,10 @@ public class SimpleTVGroup extends SimpleTV {
 
     // For test purposes
     public static final EntryData getEntryData(Dag dag, Slot slot) {
-        return DefaultEntryData.of(
+        return DefaultEntryData.of(TestMap.of(
                 DAY.getName(), dag.toString(),
                 SLOT.getName(), slot.toString()
-        );
+        ));
     }
 
     static final InmemorySimpleGroup INMEMORY_TEST_GROUP = new InmemorySimpleGroup(NAME, DEFINITION, DAY.getName(), SLOT.getName());

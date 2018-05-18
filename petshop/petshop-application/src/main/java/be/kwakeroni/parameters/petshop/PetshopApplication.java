@@ -42,10 +42,11 @@ public class PetshopApplication {
     }
 
     private static PetshopRestService createPetshopRestService() {
+        BusinessParameters parameters = createBusinessParameters();
         return new PetshopRestService(
-                new AnimalCatalog(),
-                new PriceCalculator(),
-                new ContactService());
+                new AnimalCatalog(parameters),
+                new PriceCalculator(parameters),
+                new ContactService(parameters));
     }
 
     public static void main(String[] args) throws Exception {

@@ -8,7 +8,7 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.Query;
-import be.kwakeroni.scratch.env.inmemory.InMemoryTestData;
+import be.kwakeroni.scratch.env.inmemory.TransientInMemoryTestData;
 import org.junit.Assume;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -45,7 +45,7 @@ public class Environment implements TestRule, AutoCloseable {
     protected final WritableBusinessParameters parameters;
 
     public Environment() {
-        this(InMemoryTestData::new);
+        this(TransientInMemoryTestData::new);
     }
 
     public Environment(Supplier<TestData> testDataSupplier) {

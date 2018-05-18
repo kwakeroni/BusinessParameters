@@ -16,6 +16,7 @@ import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.scratch.tv.definition.MappedTV;
+import be.kwakeroni.test.factory.TestMap;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
@@ -32,10 +33,10 @@ public class MappedTVGroup extends MappedTV {
 
     // For test purposes
     public static EntryData entryData(Dag day, String program) {
-        return DefaultEntryData.of(
+        return DefaultEntryData.of(TestMap.of(
                 DAY.getName(), day.toString(),
                 PROGRAM.getName(), program
-        );
+        ));
     }
 
     // For test purposes

@@ -2,7 +2,7 @@ package be.kwakeroni.scratch;
 
 import be.kwakeroni.parameters.adapter.jmx.JMXBackendAdapter;
 import be.kwakeroni.parameters.adapter.jmx.factory.JMXBackendAdapterFactory;
-import be.kwakeroni.scratch.env.inmemory.InMemoryTestData;
+import be.kwakeroni.scratch.env.inmemory.TransientInMemoryTestData;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -24,7 +24,7 @@ public class JMXTest {
 
     @Before
     public void setUp() {
-        InMemoryTestData testData = new InMemoryTestData();
+        TransientInMemoryTestData testData = new TransientInMemoryTestData();
         JMXBackendAdapterFactory factory = new JMXBackendAdapterFactory();
         factory.setBackendType(testData::acceptBackend);
         jmx = factory.newInstance();

@@ -14,6 +14,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>parameters-core-support</module>
+        <module>parameters-test-support</module>
     </modules>
 
     <dependencyManagement>
@@ -22,6 +23,12 @@
                 <artifactId>parameters-core-support</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>parameters-test-support</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

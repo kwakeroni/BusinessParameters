@@ -20,6 +20,7 @@ import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.client.api.query.Query;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import be.kwakeroni.scratch.tv.definition.AbstractMappedRangedTV;
+import be.kwakeroni.test.factory.TestMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,11 +38,11 @@ public interface AbstractMappedRangedTVGroup extends AbstractMappedRangedTV {
 
     // For test purposes
     public static EntryData entryData(Dag day, Slot from, Slot to, String program) {
-        return DefaultEntryData.of(
+        return DefaultEntryData.of(TestMap.of(
                 DAY.getName(), day.toString(),
                 SLOT.getName(), Ranges.toRangeString(from, to, Slot::toString),
                 PROGRAM.getName(), program
-        );
+        ));
     }
 
     public static Map<String, ?> entryData(Dag day, Slot from, Slot to, String program, boolean addRangeLimits) {

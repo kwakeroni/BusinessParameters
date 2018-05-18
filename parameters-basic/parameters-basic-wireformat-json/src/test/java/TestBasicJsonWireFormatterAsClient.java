@@ -1,4 +1,8 @@
-import be.kwakeroni.parameters.basic.client.query.*;
+import be.kwakeroni.parameters.basic.client.query.BasicClientWireFormatter;
+import be.kwakeroni.parameters.basic.client.query.EntryQuery;
+import be.kwakeroni.parameters.basic.client.query.MappedQuery;
+import be.kwakeroni.parameters.basic.client.query.RangedQuery;
+import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.wireformat.json.BasicJsonWireFormat;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.model.Parameter;
@@ -16,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -106,9 +110,9 @@ public class TestBasicJsonWireFormatterAsClient {
     // JSON Object is transformed to Entry
     public void testWireToClientEntry() {
         when(parameter.getName()).thenReturn("1");
-        when(parameter.fromString(anyString())).then(returnsFirstArg());
+        when(parameter.fromString(anyString())).then(answer((String string) -> (TestValue) (() -> string)));
         when(parameter2.getName()).thenReturn("2");
-        when(parameter2.fromString(anyString())).then(returnsFirstArg());
+        when(parameter2.fromString(anyString())).then(answer((String string) -> (TestValue) (() -> string)));
 
         JSONObject jsonEntry = new JSONObject()
                 .put("1", "one")
@@ -116,8 +120,8 @@ public class TestBasicJsonWireFormatterAsClient {
 
         Entry clientEntry = formatter.wireToClientEntry(jsonEntry, entryQuery, context);
 
-        assertThat(clientEntry.getValue(parameter)).isEqualTo("one");
-        assertThat(clientEntry.getValue(parameter2)).isEqualTo("zwei");
+        assertThat(clientEntry.getValue(parameter).get()).isEqualTo("one");
+        assertThat(clientEntry.getValue(parameter2).get()).isEqualTo("zwei");
     }
 
     @Test
@@ -186,6 +190,6 @@ public class TestBasicJsonWireFormatterAsClient {
 
 
     private static interface TestValue {
-
+        String get();
     }
 }

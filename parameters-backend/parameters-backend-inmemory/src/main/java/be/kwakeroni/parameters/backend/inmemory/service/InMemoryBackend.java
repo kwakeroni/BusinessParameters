@@ -11,12 +11,10 @@ import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendGroupFactoryContext;
 import be.kwakeroni.parameters.backend.inmemory.support.DefaultEntryData;
-import be.kwakeroni.parameters.backend.inmemory.support.DefaultGroupData;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,30 +35,26 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
     private final Map<String, GroupData> data;
     private final InMemoryBackendGroupFactoryContext factoryContext;
     private final Supplier<Stream<ParameterGroupDefinition<?>>> definitions;
+    private final GroupDataStore dataStore;
 
-
-    public InMemoryBackend(InMemoryBackendGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition<?>>> definitions) {
-        this(new HashMap<>(), factoryContext, definitions);
-    }
-
-    private InMemoryBackend(Map<String, GroupData> data, InMemoryBackendGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition<?>>> definitions) {
-        this.data = data;
+    public InMemoryBackend(InMemoryBackendGroupFactoryContext factoryContext, Supplier<Stream<ParameterGroupDefinition<?>>> definitions, GroupDataStore dataStore) {
+        this.data = new HashMap<>();
         this.factoryContext = factoryContext;
         this.definitions = definitions;
+        this.dataStore = dataStore;
     }
 
-    public void setGroupData(String groupName, Collection<EntryData> entries) {
-        this.data.put(groupName, this.createGroupData(groupName, entries));
+    private GroupData getGroupData(String name) {
+        GroupData groupData = data.computeIfAbsent(name, this::retrieveGroupData);
+
+        return Optional.ofNullable(groupData)
+                .orElseThrow(() -> new IllegalArgumentException("No group defined with name " + name));
     }
 
-    private GroupData createGroupData(String groupName, Collection<EntryData> entries) {
+    private GroupData retrieveGroupData(String groupName) {
         InMemoryGroup group = defineGroup(groupName);
-        if (entries == null) {
-            entries = new ArrayList<>(group.initialData());
-        }
-        return new DefaultGroupData(defineGroup(groupName), entries);
+        return this.dataStore.getGroupData(group);
     }
-
 
     private InMemoryGroup defineGroup(String name) {
         return this.definitions.get()
@@ -72,13 +66,6 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
 
     private InMemoryGroup defineGroup(ParameterGroupDefinition<?> definition) {
         return definition.apply(this.factoryContext);
-    }
-
-
-    private void addGroupData(String groupName, GroupData data) {
-        this.data.merge(groupName, data, (key, d) -> {
-            throw new IllegalStateException("Duplicate data for group " + key);
-        });
     }
 
     @Override
@@ -143,14 +130,6 @@ public class InMemoryBackend implements BusinessParametersBackend<InMemoryQuery<
         return getGroupData(groupName)
                 .getEntries()
                 .collect(collector);
-    }
-
-    private GroupData getGroupData(String name) {
-        if (!data.containsKey(name)) {
-            setGroupData(name, null);
-        }
-        return Optional.ofNullable(data.get(name))
-                .orElseThrow(() -> new IllegalArgumentException("No group defined with name " + name));
     }
 
     @Override

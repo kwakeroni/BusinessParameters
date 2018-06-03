@@ -23,6 +23,11 @@ import java.lang.reflect.Parameter;
 
 import static org.mockito.Mockito.mock;
 
+/*
+ *  This particular class was modified from the original to take into account
+ *  the parameter index for injected mocks in the standard case where parameter names are absent.
+ */
+
 /**
  * {@code MockitoExtension} showcases the {@link TestInstancePostProcessor}
  * and {@link ParameterResolver} extension APIs of JUnit 5 by providing

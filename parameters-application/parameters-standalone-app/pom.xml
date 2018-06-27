@@ -166,4 +166,43 @@
             <artifactId>parameters-test-support</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-webapp</id>
+                        <goals><goal>copy</goal></goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>be.kwakeroni.parameters.management</groupId>
+                                    <artifactId>parameters-management-web</artifactId>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-test-webapp</id>
+                        <goals><goal>unpack</goal></goals>
+                        <phase>process-test-resources</phase>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>be.kwakeroni.parameters.management</groupId>
+                                    <artifactId>parameters-management-web</artifactId>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.testOutputDirectory}/webapp</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

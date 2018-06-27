@@ -1,9 +1,14 @@
 package be.kwakeroni.parameters.app;
 
+import java.util.Optional;
+import java.util.OptionalInt;
+
 interface Configuration {
 
-    public int getPort();
+    public Optional<String> getWorkDirectory();
 
-    public String getContextPath();
+    public OptionalInt getPort();
+
+    public Optional<String> getContextPath();
 
 }

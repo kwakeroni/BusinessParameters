@@ -1,8 +1,9 @@
 package be.kwakeroni.parameters.app;
 
-import org.junit.Ignore;
+import be.kwakeroni.parameters.backend.api.Configuration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,13 +17,13 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 import static be.kwakeroni.test.assertion.RestAssert.assertThat;
 import static be.kwakeroni.test.assertion.RestAssert.get;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("WeakerAccess")
 @ExtendWith(MockitoExtension.class)
 class ServerTest {
 
@@ -42,16 +43,18 @@ class ServerTest {
     private Configuration configuration;
 
     @BeforeEach
-    private void setupConfiguration() throws IOException {
+    void setupConfiguration() throws IOException {
         temporaryFolder.create();
         this.workFolder = new File(temporaryFolder.getRoot(), "work");
-        when(configuration.getWorkDirectory()).thenReturn(Optional.of(workFolder.getAbsolutePath()));
-        when(configuration.getPort()).thenReturn(OptionalInt.of(PORT));
-        when(configuration.getContextPath()).thenReturn(Optional.of(CONTEXT_PATH));
+        when(configuration.get(Config.WORK_DIRECTORY)).thenReturn(Optional.of(workFolder.getAbsoluteFile().toPath()));
+        when(configuration.get(Config.PORT)).thenReturn(Optional.of(PORT));
+        when(configuration.get(Config.CONTEXT_PATH)).thenReturn(Optional.of(CONTEXT_PATH));
+        ServerConfigurationProvider.setConfiguration(configuration);
     }
 
     @AfterEach
-    private void cleanup() throws IOException {
+    void cleanup() {
+        ServerConfigurationProvider.clear();
         temporaryFolder.delete();
     }
 
@@ -71,6 +74,12 @@ class ServerTest {
         }
     }
 
+    @Test
+    @DisplayName("Loads configuration from the ServerConfigurationProvider")
+    void testLoadConfiguration() {
+        assertThat(Server.loadConfiguration()).isSameAs(configuration);
+    }
+
     @Nested
     @DisplayName("Unpacks the web application")
     class UnpackWebAppTest {
@@ -79,7 +88,7 @@ class ServerTest {
         @DisplayName("To the configured workdirectory")
         void testCreateConfiguredWorkDir() throws Exception {
             assertThat(workFolder).doesNotExist();
-            try (Server server = new Server(configuration)) {
+            try (Server server = new Server()) {
                 server.start();
 
                 assertThat(workFolder).exists();
@@ -93,14 +102,14 @@ class ServerTest {
 
         @Test
         @DisplayName("Below the runtime folder when there is no such configuration")
-        @Ignore("Taints the runtime folder")
+        @Disabled("Taints the runtime folder")
         void testCreateDefaultWorkDir() throws Exception {
-            when(configuration.getWorkDirectory()).thenReturn(Optional.of(""));
+            when(configuration.get(Config.WORK_DIRECTORY)).thenReturn(Optional.empty());
 
             File defaultFolder = new File("./work");
 
             assertThat(defaultFolder).doesNotExist();
-            try (Server server = new Server(configuration)) {
+            try (Server server = new Server()) {
                 server.start();
 
                 assertThat(defaultFolder).exists();
@@ -121,7 +130,7 @@ class ServerTest {
         @Test
         @DisplayName("At the configured URL")
         void testStart() throws Exception {
-            try (Server server = new Server(configuration)) {
+            try (Server server = new Server()) {
                 server.start();
 
                 assertThat(get(CONTEXT_URL))
@@ -133,7 +142,7 @@ class ServerTest {
         @Test
         @DisplayName("Exposing the Parameters REST Service")
         void testRestService() throws Exception {
-            try (Server server = new Server(configuration)) {
+            try (Server server = new Server()) {
                 server.start();
 
                 assertThat(get(REST_URL))
@@ -146,7 +155,7 @@ class ServerTest {
         @Test
         @DisplayName("Exposing the Management REST Service")
         void testManagementRestService() throws Exception {
-            try (Server server = new Server(configuration)) {
+            try (Server server = new Server()) {
                 server.start();
 
                 assertThat(get(MGMT_REST_URL))
@@ -159,7 +168,7 @@ class ServerTest {
         @Test
         @DisplayName("Exposing the Management Web Application")
         void testManagementWebApp() throws Exception {
-            try (Server server = new Server(configuration)) {
+            try (Server server = new Server()) {
                 server.start();
 
                 assertThat(get(MGMT_WEB_INDEX))
@@ -172,7 +181,7 @@ class ServerTest {
         @Test
         @DisplayName("Redirecting to the Management Web application index.html")
         void testManagementWebAppRedirect() throws Exception {
-            try (Server server = new Server(configuration)) {
+            try (Server server = new Server()) {
                 server.start();
 
                 assertThat(get(MGMT_WEB_URL))
@@ -189,7 +198,7 @@ class ServerTest {
         @Test
         @DisplayName("Using the stop command")
         void testStop() throws Exception {
-            try (Server server = new Server(configuration)) {
+            try (Server server = new Server()) {
                 server.start();
                 assertThat(get(CONTEXT_URL)).isSuccess();
 
@@ -201,7 +210,7 @@ class ServerTest {
         @Test
         @DisplayName("When closing the Server resource")
         void testClose() throws Exception {
-            try (Server server = new Server(configuration)) {
+            try (Server server = new Server()) {
                 server.start();
                 assertThat(get(CONTEXT_URL)).isSuccess();
             }

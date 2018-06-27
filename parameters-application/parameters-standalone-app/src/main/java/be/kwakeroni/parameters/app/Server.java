@@ -2,6 +2,8 @@ package be.kwakeroni.parameters.app;
 
 import be.kwakeroni.parameters.adapter.rest.RestBackendAdapter;
 import be.kwakeroni.parameters.adapter.rest.factory.RestBackendAdapterFactory;
+import be.kwakeroni.parameters.backend.api.Configuration;
+import be.kwakeroni.parameters.backend.api.ConfigurationProvider;
 import be.kwakeroni.parameters.management.rest.RestParameterManagement;
 import be.kwakeroni.parameters.management.rest.factory.RestParameterManagementFactory;
 import com.sun.jersey.api.container.ContainerFactory;
@@ -21,39 +23,54 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static be.kwakeroni.parameters.app.Config.*;
+
 class Server implements AutoCloseable {
 
+    @SuppressWarnings("WeakerAccess")
     public static final int DEFAULT_PORT = 8080;
+    @SuppressWarnings("WeakerAccess")
     public static final String DEFAULT_CONTEXT_PATH = "parameters";
 
     private final Configuration configuration;
     private java.nio.file.Path webappDir;
     private HttpServer httpServer;
 
+    Server() {
+        this(loadConfiguration());
+    }
 
     Server(Configuration configuration) {
         this.configuration = configuration;
     }
 
+    static Configuration loadConfiguration() {
+        Iterator<ConfigurationProvider> providers = ServiceLoader.load(ConfigurationProvider.class).iterator();
+        if (!providers.hasNext()) {
+            throw new IllegalStateException("No configuration provider found");
+        }
+        return providers.next().getConfiguration();
+    }
+
     synchronized void start() throws IOException {
         if (this.httpServer != null) return;
 
-        String workDir = configuration.getWorkDirectory()
-                .filter(s -> !s.isEmpty())
-                .orElse("./work");
-
-        this.webappDir = Paths.get(workDir).resolve("webapp");
+        this.webappDir = configuration.get(WORK_DIRECTORY)
+                .orElseGet(() -> Paths.get("./work"))
+                .resolve("webapp");
 
         prepareWebApp();
 
         String uri = String.format("http://127.0.0.1:%s/%s",
-                this.configuration.getPort().orElse(DEFAULT_PORT),
-                this.configuration.getContextPath().orElse(DEFAULT_CONTEXT_PATH));
+                this.configuration.get(PORT).orElse(DEFAULT_PORT),
+                this.configuration.get(CONTEXT_PATH).orElse(DEFAULT_CONTEXT_PATH));
 
         this.httpServer = HttpServerFactory.create(uri,
                 ContainerFactory.createContainer(HttpHandler.class, getResourceConfig(), null));

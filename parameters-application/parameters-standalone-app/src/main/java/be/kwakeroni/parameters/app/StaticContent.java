@@ -64,7 +64,7 @@ public abstract class StaticContent {
         }
     }
 
-    protected Response.ResponseBuilder getContents0(java.nio.file.Path resource) throws Exception {
+    Response.ResponseBuilder getContents0(java.nio.file.Path resource) throws Exception {
         return Response.ok()
                 .type(Files.probeContentType(resource))
                 .entity(Files.newInputStream(resource));

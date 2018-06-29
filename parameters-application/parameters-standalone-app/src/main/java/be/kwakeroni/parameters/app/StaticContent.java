@@ -1,5 +1,8 @@
 package be.kwakeroni.parameters.app;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -11,6 +14,8 @@ import java.nio.file.Files;
 import java.util.Optional;
 
 public abstract class StaticContent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StaticContent.class);
 
     private final java.nio.file.Path contentDirectory;
     private final String indexPage;
@@ -57,9 +62,8 @@ public abstract class StaticContent {
     private Response.ResponseBuilder getContents(java.nio.file.Path resource) {
         try {
             return getContents0(resource);
-        } catch (Exception e) {
-            // TODO Log
-            e.printStackTrace();
+        } catch (Exception exc) {
+            LOG.error("Unable to fetch content of file {}", exc);
             return Response.serverError();
         }
     }

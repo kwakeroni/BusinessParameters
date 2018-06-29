@@ -21,6 +21,13 @@
                 <version>${project.version}</version>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.backend</groupId>
+                <artifactId>parameters-backend-api</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -48,6 +55,11 @@
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
             <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.backend</groupId>
+            <artifactId>parameters-backend-api</artifactId>
             <optional>true</optional>
         </dependency>
     </dependencies>

@@ -2,7 +2,9 @@ package be.kwakeroni.parameters.backend.inmemory.factory;
 
 import be.kwakeroni.evelyn.storage.impl.FileStorageProvider;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
+import be.kwakeroni.parameters.backend.api.ConfigurationProvider;
 import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFactory;
+import be.kwakeroni.parameters.backend.inmemory.Config;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroupFactory;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.fallback.TransientGroupDataStore;
@@ -14,18 +16,13 @@ import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCa
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
-import java.util.Properties;
 import java.util.ServiceLoader;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static be.kwakeroni.parameters.core.support.util.Reducers.atMostOne;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -45,18 +42,23 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
     @Override
     public BusinessParametersBackend<InMemoryQuery<?>> getInstance() {
         synchronized (InMemoryBackendServiceFactory.class) {
-            if (INSTANCE == null){
+            if (INSTANCE == null) {
                 INSTANCE = getInstance(DATA_STORE_SUPPLIER.get());
             }
         }
         return INSTANCE;
     }
 
+    @SuppressWarnings("WeakerAccess")
     BusinessParametersBackend<InMemoryQuery<?>> getInstance(GroupDataStore dataStore) {
         return getInstance(loadFactories(), loadDefinitions(), dataStore);
     }
 
-    BusinessParametersBackend<InMemoryQuery<?>> getInstance(InMemoryBackendGroupFactoryContext factories, Supplier<Stream<ParameterGroupDefinition<?>>> definitions, GroupDataStore dataStore) {
+    @SuppressWarnings("WeakerAccess")
+    BusinessParametersBackend<InMemoryQuery<?>> getInstance(
+            InMemoryBackendGroupFactoryContext factories,
+            Supplier<Stream<ParameterGroupDefinition<?>>> definitions,
+            GroupDataStore dataStore) {
         return new InMemoryBackend(factories, definitions, dataStore);
     }
 
@@ -78,27 +80,12 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
     }
 
     private static GroupDataStore getDefaultDataStoreSupplier() {
-        return getConfigurationProperties()
-                .map(props -> props.getProperty("inmemory.storage.folder"))
-                .map(Paths::get)
+        return loadServices(ConfigurationProvider.class)
+                .reduce(atMostOne())
+                .map(ConfigurationProvider::getConfiguration)
+                .flatMap(config -> config.get(Config.STORAGE_FOLDER))
                 .map(InMemoryBackendServiceFactory::persistentStore)
                 .orElseGet(InMemoryBackendServiceFactory::transientStore);
-    }
-
-    private static Optional<Properties> getConfigurationProperties() {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("business-parameters.properties");
-        return Optional.ofNullable(url)
-                .map(InMemoryBackendServiceFactory::load);
-    }
-
-    private static Properties load(URL url) {
-        try {
-            Properties props = new Properties();
-            props.load(url.openStream());
-            return props;
-        } catch (IOException exc) {
-            throw new UncheckedIOException(exc);
-        }
     }
 
     private static GroupDataStore persistentStore(Path location) {

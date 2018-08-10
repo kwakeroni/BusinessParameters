@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -57,6 +58,10 @@ class Server implements AutoCloseable {
             throw new IllegalStateException("No configuration provider found");
         }
         return providers.next().getConfiguration();
+    }
+
+    Configuration getConfiguration() {
+        return configuration;
     }
 
     synchronized void start() throws IOException {
@@ -101,9 +106,9 @@ class Server implements AutoCloseable {
             for (ZipEntry entry = zipStream.getNextEntry(); entry != null; entry = zipStream.getNextEntry()) {
                 java.nio.file.Path dest = location.resolve(entry.getName());
                 if (entry.isDirectory()) {
-                    Files.createDirectory(dest);
+                    Files.createDirectories(dest);
                 } else {
-                    Files.copy(zipStream, dest);
+                    Files.copy(zipStream, dest, StandardCopyOption.REPLACE_EXISTING);
                 }
             }
             zipStream.closeEntry();

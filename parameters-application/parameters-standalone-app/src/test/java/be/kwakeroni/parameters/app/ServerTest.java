@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Optional;
 
 import static be.kwakeroni.test.assertion.RestAssert.assertThat;
@@ -98,6 +99,42 @@ class ServerTest {
                         .canRead()
                         .hasSameContentAs(new File(ServerTest.class.getResource("/webapp/index.html").toURI()));
             }
+        }
+
+        @Test
+        @DisplayName("Overwriting the workdirectory if it already exists")
+        void testOverwriteExistingWorkDir() throws Exception {
+            assertThat(workFolder).doesNotExist();
+            File index = new File(new File(workFolder, "webapp"), "index.html");
+            long lastModified = -1;
+
+            try (Server server = new Server()) {
+                server.start();
+
+                assertThat(workFolder).exists();
+                assertThat(index)
+                        .exists()
+                        .isFile()
+                        .canRead()
+                        .hasSameContentAs(new File(ServerTest.class.getResource("/webapp/index.html").toURI()));
+                lastModified = index.lastModified();
+            }
+            Thread.sleep(1000);
+            assertThat(workFolder).exists();
+            try (Server server = new Server()) {
+                server.start();
+
+                assertThat(workFolder).exists();
+                assertThat(index)
+                        .exists()
+                        .isFile()
+                        .canRead()
+                        .hasSameContentAs(new File(ServerTest.class.getResource("/webapp/index.html").toURI()));
+
+                assertThat(lastModified).isGreaterThan(0);
+                assertThat(new Date(index.lastModified())).isAfter(new Date(lastModified));
+            }
+
         }
 
         @Test

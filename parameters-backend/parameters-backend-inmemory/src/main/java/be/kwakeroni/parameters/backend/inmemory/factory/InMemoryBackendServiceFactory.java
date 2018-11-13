@@ -69,6 +69,10 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
             InMemoryBackendGroupFactoryContext factories,
             Supplier<Stream<ParameterGroupDefinition<?>>> definitions,
             GroupDataStore dataStore) {
+        // Log definitions
+        definitions.get()
+                .forEach(definition -> LOG.info("Detected definition {}", definition.getName()));
+
         return new InMemoryBackend(factories, definitions, dataStore);
     }
 
@@ -127,8 +131,7 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
                 .orElseGet(() -> ServiceLoader.load(ParameterGroupDefinitionCatalog.class));
 
         return () -> stream(serviceLoader)
-                .flatMap(ParameterGroupDefinitionCatalog::stream)
-                .peek(definition -> LOG.info("Detected definition {}", definition.getName()));
+                .flatMap(ParameterGroupDefinitionCatalog::stream);
     }
 
     private static ClassLoader getClassLoaderFromLocation(Path path) {

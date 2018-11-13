@@ -1,6 +1,7 @@
 package be.kwakeroni.parameters.backend.inmemory.factory;
 
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
+import be.kwakeroni.parameters.backend.api.Configuration;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroupFactory;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.fallback.TransientGroupDataStore;
@@ -12,6 +13,7 @@ import be.kwakeroni.parameters.definition.api.catalog.ParameterGroupDefinitionCa
 import be.kwakeroni.test.logging.LogEvent;
 import be.kwakeroni.test.logging.LoggerSpy;
 import be.kwakeroni.test.logging.SLF4JTestLog;
+import be.kwakeroni.test.util.TestConfigurationProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,21 +27,21 @@ import org.mockito.Mock;
 import org.slf4j.event.Level;
 
 import java.io.File;
-import java.io.UncheckedIOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import static be.kwakeroni.test.logging.LogMatcher.Factory.hasLevel;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
 
@@ -57,6 +59,8 @@ class InMemoryBackendServiceFactoryTest {
     private BackendConstructor backendConstructor;
     @Mock
     private UnaryOperator<Properties> propertiesOperator;
+    @Mock
+    private Configuration configuration;
 
     @BeforeEach
     void setupContext() throws Exception {
@@ -69,6 +73,8 @@ class InMemoryBackendServiceFactoryTest {
         Thread.currentThread().setContextClassLoader(classLoader);
 
         InMemoryBackendServiceFactory.INSTANCE = null;
+        TestConfigurationProvider.setConfiguration(this.configuration);
+        when(this.configuration.get(any())).thenCallRealMethod();
     }
 
     @AfterEach
@@ -78,6 +84,7 @@ class InMemoryBackendServiceFactoryTest {
         folder.delete();
 
         InMemoryBackendServiceFactory.INSTANCE = null;
+        TestConfigurationProvider.clear();
     }
 
     @BeforeEach
@@ -96,7 +103,8 @@ class InMemoryBackendServiceFactoryTest {
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
+        SLF4JTestLog.setLevel(Level.TRACE);
         this.logger = SLF4JTestLog.loggerSpy();
         this.factory = new InMemoryBackendServiceFactory() {
             @Override
@@ -141,6 +149,7 @@ class InMemoryBackendServiceFactoryTest {
 
         factory.getInstance();
 
+        @SuppressWarnings("unchecked")
         ArgumentCaptor<Supplier<Stream<ParameterGroupDefinition<?>>>> supplier = ArgumentCaptor.forClass(Supplier.class);
         verify(backendConstructor).create(any(), supplier.capture(), any());
 
@@ -187,8 +196,7 @@ class InMemoryBackendServiceFactoryTest {
             factory.getInstance();
 
             ArgumentCaptor<LogEvent> log = ArgumentCaptor.forClass(LogEvent.class);
-            verify(logger).log(log.capture());
-            assertThat(log.getValue().getLevel()).isEqualTo(Level.WARN);
+            verify(logger).log(argThat(hasLevel(Level.WARN).hasMessageContaining("transient")));
         }
 
         @Test
@@ -218,21 +226,11 @@ class InMemoryBackendServiceFactoryTest {
             factory.getInstance();
 
             ArgumentCaptor<LogEvent> log = ArgumentCaptor.forClass(LogEvent.class);
-            verify(logger).log(log.capture());
-            assertThat(log.getValue().getLevel()).isEqualTo(Level.INFO);
-            assertThat(log.getValue().getFormattedMessage()).contains(storageFolder.getAbsolutePath());
+            verify(logger).log(argThat(
+                    hasLevel(Level.INFO)
+                            .hasMessageContaining(storageFolder.getAbsolutePath())));
         }
 
-    }
-
-    @Test
-    @DisplayName("Throws an exception if the configuration cannot be read")
-    void testThrowsIfConfigurationError() throws Exception {
-        File file = folder.newFile("business-parameters.properties");
-        assert file.setReadable(false, false) : "Could not make test properties unreadable";
-
-        assertThatThrownBy(() -> factory.getInstance())
-                .isInstanceOf(UncheckedIOException.class);
     }
 
     @Test
@@ -278,9 +276,8 @@ class InMemoryBackendServiceFactoryTest {
         Files.write(spec.toPath(), Collections.singleton(implementor.getName()));
     }
 
-    private void exposeProperties(String property, String value) throws Exception {
-        File props = new File(folder.getRoot(), "business-parameters.properties");
-        Files.write(props.toPath(), Collections.singleton(String.format("%s=%s", property, value)));
+    private void exposeProperties(String property, String value) {
+        when(this.configuration.getStringParameter(property)).thenReturn(Optional.of(value));
     }
 
 }

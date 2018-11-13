@@ -38,7 +38,6 @@ public class RestParameterManagement {
         this.backend = backend;
     }
 
-    @Path("/")
     @GET
     @Produces({TEXT_PLAIN})
     public String getInfo() {

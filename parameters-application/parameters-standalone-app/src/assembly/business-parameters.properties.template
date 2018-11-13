@@ -1,0 +1,12 @@
+
+
+##### Persistent storage
+# Path to the folder where Business Parameters will store its data.
+# This property is optional. if it is not set, data will only be stored in memory.
+#
+inmemory.storage.folder=./data
+
+##### Business Parameters Definitions
+# Path to the folder where .jar-files with the definitions of business parameters can be deployed
+#
+inmemory.definitions.folder=./definitions

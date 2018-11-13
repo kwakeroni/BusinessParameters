@@ -37,7 +37,7 @@ public class RestBackendAdapterFactory {
     private BackendWireFormatterContext loadBackendFormatters() {
         DefaultBackendWireFormatterContext context = new DefaultBackendWireFormatterContext();
         loadServices(BackendWireFormatterFactory.class)
-                .peek(factory -> System.out.println(factory.getWireFormat() + ": " + factory))
+//                .peek(factory -> System.out.println(factory.getWireFormat() + ": " + factory))
                 .filter(factory -> "json".equals(factory.getWireFormat()))
                 .forEach(context::register);
         return context;

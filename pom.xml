@@ -13,6 +13,7 @@
 
     <modules>
         <module>parameters-adapter</module>
+        <module>parameters-application</module>
         <module>parameters-backend</module>
         <module>parameters-basic</module>
         <module>parameters-client</module>

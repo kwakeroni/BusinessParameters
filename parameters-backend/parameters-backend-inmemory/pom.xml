@@ -49,6 +49,10 @@
         </dependency>
         <dependency>
             <groupId>be.kwakeroni.parameters.core</groupId>
+            <artifactId>parameters-core-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.core</groupId>
             <artifactId>parameters-test-support</artifactId>
         </dependency>
         <dependency>

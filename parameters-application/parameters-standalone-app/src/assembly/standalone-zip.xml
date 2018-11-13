@@ -1,0 +1,37 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+    <id>standalone-zip</id>
+    <dependencySets>
+        <dependencySet>
+            <includes>
+                <include>${project.groupId}:${project.artifactId}:jar:jar-with-dependencies:${project.version}
+                </include>
+            </includes>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useProjectAttachments>true</useProjectAttachments>
+        </dependencySet>
+    </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/src/assembly/</directory>
+            <excludes>
+                <exclude>**/*</exclude>
+            </excludes>
+            <outputDirectory>data</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/assembly/</directory>
+            <excludes>
+                <exclude>**/*</exclude>
+            </excludes>
+            <outputDirectory>definitions</outputDirectory>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>${project.basedir}/src/assembly/business-parameters.properties.template</source>
+            <destName>business-parameters.properties</destName>
+            <outputDirectory>config</outputDirectory>
+        </file>
+    </files>
+</assembly>

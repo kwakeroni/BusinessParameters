@@ -85,7 +85,7 @@ public interface ThrowingPredicate<T, E extends Exception> {
      *
      * @param throwingPredicate The predicate to be negated
      * @param <T>               the type of the input to the predicate
-     * @param <E>               the type of the exception that can be thrown by the function
+     * @param <E>               the type of the exception that can be thrown by the predicate
      * @return a predicate that represents the logical negation of {@code throwingPredicate}
      */
     public static <T, E extends Exception> ThrowingPredicate<T, E> not(ThrowingPredicate<T, E> throwingPredicate) {
@@ -111,14 +111,17 @@ public interface ThrowingPredicate<T, E extends Exception> {
      * @param throwingPredicate the predicate to delegate to
      * @param exceptionWrapper  The function to wrap a thrown exception into a runtime exception
      * @param <T>               the type of the input to the predicate
+     * @param <E>               the type of the exception that can be thrown by the predicate
      * @return a predicate that tests {@code throwingPredicate} and wraps any exception into a {@link RuntimeException} produced by {@code exceptionWrapper}
      */
-    public static <T> Predicate<T> unchecked(ThrowingPredicate<T, ?> throwingPredicate, Function<? super Exception, ? extends RuntimeException> exceptionWrapper) {
+    public static <T, E extends Exception> Predicate<T> unchecked(ThrowingPredicate<T, ?> throwingPredicate, Function<? super E, ? extends RuntimeException> exceptionWrapper) {
         return t -> {
             try {
                 return throwingPredicate.test(t);
+            } catch (RuntimeException exc) {
+                throw exc;
             } catch (Exception exc) {
-                throw exceptionWrapper.apply(exc);
+                throw exceptionWrapper.apply((E) exc);
             }
         };
     }

@@ -112,14 +112,17 @@ public interface ThrowingFunction<T, R, E extends Exception> {
      * @param exceptionWrapper The function to wrap a thrown exception into a runtime exception
      * @param <T>              the type of the input to the function
      * @param <R>              the type of the result of the function
+     * @param <E>               the type of the exception to be thrown by the function
      * @return a function that delegates to {@code throwingFunction} and wraps any exception into a RuntimeException produced by {@code exceptionWrapper}.
      */
-    public static <T, R> Function<T, R> unchecked(ThrowingFunction<T, R, ?> throwingFunction, Function<? super Exception, ? extends RuntimeException> exceptionWrapper) {
+    public static <T, R, E extends Exception> Function<T, R> unchecked(ThrowingFunction<T, R, E> throwingFunction, Function<? super E, ? extends RuntimeException> exceptionWrapper) {
         return t -> {
             try {
                 return throwingFunction.apply(t);
+            } catch (RuntimeException exc) {
+                throw exc;
             } catch (Exception exc) {
-                throw exceptionWrapper.apply(exc);
+                throw exceptionWrapper.apply((E) exc);
             }
         };
     }

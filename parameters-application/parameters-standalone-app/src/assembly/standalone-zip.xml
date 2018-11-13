@@ -11,4 +11,27 @@
             <useProjectAttachments>true</useProjectAttachments>
         </dependencySet>
     </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/src/assembly/</directory>
+            <excludes>
+                <exclude>**/*</exclude>
+            </excludes>
+            <outputDirectory>data</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/assembly/</directory>
+            <excludes>
+                <exclude>**/*</exclude>
+            </excludes>
+            <outputDirectory>definitions</outputDirectory>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>${project.basedir}/src/assembly/business-parameters.properties.template</source>
+            <destName>business-parameters.properties</destName>
+            <outputDirectory>config</outputDirectory>
+        </file>
+    </files>
 </assembly>

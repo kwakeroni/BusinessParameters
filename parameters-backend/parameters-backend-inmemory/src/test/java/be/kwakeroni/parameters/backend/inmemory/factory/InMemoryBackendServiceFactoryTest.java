@@ -40,6 +40,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import static be.kwakeroni.test.logging.LogMatcher.Factory.hasLevel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
@@ -103,6 +104,7 @@ class InMemoryBackendServiceFactoryTest {
 
     @BeforeEach
     void setUp() {
+        SLF4JTestLog.setLevel(Level.TRACE);
         this.logger = SLF4JTestLog.loggerSpy();
         this.factory = new InMemoryBackendServiceFactory() {
             @Override
@@ -194,8 +196,7 @@ class InMemoryBackendServiceFactoryTest {
             factory.getInstance();
 
             ArgumentCaptor<LogEvent> log = ArgumentCaptor.forClass(LogEvent.class);
-            verify(logger).log(log.capture());
-            assertThat(log.getValue().getLevel()).isEqualTo(Level.WARN);
+            verify(logger).log(argThat(hasLevel(Level.WARN).hasMessageContaining("transient")));
         }
 
         @Test
@@ -225,9 +226,9 @@ class InMemoryBackendServiceFactoryTest {
             factory.getInstance();
 
             ArgumentCaptor<LogEvent> log = ArgumentCaptor.forClass(LogEvent.class);
-            verify(logger).log(log.capture());
-            assertThat(log.getValue().getLevel()).isEqualTo(Level.INFO);
-            assertThat(log.getValue().getFormattedMessage()).contains(storageFolder.getAbsolutePath());
+            verify(logger).log(argThat(
+                    hasLevel(Level.INFO)
+                            .hasMessageContaining(storageFolder.getAbsolutePath())));
         }
 
     }

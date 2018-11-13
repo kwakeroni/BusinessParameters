@@ -12,6 +12,8 @@ import com.sun.jersey.api.core.ApplicationAdapter;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -40,6 +42,8 @@ class Server implements AutoCloseable {
     @SuppressWarnings("WeakerAccess")
     public static final String DEFAULT_CONTEXT_PATH = "parameters";
 
+    private static final Logger LOG = LoggerFactory.getLogger(Server.class);
+
     private final Configuration configuration;
     private java.nio.file.Path webappDir;
     private HttpServer httpServer;
@@ -67,21 +71,28 @@ class Server implements AutoCloseable {
     synchronized void start() throws IOException {
         if (this.httpServer != null) return;
 
+
+        String uri = String.format("http://127.0.0.1:%s/%s",
+                this.configuration.get(PORT).orElse(DEFAULT_PORT),
+                this.configuration.get(CONTEXT_PATH).orElse(DEFAULT_CONTEXT_PATH));
+
+        LOG.info("Starting server at {}", uri);
+
         this.webappDir = configuration.get(WORK_DIRECTORY)
                 .orElseGet(() -> Paths.get("./work"))
                 .resolve("webapp");
 
         prepareWebApp();
 
-        String uri = String.format("http://127.0.0.1:%s/%s",
-                this.configuration.get(PORT).orElse(DEFAULT_PORT),
-                this.configuration.get(CONTEXT_PATH).orElse(DEFAULT_CONTEXT_PATH));
+
 
         this.httpServer = HttpServerFactory.create(uri,
                 ContainerFactory.createContainer(HttpHandler.class, getResourceConfig(), null));
 
+
         this.httpServer.start();
 
+        LOG.info("Server ready");
     }
 
     synchronized void stop() {
@@ -97,6 +108,8 @@ class Server implements AutoCloseable {
     }
 
     private void prepareWebApp() throws IOException {
+        LOG.info("Buffering web application into {}", this.webappDir);
+
         Files.createDirectories(this.webappDir);
         unzip(() -> Server.class.getResourceAsStream("/parameters-management-web.jar"), this.webappDir);
     }

@@ -26,12 +26,22 @@ import static be.kwakeroni.parameters.core.support.util.function.ThrowingFunctio
 public class Application {
 
     public static void main(String[] args) throws Exception {
+        initLogging();
         try {
             createServer(args)
                     .ifPresent(Application::start);
         } catch (ParseException exc) {
             System.out.println(exc.getMessage());
             Opt.HELP.handle("");
+        }
+    }
+
+    private static void initLogging() {
+        System.out.println("log4j.configuration=" + System.getProperty("log4j.configuration"));
+        if (System.getProperty("log4j.configuration") == null) {
+            if (Thread.currentThread().getContextClassLoader().getResource("log4j.properties") == null){
+                System.setProperty("log4j.configuration", "log4j.fallback.properties");
+            }
         }
     }
 

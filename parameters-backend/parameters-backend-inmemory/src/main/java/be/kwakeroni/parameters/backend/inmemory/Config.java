@@ -8,6 +8,7 @@ import java.nio.file.Path;
 public final class Config {
 
     public static final ConfigurationProperty<Path> STORAGE_FOLDER = ConfigurationProperty.ofPath("inmemory.storage.folder");
+    public static final ConfigurationProperty<Path> DEFINITIONS_FOLDER = ConfigurationProperty.ofPath("inmemory.definitions.folder");
 
     private Config() {
     }

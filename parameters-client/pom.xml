@@ -18,6 +18,7 @@
 
     <modules>
         <module>parameters-client-api</module>
+        <module>parameters-client-rest</module>
     </modules>
 
     <dependencyManagement>

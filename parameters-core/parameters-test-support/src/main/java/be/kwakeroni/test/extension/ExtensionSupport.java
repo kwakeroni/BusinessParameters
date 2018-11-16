@@ -83,6 +83,7 @@ class ExtensionSupport {
 
     protected static void setField(Field field, Object instance, Object value) {
         try {
+            field.setAccessible(true);
             field.set(instance, value);
         } catch (IllegalAccessException e) {
             throw new IllegalStateException(e);

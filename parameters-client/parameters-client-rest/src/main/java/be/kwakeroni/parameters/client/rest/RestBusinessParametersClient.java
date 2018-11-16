@@ -85,6 +85,9 @@ public class RestBusinessParametersClient implements WritableBusinessParameters 
         if (external == null) {
             throw new IllegalArgumentException("Wireformat produced null for " + query);
         }
+        if (external instanceof JSONObject) {
+            external = ((JSONObject) external).toString();
+        }
         if (!(external instanceof String)) {
             throw new IllegalArgumentException("Wireformat produced " + external.getClass().getName() + " instead of String for " + query);
         }

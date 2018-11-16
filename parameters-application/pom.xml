@@ -14,5 +14,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>parameters-standalone-app</module>
+        <module>parameters-app-support</module>
     </modules>
 </project>

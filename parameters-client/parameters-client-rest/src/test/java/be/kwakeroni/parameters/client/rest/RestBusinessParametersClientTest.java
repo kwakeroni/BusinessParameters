@@ -5,6 +5,7 @@ import be.kwakeroni.parameters.client.api.model.EntryType;
 import be.kwakeroni.parameters.client.api.model.ParameterGroup;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import be.kwakeroni.parameters.client.api.query.Query;
+import be.kwakeroni.test.extension.TemporaryFolderExtension;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.AfterAll;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.extension.mockito.MockitoExtension;
 import org.mockito.Mock;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
+@ExtendWith(TemporaryFolderExtension.class)
 class RestBusinessParametersClientTest {
 
     static Runnable resetWireMock;
@@ -47,6 +50,8 @@ class RestBusinessParametersClientTest {
     ParameterGroup<TestEntry> group;
     @Mock
     Query<TestEntry, TestResult> query;
+    @TemporaryFolderExtension.TemporaryFolder
+    Path path;
 
     @BeforeAll
     static void setupClass() {
@@ -77,6 +82,8 @@ class RestBusinessParametersClientTest {
         @Test
         @DisplayName("to a REST endpoint")
         void testSendQuery() {
+            System.out.println(path);
+
             stubFor(post(urlMatching(".*")).willReturn(ok()));
 
             when(group.getName()).thenReturn("myGroup");

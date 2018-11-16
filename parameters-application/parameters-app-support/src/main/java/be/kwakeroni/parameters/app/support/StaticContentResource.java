@@ -1,4 +1,4 @@
-package be.kwakeroni.parameters.app;
+package be.kwakeroni.parameters.app.support;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,14 +13,18 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.util.Optional;
 
-public abstract class StaticContent {
+public abstract class StaticContentResource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StaticContent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StaticContentResource.class);
 
     private final java.nio.file.Path contentDirectory;
     private final String indexPage;
 
-    StaticContent(java.nio.file.Path contentDirectory, String indexPage) {
+    protected StaticContentResource(StaticContent content) {
+        this(content.getContentDirectory(), content.getIndexPage());
+    }
+
+    protected StaticContentResource(java.nio.file.Path contentDirectory, String indexPage) {
         this.contentDirectory = contentDirectory.toAbsolutePath().normalize();
         this.indexPage = indexPage;
     }

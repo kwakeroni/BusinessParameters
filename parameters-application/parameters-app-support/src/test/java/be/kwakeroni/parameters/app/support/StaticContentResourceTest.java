@@ -1,5 +1,6 @@
-package be.kwakeroni.parameters.app;
+package be.kwakeroni.parameters.app.support;
 
+import be.kwakeroni.test.extension.TemporaryFolderExtension;
 import com.sun.jersey.api.container.ContainerFactory;
 import com.sun.jersey.api.container.httpserver.HttpServerFactory;
 import com.sun.jersey.api.core.ApplicationAdapter;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
 
 import javax.ws.rs.Path;
@@ -29,7 +31,8 @@ import static be.kwakeroni.test.assertion.RestAssert.get;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class StaticContentTest {
+@ExtendWith(TemporaryFolderExtension.class)
+public class StaticContentResourceTest {
 
     private static final String CONTEXT_PATH = "/content";
     private static final String INDEX_PAGE = "index.test";
@@ -50,8 +53,8 @@ public class StaticContentTest {
     private static Function<java.nio.file.Path, Response.ResponseBuilder> getFileContents = mock(Function.class);
 
     @Path(CONTEXT_PATH)
-    public static class TestStaticContent extends StaticContent {
-        private TestStaticContent(java.nio.file.Path contentDirectory) {
+    public static class TestStaticContentResource extends StaticContentResource {
+        private TestStaticContentResource(java.nio.file.Path contentDirectory) {
             super(contentDirectory, INDEX_PAGE);
         }
 
@@ -83,7 +86,7 @@ public class StaticContentTest {
         ResourceConfig config = new ApplicationAdapter(new Application() {
             @Override
             public Set<Object> getSingletons() {
-                return Collections.singleton(new TestStaticContent(contentDirectory.getRoot().toPath()));
+                return Collections.singleton(new TestStaticContentResource(contentDirectory.getRoot().toPath()));
             }
         });
         config.setPropertiesAndFeatures(Collections.singletonMap("com.sun.jersey.api.json.POJOMappingFeature", true));
@@ -169,6 +172,6 @@ public class StaticContentTest {
     }
 
     private static InputStream getImage() {
-        return StaticContentTest.class.getResourceAsStream("test.jpg");
+        return StaticContentResourceTest.class.getResourceAsStream("test.jpg");
     }
 }

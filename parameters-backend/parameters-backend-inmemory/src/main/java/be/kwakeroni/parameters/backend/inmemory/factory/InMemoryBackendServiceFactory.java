@@ -108,7 +108,7 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
     private static GroupDataStore persistentStore(Path location) {
         FileStorageProvider provider = new FileStorageProvider(location);
         PersistedGroupDataStore store = new PersistedGroupDataStore(provider);
-        LOG.info("Using persistent data store at {}", location);
+        LOG.info("Using persistent data store at {}", location.toAbsolutePath());
         return store;
     }
 

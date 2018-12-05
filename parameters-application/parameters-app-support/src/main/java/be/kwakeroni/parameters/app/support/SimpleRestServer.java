@@ -54,6 +54,7 @@ public abstract class SimpleRestServer implements AutoCloseable {
 
     protected synchronized void stop() {
         if (this.httpServer != null) {
+            LOG.info("Shutting down server at {}", this.httpServer.getAddress());
             this.httpServer.stop(0);
             this.httpServer = null;
         }

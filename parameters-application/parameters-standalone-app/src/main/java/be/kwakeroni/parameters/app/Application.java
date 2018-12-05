@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.app;
 
+import be.kwakeroni.parameters.app.support.MainWaiter;
 import be.kwakeroni.parameters.backend.api.Configuration;
 import be.kwakeroni.parameters.core.support.backend.ConfigurationSupport;
 import be.kwakeroni.parameters.core.support.util.function.ThrowingPredicate;
@@ -13,27 +14,47 @@ import org.apache.commons.cli.ParseException;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.function.UnaryOperator;
 
 import static be.kwakeroni.parameters.core.support.util.function.ThrowingFunction.unchecked;
 
 public class Application {
 
+    private final Server server;
+
     public static void main(String[] args) throws Exception {
         initLogging();
         try {
-            createServer(args)
-                    .ifPresent(Application::start);
+            Optional<Application> app = create(args);
+            if (app.isPresent()) {
+                try (AutoCloseable closeable = app.get().start()) {
+                    MainWaiter.waitForExit();
+                }
+            }
         } catch (ParseException exc) {
             System.out.println(exc.getMessage());
             Opt.HELP.handle("");
         }
+    }
+
+    public static Optional<Application> create(String... args) throws CLIException, ParseException {
+        return createServer(args)
+                .map(Application::new);
+    }
+
+    public static Optional<Application> create(Properties configurationProperties) {
+        return createServer(configurationProperties)
+                .map(Application::new);
+    }
+
+    private Application(Server server) {
+        this.server = server;
     }
 
     private static void initLogging() {
@@ -45,20 +66,12 @@ public class Application {
         }
     }
 
-    private static void start(Server resource) {
-        try (Server server = resource) {
-            server.start();
-
-            while (true) {
-                // Thread.onSpinWait();
-            }
-
-        } catch (IOException exc) {
-            throw new UncheckedIOException(exc);
-        }
+    public AutoCloseable start() throws IOException {
+        this.server.start();
+        return this.server;
     }
 
-    static Optional<Server> createServer(String[] args) throws Exception {
+    static Optional<Server> createServer(String[] args) throws CLIException, ParseException {
         CommandLineParser clParser = new DefaultParser();
         CommandLine commandLine = clParser.parse(CLI_OPTIONS, args);
 
@@ -68,6 +81,12 @@ public class Application {
             }
         }
 
+        return Optional.of(new Server());
+    }
+
+    static Optional<Server> createServer(Properties configurationProperties) {
+        Configuration configuration = ConfigurationSupport.of(configurationProperties);
+        ServerConfigurationProvider.setConfiguration(configuration);
         return Optional.of(new Server());
     }
 
@@ -128,7 +147,7 @@ public class Application {
             return (this.opt != null) ? this.opt : this.option.getLongOpt();
         }
 
-        boolean handle(CommandLine commandLine) throws Exception {
+        boolean handle(CommandLine commandLine) throws CLIException {
             if (commandLine.hasOption(getOptKey())) {
                 String optValue = commandLine.getOptionValue(getOptKey());
                 return handle(optValue);
@@ -136,8 +155,12 @@ public class Application {
             return true;
         }
 
-        boolean handle(String value) throws Exception {
-            return this.handler.test(value);
+        boolean handle(String value) throws CLIException {
+            try {
+                return this.handler.test(value);
+            } catch (Exception e) {
+                throw new CLIException(e);
+            }
         }
     }
 
@@ -154,5 +177,19 @@ public class Application {
                 .map(Path::toString)
                 .orElse("parameters-standalone-app.jar");
 
+    }
+
+    public static class CLIException extends Exception {
+        public CLIException(String message) {
+            super(message);
+        }
+
+        public CLIException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public CLIException(Throwable cause) {
+            super(cause);
+        }
     }
 }

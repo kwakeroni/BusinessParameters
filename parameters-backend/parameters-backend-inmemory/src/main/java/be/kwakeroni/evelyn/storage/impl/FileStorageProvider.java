@@ -12,6 +12,9 @@ public class FileStorageProvider implements StorageProvider {
     private final Path storageDirectory;
 
     public FileStorageProvider(Path storageDirectory) {
+        if (! Files.exists(storageDirectory)){
+            throw new IllegalStateException("Storage directory does not exist: " + storageDirectory.toAbsolutePath());
+        }
         this.storageDirectory = storageDirectory;
     }
 

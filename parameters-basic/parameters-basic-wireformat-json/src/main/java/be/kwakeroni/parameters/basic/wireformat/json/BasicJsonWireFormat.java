@@ -55,20 +55,20 @@ public class BasicJsonWireFormat implements BasicClientWireFormatter, BasicBacke
     }
 
     @Override
-    public Object externalizeValueQuery(ValueQuery<?> query, ClientWireFormatterContext context) {
+    public JSONObject externalizeValueQuery(ValueQuery<?> query, ClientWireFormatterContext context) {
         return new JSONObject()
                 .put(TYPE, TYPE_VALUE)
                 .put(PARAMETER, query.getParameter().getName());
     }
 
     @Override
-    public Object externalizeEntryQuery(EntryQuery query, ClientWireFormatterContext context) {
+    public JSONObject externalizeEntryQuery(EntryQuery query, ClientWireFormatterContext context) {
         return new JSONObject()
                 .put(TYPE, TYPE_ENTRY);
     }
 
     @Override
-    public Object externalizeMappedQuery(MappedQuery<?, ?, ?> query, ClientWireFormatterContext context) {
+    public JSONObject externalizeMappedQuery(MappedQuery<?, ?, ?> query, ClientWireFormatterContext context) {
         return new JSONObject()
                 .put(TYPE, TYPE_MAPPED)
                 .put(KEY, query.getKeyString())
@@ -76,7 +76,7 @@ public class BasicJsonWireFormat implements BasicClientWireFormatter, BasicBacke
     }
 
     @Override
-    public Object externalizeRangedQuery(RangedQuery<?, ?, ?> query, ClientWireFormatterContext context) {
+    public JSONObject externalizeRangedQuery(RangedQuery<?, ?, ?> query, ClientWireFormatterContext context) {
         return new JSONObject()
                 .put(TYPE, TYPE_RANGED)
                 .put(VALUE, query.getValueString())
@@ -84,7 +84,7 @@ public class BasicJsonWireFormat implements BasicClientWireFormatter, BasicBacke
     }
 
     @Override
-    public <T> Object clientValueToWire(T value, ValueQuery<T> query, ClientWireFormatterContext context) {
+    public <T> String clientValueToWire(T value, ValueQuery<T> query, ClientWireFormatterContext context) {
         return (value == null) ? null : query.getParameter().toString(value);
     }
 
@@ -94,13 +94,13 @@ public class BasicJsonWireFormat implements BasicClientWireFormatter, BasicBacke
     }
 
     @Override
-    public Object clientEntryToWire(Entry entry, EntryQuery query, ClientWireFormatterContext context) {
-        return new JSONObject(entry.toMap());
+    public String clientEntryToWire(Entry entry, EntryQuery query, ClientWireFormatterContext context) {
+        return new JSONObject(entry.toMap()).toString();
     }
 
     @Override
     public Entry wireToClientEntry(Object result, EntryQuery query, ClientWireFormatterContext context) {
-        return new DefaultEntry(((JSONObject) result).toMap());
+        return new DefaultEntry((new JSONObject((String) result)).toMap());
     }
 
 

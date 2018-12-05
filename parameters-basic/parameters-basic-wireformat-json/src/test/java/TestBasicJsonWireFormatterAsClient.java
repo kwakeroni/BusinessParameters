@@ -99,8 +99,8 @@ public class TestBasicJsonWireFormatterAsClient {
 
         Object wireEntry = formatter.clientEntryToWire(entry, entryQuery, context);
 
-        assertThat(wireEntry).isInstanceOf(JSONObject.class);
-        JSONObject jsonEntry = (JSONObject) wireEntry;
+        assertThat(wireEntry).isInstanceOf(String.class);
+        JSONObject jsonEntry = new JSONObject((String) wireEntry);
 
         assertThat(jsonEntry.get("one")).isEqualTo("111");
         assertThat(jsonEntry.get("two")).isEqualTo("22");
@@ -118,7 +118,7 @@ public class TestBasicJsonWireFormatterAsClient {
                 .put("1", "one")
                 .put("2", "zwei");
 
-        Entry clientEntry = formatter.wireToClientEntry(jsonEntry, entryQuery, context);
+        Entry clientEntry = formatter.wireToClientEntry(jsonEntry.toString(), entryQuery, context);
 
         assertThat(clientEntry.getValue(parameter).get()).isEqualTo("one");
         assertThat(clientEntry.getValue(parameter2).get()).isEqualTo("zwei");

@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.petshop;
 
+import be.kwakeroni.parameters.app.support.MainWaiter;
 import be.kwakeroni.parameters.app.support.SimpleRestServer;
 import be.kwakeroni.parameters.app.support.StaticContent;
 import be.kwakeroni.parameters.app.support.StaticContentFactory;
@@ -14,7 +15,6 @@ import be.kwakeroni.parameters.petshop.service.PriceCalculator;
 import javax.ws.rs.Path;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,13 +32,32 @@ public class PetshopApplication {
     @SuppressWarnings("WeakerAccess")
     public static final String DEFAULT_CONTEXT_PATH = "";
 
+    private final Server server;
+
     public static void main(String[] args) throws Exception {
         initLogging();
-
-        createServer(args)
-                .ifPresent(PetshopApplication::start);
-
+        Optional<PetshopApplication> app = create(args);
+        if (app.isPresent()) {
+            try (AutoCloseable closeable = app.get().start()) {
+                MainWaiter.waitForExit();
+            }
+        }
     }
+
+    public static Optional<PetshopApplication> create(String... args) throws IOException {
+        return createServer(args)
+                .map(PetshopApplication::new);
+    }
+
+    public static Optional<PetshopApplication> create(Properties configurationProperties) throws IOException {
+        return createServer(configurationProperties)
+                .map(PetshopApplication::new);
+    }
+
+    private PetshopApplication(Server server) {
+        this.server = server;
+    }
+
 
     private static void initLogging() {
         System.out.println("log4j.configuration=" + System.getProperty("log4j.configuration"));
@@ -49,25 +68,19 @@ public class PetshopApplication {
         }
     }
 
-    private static void start(Server resource) {
-        try (Server server = resource) {
-            server.start();
-
-            while (true) {
-                // Thread.onSpinWait();
-            }
-
-        } catch (IOException exc) {
-            throw new UncheckedIOException(exc);
-        }
+    public AutoCloseable start() throws IOException {
+        this.server.start();
+        return this.server;
     }
 
-
-    static Optional<Server> createServer(String[] args) throws IOException {
+    static Optional<Server> createServer(String... args) throws IOException {
         Properties properties = new Properties();
-        properties.load(OldPetshopApplication.class.getResourceAsStream("/petshop.properties"));
-        Map<String, String> propertyMap = properties.stringPropertyNames().stream().collect(Collectors.toMap(Function.identity(), properties::getProperty));
+        properties.load(PetshopApplication.class.getResourceAsStream("/petshop.properties"));
+        return createServer(properties);
+    }
 
+    static Optional<Server> createServer(Properties properties) throws IOException {
+        Map<String, String> propertyMap = properties.stringPropertyNames().stream().collect(Collectors.toMap(Function.identity(), properties::getProperty));
         return Optional.of(new Server(propertyMap));
     }
 

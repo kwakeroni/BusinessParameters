@@ -23,7 +23,7 @@ public class StaticContentFactory {
     }
 
     public static StaticContent fromZip(Supplier<InputStream> zipFile, String indexFile, Path workDir) {
-        LOG.info("Buffering web application into {}", workDir);
+        LOG.info("Buffering web application into {}", workDir.toAbsolutePath());
 
         try {
             Files.createDirectories(workDir);

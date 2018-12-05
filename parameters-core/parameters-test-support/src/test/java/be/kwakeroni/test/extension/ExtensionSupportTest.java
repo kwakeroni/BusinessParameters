@@ -43,7 +43,7 @@ class ExtensionSupportTest {
         assertThat(
                 extension.getFields(this)
                     .map(ExtensionSupportTest::toString)
-        ).containsExactlyInAnyOrder("ExtensionSupportTest:oneField", "ExtensionSupportTest:secondField");
+        ).contains("ExtensionSupportTest:oneField", "ExtensionSupportTest:secondField");
     }
 
 

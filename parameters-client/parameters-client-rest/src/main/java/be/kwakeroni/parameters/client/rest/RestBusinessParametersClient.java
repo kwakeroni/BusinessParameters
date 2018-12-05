@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 import java.util.Optional;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
 public class RestBusinessParametersClient implements WritableBusinessParameters {
 
     private static Logger LOG = LoggerFactory.getLogger(RestBusinessParametersClient.class);
@@ -31,10 +33,14 @@ public class RestBusinessParametersClient implements WritableBusinessParameters 
     }
 
     private String normalizePath(String path) {
-        if (path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
+        if (!path.endsWith("/")) {
+            path = path + "/";
         }
         return path;
+    }
+
+    private WebResource resource(String path) {
+        return this.resource.path(path);
     }
 
 
@@ -45,9 +51,14 @@ public class RestBusinessParametersClient implements WritableBusinessParameters 
         Objects.requireNonNull(query, "query");
 
         String external = externalize(query);
-        ClientResponse response = this.resource.path("/" + group.getName() + "/query").post(ClientResponse.class, external);
 
-        return internalizeResult(query, process(response, String.class));
+        WebResource resource = resource("/" + group.getName() + "/query");
+        ClientResponse response = resource.type(APPLICATION_JSON).post(ClientResponse.class, external);
+        Optional<T> result = process(resource, response, String.class)
+                .flatMap(extValue -> internalizeResult(query, extValue));
+
+        LOG.info("\n    Query  " + external + "\n    Result " + result);
+        return result;
     }
 
     @Override
@@ -62,9 +73,9 @@ public class RestBusinessParametersClient implements WritableBusinessParameters 
                 .put("value", externalizeValue(query, value));
 
 
-        ClientResponse response = this.resource.path("/" + group.getName() + "/update").post(ClientResponse.class, request.toString());
-
-        process(response);
+        WebResource resource = resource("/" + group.getName() + "/update");
+        ClientResponse response = resource.type(APPLICATION_JSON).post(ClientResponse.class, request.toString());
+        process(resource, response);
     }
 
     @Override
@@ -75,9 +86,9 @@ public class RestBusinessParametersClient implements WritableBusinessParameters 
 
         JSONObject request = new JSONObject(entry.toMap());
 
-        ClientResponse response = this.resource.path("/" + group.getName()).post(ClientResponse.class, request.toString());
-
-        process(response);
+        WebResource resource = resource("/" + group.getName());
+        ClientResponse response = resource.type(APPLICATION_JSON).post(ClientResponse.class, request.toString());
+        process(resource, response);
     }
 
     private String externalize(Query<?, ?> query) {
@@ -102,24 +113,38 @@ public class RestBusinessParametersClient implements WritableBusinessParameters 
         return query.internalizeResult(value, this.context);
     }
 
-    private <T> T process(ClientResponse response, Class<T> type) {
-        return process(response).getEntity(type);
+    private <T> Optional<T> process(WebResource resource, ClientResponse response, Class<T> type) {
+        return process(resource.getURI().toString(), response, type);
     }
 
-    private ClientResponse process(ClientResponse response) {
+    private <T> Optional<T> process(String url, ClientResponse response, Class<T> type) {
+        return getEntity(process(url, response), type);
+    }
+
+    private ClientResponse process(WebResource resource, ClientResponse response) {
+        return process(resource.getURI().toString(), response);
+    }
+
+    private ClientResponse process(String url, ClientResponse response) {
         switch (response.getStatusInfo().getFamily()) {
             case CLIENT_ERROR:
-                throw new IllegalArgumentException("Error response from Business Parameters REST service: status=" + response.getStatus() + " message=" + response.getEntity(String.class));
+                throw new IllegalArgumentException("Error response from Business Parameters REST service: url=" + url + " status=" + response.getStatus() + " message=" + response.getEntity(String.class));
             case SERVER_ERROR:
-                throw new IllegalStateException("Error response from Business Parameters REST service: status=" + response.getStatus() + " message=" + response.getEntity(String.class));
+                throw new IllegalStateException("Error response from Business Parameters REST service: url=" + url + " status=" + response.getStatus() + " message=" + response.getEntity(String.class));
             case OTHER:
-                throw new IllegalStateException("Unknown response from Business Parameters REST service: status=" + response.getStatus() + " message=" + response.getEntity(String.class));
+                throw new IllegalStateException("Unknown response from Business Parameters REST service: url=" + url + " status=" + response.getStatus() + " message=" + response.getEntity(String.class));
             case INFORMATIONAL:
             case REDIRECTION:
-                LOG.warn("Unexpected response: status=" + response.getStatus() + " entity=" + response.getEntity(String.class));
+                LOG.warn("Unexpected response: url=" + url + " status=" + response.getStatus() + " entity=" + response.getEntity(String.class));
             case SUCCESSFUL:
                 return response;
         }
         return response;
+    }
+
+    private <T> Optional<T> getEntity(ClientResponse response, Class<T> type) {
+        return Optional.of(response)
+                .filter(r -> r.getStatus() != 204)
+                .map(r -> r.getEntity(type));
     }
 }

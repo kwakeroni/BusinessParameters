@@ -18,12 +18,18 @@
 
     <modules>
         <module>parameters-client-api</module>
+        <module>parameters-client-rest</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <artifactId>parameters-client-api</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>parameters-client-rest</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>

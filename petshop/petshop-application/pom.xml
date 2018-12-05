@@ -49,8 +49,29 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>be.kwakeroni.parameters.basic</groupId>
+                <artifactId>parameters-basic-common</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>be.kwakeroni.parameters.client</groupId>
                 <artifactId>parameters-client</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.definition</groupId>
+                <artifactId>parameters-definition</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>be.kwakeroni.parameters.core</groupId>
+                <artifactId>parameters-core</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -59,34 +80,34 @@
     </dependencyManagement>
 
     <dependencies>
+        <!--<dependency>-->
+        <!--<groupId>be.kwakeroni.parameters.management</groupId>-->
+        <!--<artifactId>parameters-management-rest</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>be.kwakeroni.parameters.adapter</groupId>-->
+        <!--<artifactId>parameters-adapter-direct</artifactId>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>be.kwakeroni.parameters.management</groupId>
-            <artifactId>parameters-management-rest</artifactId>
+            <groupId>be.kwakeroni.parameters.client</groupId>
+            <artifactId>parameters-client-rest</artifactId>
         </dependency>
-        <dependency>
-            <groupId>be.kwakeroni.parameters.adapter</groupId>
-            <artifactId>parameters-adapter-direct</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.kwakeroni.parameters.adapter</groupId>
-            <artifactId>parameters-adapter-rest</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.kwakeroni.parameters.backend</groupId>
-            <artifactId>parameters-backend-inmemory</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.kwakeroni.parameters.basic</groupId>
-            <artifactId>parameters-basic-backend</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.kwakeroni.parameters.basic</groupId>
-            <artifactId>parameters-basic-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.kwakeroni.parameters.basic</groupId>
-            <artifactId>parameters-basic-inmemory</artifactId>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>be.kwakeroni.parameters.backend</groupId>-->
+        <!--<artifactId>parameters-backend-inmemory</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
+        <!--<artifactId>parameters-basic-backend</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
+        <!--<artifactId>parameters-basic-common</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>be.kwakeroni.parameters.basic</groupId>-->
+        <!--<artifactId>parameters-basic-inmemory</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>be.kwakeroni.parameters.client</groupId>
             <artifactId>parameters-client-api</artifactId>
@@ -96,8 +117,25 @@
             <artifactId>parameters-basic-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>be.kwakeroni.parameters.definition</groupId>
+            <artifactId>parameters-definition-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>be.kwakeroni.parameters.basic</groupId>
-            <artifactId>parameters-basic-wireformat-raw</artifactId>
+            <artifactId>parameters-basic-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.core</groupId>
+            <artifactId>parameters-core-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.basic</groupId>
+            <artifactId>parameters-basic-wireformat-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.kwakeroni.parameters.application</groupId>
+            <artifactId>parameters-standalone-app</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
@@ -160,14 +198,14 @@
                     <executions>
                         <execution>
                             <id>petshop-application</id>
-                            <phase>install</phase>
+                            <phase>verify</phase>
                             <goals>
                                 <goal>java</goal>
                             </goals>
                         </execution>
                     </executions>
                     <configuration>
-                        <mainClass>be.kwakeroni.parameters.petshop.PetshopApplication</mainClass>
+                        <mainClass>be.kwakeroni.parameters.petshop.DemoApplication</mainClass>
                         <arguments>
                         </arguments>
                     </configuration>
@@ -200,42 +238,59 @@
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>3.0.2</version>
                     <executions>
+                        <!--<execution>-->
+                        <!--<id>unpack-parameters-management-web</id>-->
+                        <!--<phase>process-sources</phase>-->
+                        <!--<goals>-->
+                        <!--<goal>unpack</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                        <!--<artifactItems>-->
+                        <!--<artifactItem>-->
+                        <!--<groupId>be.kwakeroni.parameters.management</groupId>-->
+                        <!--<artifactId>parameters-management-web</artifactId>-->
+                        <!--<version>${project.version}</version>-->
+                        <!--<type>jar</type>-->
+                        <!--<overWrite>false</overWrite>-->
+                        <!--</artifactItem>-->
+                        <!--</artifactItems>-->
+                        <!--<outputDirectory>${project.build.outputDirectory}/parameters-webapp</outputDirectory>-->
+                        <!--</configuration>-->
+                        <!--</execution>-->
+                        <!--<execution>-->
+                        <!--<id>unpack-petshop-web</id>-->
+                        <!--<phase>process-sources</phase>-->
+                        <!--<goals>-->
+                        <!--<goal>unpack</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                        <!--<artifactItems>-->
+                        <!--<artifactItem>-->
+                        <!--<groupId>be.kwakeroni.parameters.petshop</groupId>-->
+                        <!--<artifactId>petshop-web</artifactId>-->
+                        <!--<version>${project.version}</version>-->
+                        <!--<type>jar</type>-->
+                        <!--<overWrite>false</overWrite>-->
+                        <!--</artifactItem>-->
+                        <!--</artifactItems>-->
+                        <!--<outputDirectory>${project.build.outputDirectory}/petshop-webapp</outputDirectory>-->
+                        <!--</configuration>-->
+                        <!--</execution>-->
                         <execution>
-                            <id>unpack-parameters-management-web</id>
-                            <phase>process-sources</phase>
+                            <id>copy-webapp</id>
                             <goals>
-                                <goal>unpack</goal>
+                                <goal>copy</goal>
                             </goals>
-                            <configuration>
-                                <artifactItems>
-                                    <artifactItem>
-                                        <groupId>be.kwakeroni.parameters.management</groupId>
-                                        <artifactId>parameters-management-web</artifactId>
-                                        <version>${project.version}</version>
-                                        <type>jar</type>
-                                        <overWrite>false</overWrite>
-                                    </artifactItem>
-                                </artifactItems>
-                                <outputDirectory>${project.build.outputDirectory}/parameters-webapp</outputDirectory>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>unpack-petshop-web</id>
-                            <phase>process-sources</phase>
-                            <goals>
-                                <goal>unpack</goal>
-                            </goals>
+                            <phase>process-resources</phase>
                             <configuration>
                                 <artifactItems>
                                     <artifactItem>
                                         <groupId>be.kwakeroni.parameters.petshop</groupId>
                                         <artifactId>petshop-web</artifactId>
-                                        <version>${project.version}</version>
-                                        <type>jar</type>
-                                        <overWrite>false</overWrite>
                                     </artifactItem>
                                 </artifactItems>
-                                <outputDirectory>${project.build.outputDirectory}/petshop-webapp</outputDirectory>
+                                <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                <stripVersion>true</stripVersion>
                             </configuration>
                         </execution>
                     </executions>

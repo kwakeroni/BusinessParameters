@@ -15,6 +15,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -52,7 +53,7 @@ public class Environment implements TestRule, AutoCloseable {
         this.testData = testDataSupplier.get();
         BusinessParametersFactory factory = Services.loadService(BusinessParametersFactory.class);
         ((DirectBusinessParametersServiceFactory) factory).setBackendType(this.testData::acceptBackend);
-        WritableBusinessParameters local = factory.getWritableInstance();
+        WritableBusinessParameters local = factory.getWritableInstance(Collections.emptyMap());
         this.parameters = new WritableBusinessParameters() {
             @Override
             public <ET extends EntryType, T> void set(ParameterGroup<ET> group, Query<ET, T> query, T value) {

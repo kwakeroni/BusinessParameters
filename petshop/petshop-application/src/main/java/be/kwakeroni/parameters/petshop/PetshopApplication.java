@@ -1,177 +1,169 @@
 package be.kwakeroni.parameters.petshop;
 
-import be.kwakeroni.parameters.adapter.rest.RestBackendAdapter;
-import be.kwakeroni.parameters.adapter.rest.factory.RestBackendAdapterFactory;
+import be.kwakeroni.parameters.app.support.MainWaiter;
+import be.kwakeroni.parameters.app.support.SimpleRestServer;
+import be.kwakeroni.parameters.app.support.StaticContent;
+import be.kwakeroni.parameters.app.support.StaticContentFactory;
+import be.kwakeroni.parameters.app.support.StaticContentResource;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.client.api.factory.BusinessParametersFactory;
-import be.kwakeroni.parameters.management.rest.RestParameterManagement;
-import be.kwakeroni.parameters.management.rest.factory.RestParameterManagementFactory;
 import be.kwakeroni.parameters.petshop.rest.PetshopRestService;
 import be.kwakeroni.parameters.petshop.service.AnimalCatalog;
 import be.kwakeroni.parameters.petshop.service.ContactService;
 import be.kwakeroni.parameters.petshop.service.PriceCalculator;
-import com.sun.jersey.api.container.ContainerFactory;
-import com.sun.jersey.api.container.httpserver.HttpServerFactory;
-import com.sun.jersey.api.core.ApplicationAdapter;
-import com.sun.jersey.api.core.ResourceConfig;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Response;
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
+import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-/**
- * Created by kwakeroni on 07/11/17.
- */
 public class PetshopApplication {
 
-    public PetshopApplication() {
+    @SuppressWarnings("WeakerAccess")
+    public static final int DEFAULT_PORT = 8081;
+    @SuppressWarnings("WeakerAccess")
+    public static final String DEFAULT_CONTEXT_PATH = "";
 
-    }
-
-    private static PetshopRestService createPetshopRestService() {
-        BusinessParameters parameters = createBusinessParameters();
-        return new PetshopRestService(
-                new AnimalCatalog(parameters),
-                new PriceCalculator(parameters),
-                new ContactService(parameters));
-    }
+    private final Server server;
 
     public static void main(String[] args) throws Exception {
-        try (
-                Server parameters = new Server(8080, "/parameters",
-                        createAdapter(),
-                        createManagement(),
-                        new ParametersWebAppService()
-                );
-                Server petshop = new Server(8081, "/",
-                        createPetshopRestService(),
-                        new PetshopWebAppService()
-                );
-        ) {
-            parameters.start();
-            petshop.start();
-            System.out.println("Enter 'q' to stop server.");
-            boolean running = true;
-            while (running) {
-                if ('q' == System.in.read()) {
-                    running = false;
-                }
+        initLogging();
+        Optional<PetshopApplication> app = create(args);
+        if (app.isPresent()) {
+            try (AutoCloseable closeable = app.get().start()) {
+                MainWaiter.waitForExit();
             }
         }
-
     }
 
-    private static class Server implements AutoCloseable {
+    public static Optional<PetshopApplication> create(String... args) throws IOException {
+        return createServer(args)
+                .map(PetshopApplication::new);
+    }
 
-        private HttpServer server;
+    public static Optional<PetshopApplication> create(Properties configurationProperties) throws IOException {
+        return createServer(configurationProperties)
+                .map(PetshopApplication::new);
+    }
 
-        public Server(int port, String root, Object... resources) throws IOException {
-            ResourceConfig config = new ApplicationAdapter(ofSingletons(resources));
-            config.setPropertiesAndFeatures(Collections.singletonMap("com.sun.jersey.api.json.POJOMappingFeature", true));
+    private PetshopApplication(Server server) {
+        this.server = server;
+    }
 
-            this.server = HttpServerFactory.create("http://127.0.0.1:" + port + root,
-                    ContainerFactory.createContainer(HttpHandler.class, config, null));
+
+    private static void initLogging() {
+        System.out.println("log4j.configuration=" + System.getProperty("log4j.configuration"));
+        if (System.getProperty("log4j.configuration") == null) {
+            if (Thread.currentThread().getContextClassLoader().getResource("log4j.properties") == null) {
+                System.setProperty("log4j.configuration", "log4j.fallback.properties");
+            }
         }
+    }
 
-        public void start() {
-            this.server.start();
+    public AutoCloseable start() throws IOException {
+        this.server.start();
+        return this.server;
+    }
+
+    static Optional<Server> createServer(String... args) throws IOException {
+        Properties properties = new Properties();
+        properties.load(PetshopApplication.class.getResourceAsStream("/petshop.properties"));
+        return createServer(properties);
+    }
+
+    static Optional<Server> createServer(Properties properties) throws IOException {
+        Map<String, String> propertyMap = properties.stringPropertyNames().stream().collect(Collectors.toMap(Function.identity(), properties::getProperty));
+        return Optional.of(new Server(propertyMap));
+    }
+
+
+    private static class Server extends SimpleRestServer {
+
+        private final Map<String, String> properties;
+
+        public Server(Map<String, String> properties) {
+            this.properties = properties;
         }
 
         @Override
-        public void close() throws Exception {
-            if (this.server != null) this.server.stop(0);
-
-        }
-    }
-
-
-    private static RestBackendAdapter createAdapter() {
-        RestBackendAdapterFactory factory = new RestBackendAdapterFactory();
-        return factory.newInstance();
-    }
-
-    private static RestParameterManagement createManagement() {
-        RestParameterManagementFactory factory = new RestParameterManagementFactory();
-        return factory.newInstance();
-    }
-
-    private static BusinessParameters createBusinessParameters() {
-        return ServiceLoader.load(BusinessParametersFactory.class).iterator().next().getInstance();
-    }
-
-    private static Application ofSingletons(Object... singletons) {
-        return new Application() {
-            @Override
-            public Set<Object> getSingletons() {
-                return new HashSet<>(Arrays.asList(singletons));
-            }
-        };
-    }
-
-
-    public static abstract class AbstractWebAppService {
-
-        private final String resourcePath;
-        private final String indexPage;
-
-        public AbstractWebAppService(String resourcePath, String indexPage) {
-            this.resourcePath = resourcePath;
-            this.indexPage = indexPage;
+        protected int getPort() {
+            return DEFAULT_PORT;
         }
 
-        @GET
-        @Path("/")
-        public Response root() throws Exception {
-            return Response.seeOther(new URI(indexPage)).build();
+        @Override
+        protected String getContextPath() {
+            return DEFAULT_CONTEXT_PATH;
         }
 
-        @GET
-        @Path("{path:.*}")
-        public Response get(@PathParam("path") String path) throws Exception {
-            if (path == null || path.isEmpty() || "/".equals(path)) {
-                path = "index.html";
+        @Override
+        protected String getHelloMessage() {
+            return "Business Parameters Petshop";
+        }
+
+        @Override
+        protected Collection<Object> getResources() {
+            StaticContentResource webApp = getWebApp();
+            PetshopRestService restService = createPetshopRestService(properties);
+            return Arrays.asList(restService, webApp);
+        }
+
+
+        private PetshopRestService createPetshopRestService(Map<String, String> properties) {
+            BusinessParameters parameters = createBusinessParameters(properties);
+            return new PetshopRestService(
+                    new AnimalCatalog(parameters),
+                    new PriceCalculator(parameters),
+                    new ContactService(parameters));
+        }
+
+        private BusinessParameters createBusinessParameters(Map<String, String> properties) {
+            return ServiceLoader.load(BusinessParametersFactory.class).iterator().next().getInstance(properties);
+        }
+
+        private StaticContentResource getWebApp() {
+            @Path("/petshop")
+            class PetshopWebApp extends StaticContentResource {
+                public PetshopWebApp() {
+                    super(getWebContent());
+                }
             }
 
-            String webPath = resourcePath + "/" + path;
-            URL resource = PetshopApplication.class.getResource(webPath);
 
-            if (resource != null) {
-                File file = new File(resource.toURI());
+            return new PetshopWebApp();
+        }
 
-                return Response.ok(file)
-                        // .header("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"" ) //optional
-                        .build();
-            } else {
-                System.out.println("Resource not found: " + webPath);
-                return Response.status(404).build();
-            }
+        private StaticContent getWebContent() {
+            return StaticContentFactory.fromZip(this::getManagementWebZip, "petshop/index.html", getWebappDir());
+        }
+
+        private java.nio.file.Path getWebappDir() {
+            return Optional.ofNullable(properties.get("server.workDir"))
+                    .map(Paths::get)
+                    .orElseGet(() -> Paths.get("./work"))
+                    .resolve("petshop");
+        }
+
+        private InputStream getManagementWebZip() {
+            return PetshopApplication.class.getResourceAsStream("/petshop-web.jar");
+        }
+
+        @Override
+        protected synchronized void start() throws IOException {
+            super.start();
+        }
+
+        @Override
+        protected synchronized void stop() {
+            super.stop();
         }
     }
 
-    @Path("/petshop")
-    public static class PetshopWebAppService extends AbstractWebAppService {
-        public PetshopWebAppService() {
-            super("/petshop-webapp", "petshop/index.html");
-        }
-    }
-
-    @Path("/web")
-    public static class ParametersWebAppService extends AbstractWebAppService {
-        public ParametersWebAppService() {
-            super("/parameters-webapp", "web/index.html");
-        }
-    }
 }

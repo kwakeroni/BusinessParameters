@@ -33,4 +33,8 @@ class DefaultEntry implements Entry {
     public Map<String, String> toMap() {
         return this.values.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> String.valueOf(e.getValue())));
     }
+
+    public String toString() {
+        return values.toString();
+    }
 }

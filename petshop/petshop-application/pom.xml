@@ -198,14 +198,14 @@
                     <executions>
                         <execution>
                             <id>petshop-application</id>
-                            <phase>install</phase>
+                            <phase>verify</phase>
                             <goals>
                                 <goal>java</goal>
                             </goals>
                         </execution>
                     </executions>
                     <configuration>
-                        <mainClass>be.kwakeroni.parameters.petshop.OldPetshopApplication</mainClass>
+                        <mainClass>be.kwakeroni.parameters.petshop.DemoApplication</mainClass>
                         <arguments>
                         </arguments>
                     </configuration>

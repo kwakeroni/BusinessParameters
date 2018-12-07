@@ -9,6 +9,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,6 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
@@ -48,6 +48,7 @@ public class StaticContentResourceTest {
 
     private static HttpServer httpServer;
     private static TemporaryFolder contentDirectory = new TemporaryFolder();
+    private static boolean supportsUnreadableFiles;
 
     @SuppressWarnings("unchecked")
     private static Function<java.nio.file.Path, Response.ResponseBuilder> getFileContents = mock(Function.class);
@@ -77,7 +78,7 @@ public class StaticContentResourceTest {
         // Non-readable file to make sure this file cannot be accessed
         java.nio.file.Path nonReadablePath = contentDirectory.getRoot().toPath().resolve(NON_READABLE);
         Files.write(nonReadablePath, Arrays.asList("one", "two", "three"));
-        Files.setPosixFilePermissions(nonReadablePath, PosixFilePermissions.fromString("--x------"));
+        supportsUnreadableFiles = nonReadablePath.toFile().setReadable(false, false);
 
         java.nio.file.Path imagePath = contentDirectory.getRoot().toPath().resolve(IMAGE);
         Files.createDirectories(imagePath.getParent());
@@ -157,6 +158,7 @@ public class StaticContentResourceTest {
     @Test
     @DisplayName("Reports non-readable files as not found")
     void testNotFoundNonReadableFiles() {
+        Assumptions.assumeTrue(supportsUnreadableFiles, "OS does not support unreadable files");
         assertThat(get(NON_READABLE_URL))
                 .isNotFound();
     }

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -28,13 +29,24 @@ class ContextClassLoaderExtensionTest {
     private static final String BASE_PATH;
 
     static {
-        String url = ContextClassLoaderExtensionTest.class.getResource("/").toExternalForm();
-        BASE_URL = url.substring(0, url.length() - 1);
-        BASE_PATH = BASE_URL.substring("file:".length());
+        try {
+            URL url = ContextClassLoaderExtensionTest.class.getResource("/");
+            BASE_URL = removeTrailingSlash(url.toExternalForm());
+            BASE_PATH = toPath(url).toString();
+        } catch (URISyntaxException exc) {
+            throw new ExceptionInInitializerError(exc);
+        }
+    }
+
+    private static String removeTrailingSlash(String string) {
+        return string.substring(0, string.length() - 1);
+    }
+
+    private static Path toPath(URL url) throws URISyntaxException {
+        return Paths.get(url.toURI()).toAbsolutePath();
     }
 
     private ClassLoader originalContextClassLoader;
-
 
     @BeforeEach
     public void setUp() {

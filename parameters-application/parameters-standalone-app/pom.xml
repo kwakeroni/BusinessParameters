@@ -80,6 +80,10 @@
             <artifactId>parameters-management-rest</artifactId>
         </dependency>
         <dependency>
+            <groupId>be.kwakeroni.parameters.management</groupId>
+            <artifactId>parameters-management-web</artifactId>
+        </dependency>
+        <dependency>
             <groupId>be.kwakeroni.parameters.adapter</groupId>
             <artifactId>parameters-adapter-direct</artifactId>
         </dependency>

@@ -3,6 +3,7 @@ package be.kwakeroni.parameters.app;
 import be.kwakeroni.parameters.backend.api.Configuration;
 import be.kwakeroni.parameters.backend.api.ConfigurationProvider;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,6 +33,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
 class ServerConfigurationProviderTest {
+
+    private static final boolean SUPPORTS_POSIX = FileSystems.getDefault().supportedFileAttributeViews().contains("posix");
 
     @AfterEach
     void cleanup() {
@@ -79,6 +83,7 @@ class ServerConfigurationProviderTest {
     @Test
     @DisplayName("Survives unreadable properties file")
     void testFileConfigUnreadable() throws Exception {
+        Assumptions.assumeTrue(SUPPORTS_POSIX, "File system does not support Posix");
         Path file = Paths.get("business-parameters.properties");
         try {
             Files.write(file, Collections.singleton("property=testFileConfigUnreadable"));
@@ -128,6 +133,7 @@ class ServerConfigurationProviderTest {
     @Test
     @DisplayName("Survives unreadable properties file on classpath")
     void testClasspathConfigUnreadable() throws Exception {
+        Assumptions.assumeTrue(SUPPORTS_POSIX, "File system does not support Posix");
         String pathPrefix = this.getClass().getName().replace('.', '/') + "/testClasspathConfigUnreadable/";
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         Path path = Paths.get(original.getResource(pathPrefix + "business-parameters.properties").toURI());

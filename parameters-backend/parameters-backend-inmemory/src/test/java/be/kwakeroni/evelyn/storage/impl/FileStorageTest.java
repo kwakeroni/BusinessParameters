@@ -100,7 +100,7 @@ public class FileStorageTest {
 
     @Test
     public void propagatesIOExceptions() throws Exception {
-        FileStorage fileStorage = new FileStorage(Paths.get("not://existing"));
+        FileStorage fileStorage = new FileStorage(Paths.get("/not/existing"));
 
         assertThatThrownBy(fileStorage::initialize)
                 .isInstanceOf(UncheckedIOException.class);

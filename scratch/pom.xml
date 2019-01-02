@@ -258,6 +258,7 @@
                         <configuration>
                             <file>${project.basedir}/../dependency-graph.png</file>
                             <excludes>be.kwakeroni.parameters:scratch</excludes>
+                            <keepDotFile>true</keepDotFile>
                         </configuration>
                     </execution>
                 </executions>

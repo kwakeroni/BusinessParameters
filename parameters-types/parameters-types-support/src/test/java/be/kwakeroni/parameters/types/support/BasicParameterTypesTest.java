@@ -39,14 +39,14 @@ public class BasicParameterTypesTest<T, B> {
         expectStandardMapping(BOOLEAN, false, "false", true);
         expectStandardMapping(CHAR, '\u00C7', "Ç", '\u00C8');
         expectStandardMapping(LOCAL_DATE, LocalDate.of(1981, 12, 14), "19811214", LocalDate.of(2019, 1, 2));
-        expectMapping(CALENDAR, JavaLangType.LONG, SOME_PAST_CALENDAR, SOME_PAST_CALENDAR.getTimeInMillis(), "19811214151617891", System.currentTimeMillis());
-        expectMapping(ANONYMOUS, JavaLangType.LONG, SOME_PAST_CALENDAR, SOME_PAST_CALENDAR.getTimeInMillis(), "19811214151617891", System.currentTimeMillis());
+        expectMapping(CALENDAR, Long.class, SOME_PAST_CALENDAR, SOME_PAST_CALENDAR.getTimeInMillis(), "19811214151617891", System.currentTimeMillis());
+        expectMapping(ANONYMOUS, Long.class, SOME_PAST_CALENDAR, SOME_PAST_CALENDAR.getTimeInMillis(), "19811214151617891", System.currentTimeMillis());
     }
 
     @Parameter(0)
     public BasicType<T, B> type;
     @Parameter(1)
-    public JavaLangType javaType;
+    public Class<B> javaType;
     @Parameter(2)
     public T value;
     @Parameter(3)
@@ -58,7 +58,7 @@ public class BasicParameterTypesTest<T, B> {
 
     @Test
     public void asBasicType() {
-        assertThat(type.asBasicType()).isSameAs(javaType);
+        assertThat(type.getBasicJavaClass()).isSameAs(javaType);
     }
 
     @Test
@@ -96,14 +96,14 @@ public class BasicParameterTypesTest<T, B> {
     }
 
     private static <T> void expectStandardMapping(BasicType<T, T> javaType, T value, String stringValue, T largerBasicValue) {
-        expectMapping(javaType, (JavaLangType) javaType, value, value, stringValue, largerBasicValue);
+        expectMapping(javaType, javaType.getBasicJavaClass(), value, value, stringValue, largerBasicValue);
     }
 
-    private static <T, B> void expectMapping(BasicType<? super T, ? super B> type, JavaLangType javaType, T value, B basicValue, String stringValue, B largerBasicValue) {
+    private static <T, B> void expectMapping(BasicType<? super T, ? super B> type, Class<B> javaType, T value, B basicValue, String stringValue, B largerBasicValue) {
         MAPPINGS.add(mapping(type, javaType, value, basicValue, stringValue, largerBasicValue));
     }
 
-    private static <T, B> Object[] mapping(BasicType<? super T, ? super B> type, JavaLangType javaType, T value, B basicValue, String stringValue, B largerBasicValue) {
+    private static <T, B> Object[] mapping(BasicType<? super T, ? super B> type, Class<B> javaType, T value, B basicValue, String stringValue, B largerBasicValue) {
         return new Object[]{type, javaType, value, basicValue, stringValue, largerBasicValue};
     }
 

@@ -32,22 +32,22 @@ public interface ParameterTypes {
 
     public static <T> BasicType<T, Integer> ofIntegerType(Class<T> type, Function<? super String, ? extends T> fromString, Function<? super T, String> toString,
                                                           Function<? super Integer, ? extends T> fromBasic, Function<? super T, Integer> toBasic) {
-        return new AdhocBasicType<>(type, fromString, toString, JavaLangType.INT, fromBasic, toBasic);
+        return new AdhocBasicType<>(type, fromString, toString, Integer.class, fromBasic, toBasic);
     }
 
     public static <T> BasicType<T, Integer> ofIntegerType(Function<? super String, ? extends T> fromString, Function<? super T, String> toString,
                                                           Function<? super Integer, ? extends T> fromBasic, Function<? super T, Integer> toBasic) {
-        return new AdhocBasicType<>(fromString, toString, JavaLangType.INT, fromBasic, toBasic);
+        return new AdhocBasicType<>(fromString, toString, Integer.class, fromBasic, toBasic);
     }
 
     public static <T> BasicType<T, Long> ofLongType(Class<T> type, Function<? super String, ? extends T> fromString, Function<? super T, String> toString,
                                                           Function<? super Long, ? extends T> fromBasic, Function<? super T, Long> toBasic) {
-        return new AdhocBasicType<>(type, fromString, toString, JavaLangType.LONG, fromBasic, toBasic);
+        return new AdhocBasicType<>(type, fromString, toString, Long.class, fromBasic, toBasic);
     }
 
     public static <T> BasicType<T, Long> ofLongType(Function<? super String, ? extends T> fromString, Function<? super T, String> toString,
                                                           Function<? super Long, ? extends T> fromBasic, Function<? super T, Long> toBasic) {
-        return new AdhocBasicType<>(fromString, toString, JavaLangType.LONG, fromBasic, toBasic);
+        return new AdhocBasicType<>(fromString, toString, Long.class, fromBasic, toBasic);
     }
 
 }

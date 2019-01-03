@@ -25,13 +25,6 @@ public class ParameterTypesTest<T> {
     private static final ParameterType<byte[]> ANONYMOUS = ParameterTypes.of(String::getBytes, String::new);
 
     static {
-        System.out.println(Integer.toHexString(199));
-        expectMapping(STRING, "myString", "myString");
-        expectMapping(INT, 18, "18");
-        expectMapping(LONG, 18L, "18");
-        expectMapping(BOOLEAN, true, "true");
-        expectMapping(BOOLEAN, false, "false");
-        expectMapping(CHAR, '\u00C7', "Ç");
         expectMapping(TEST_ENUM, TestEnum.ONE, "ONE");
         expectMapping(TEST_ENUM, TestEnum.TWO, "TWO");
         expectMapping(TEST_ENUM, TestEnum.THREE, "THREE");

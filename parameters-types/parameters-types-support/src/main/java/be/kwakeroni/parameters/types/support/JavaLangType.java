@@ -1,5 +1,8 @@
 package be.kwakeroni.parameters.types.support;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
@@ -57,6 +60,19 @@ public enum JavaLangType implements BasicType {
         @Override
         public String toString(Object value) {
             return Character.toString((char) value);
+        }
+    },
+    LOCAL_DATE {
+        private final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("uuuuMMdd");
+
+        @Override
+        public Object fromString(String value) {
+            return LocalDate.parse(value, FORMAT);
+        }
+
+        @Override
+        public String toString(Object value) {
+            return ((LocalDate) value).format(FORMAT);
         }
     };
 

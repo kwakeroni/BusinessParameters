@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.petshop.service;
 
+import be.kwakeroni.parameters.basic.client.model.Historicized;
 import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.basic.client.model.Ranged;
 import be.kwakeroni.parameters.basic.client.model.Simple;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class PriceCalculator {
 
     private final Mapped<String, Ranged<Integer, Simple>> bulkDiscount;
-    private final Mapped<String, Ranged<LocalDate, Simple>> salesDiscount;
+    private final Mapped<String, Historicized<Simple>> salesDiscount;
 
     public PriceCalculator(BusinessParameters parameters) {
         this.bulkDiscount = BulkDiscount.DEFINITION.createGroup(parameters);

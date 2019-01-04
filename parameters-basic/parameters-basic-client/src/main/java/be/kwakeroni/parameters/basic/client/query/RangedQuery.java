@@ -14,7 +14,7 @@ import java.util.function.Function;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class RangedQuery<V, ET extends EntryType, T> implements Query<Ranged<V, ET>, T> {
+public class RangedQuery<V, ET extends EntryType, RangedType extends Ranged<V, ET>, T> implements Query<RangedType, T> {
 
     private final V value;
     private final Function<? super V, String> type;
@@ -62,7 +62,7 @@ public class RangedQuery<V, ET extends EntryType, T> implements Query<Ranged<V, 
         return "at(" + value + ")." + subQuery;
     }
 
-    public static class Partial<V, ET extends EntryType> implements PartialQuery<Ranged<V, ET>, ET> {
+    public static class Partial<V, ET extends EntryType, RangedType extends Ranged<V, ET>> implements PartialQuery<RangedType, ET> {
         private final V value;
         private final Function<? super V, String> type;
 
@@ -76,8 +76,13 @@ public class RangedQuery<V, ET extends EntryType, T> implements Query<Ranged<V, 
         }
 
         @Override
-        public <T> Query<Ranged<V, ET>, T> andThen(Query<ET, T> subQuery) {
-            return new RangedQuery<V, ET, T>(value, type, subQuery);
+        public <T> Query<RangedType, T> andThen(Query<ET, T> subQuery) {
+            return new RangedQuery<>(value, type, subQuery);
+        }
+
+        public <T> Query<RangedType, T> _andThen(Query<ET, T> subQuery) {
+            return new RangedQuery<>(value, type, subQuery);
         }
     }
+
 }

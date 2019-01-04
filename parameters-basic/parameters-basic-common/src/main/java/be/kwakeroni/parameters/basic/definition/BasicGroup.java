@@ -1,5 +1,6 @@
 package be.kwakeroni.parameters.basic.definition;
 
+import be.kwakeroni.parameters.basic.definition.builder.HistoricizedDefinitionBuilder;
 import be.kwakeroni.parameters.basic.definition.builder.MappedDefinitionBuilder;
 import be.kwakeroni.parameters.basic.definition.builder.RangedDefinitionBuilder;
 import be.kwakeroni.parameters.basic.definition.builder.SimpleDefinitionBuilder;
@@ -21,6 +22,10 @@ public interface BasicGroup {
         return new DefaultRangedDefinitionBuilder<>();
     }
 
+    public default HistoricizedDefinitionBuilder<?> historicized() {
+        return new DefaultHistoricizedDefinitionBuilder<>();
+    }
+
     public static BasicGroup builder() {
         return new BasicGroup() {
         };
@@ -32,6 +37,10 @@ public interface BasicGroup {
 
     public static RangedDefinitionBuilder<?, ?> rangedGroup() {
         return builder().ranged();
+    }
+
+    public static HistoricizedDefinitionBuilder<?> historicizedGroup() {
+        return builder().historicized();
     }
 
     public static SimpleDefinitionBuilder group() {

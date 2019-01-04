@@ -1,7 +1,7 @@
 package be.kwakeroni.parameters.petshop.definitions;
 
+import be.kwakeroni.parameters.basic.client.model.Historicized;
 import be.kwakeroni.parameters.basic.client.model.Mapped;
-import be.kwakeroni.parameters.basic.client.model.Ranged;
 import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.basic.definition.BasicGroup;
 import be.kwakeroni.parameters.client.api.model.Parameter;
@@ -17,12 +17,12 @@ public class SalesDiscount {
     public static final Parameter<LocalDate> PERIOD = ParameterSupport.ofLocalDate("period");
     public static final Parameter<Integer> DISCOUNT = ParameterSupport.ofInt("discount");
 
-    public static final ParameterGroupDefinition<Mapped<String, Ranged<LocalDate, Simple>>> DEFINITION =
+    public static final ParameterGroupDefinition<Mapped<String, Historicized<Simple>>> DEFINITION =
             BasicGroup.mappedGroup()
                     .withKeyParameter("animal", ParameterTypes.STRING)
                     .mappingTo(
-                            BasicGroup.rangedGroup()
-                                    .withRangeParameter("period", ParameterTypes.LOCAL_DATE)
+                            BasicGroup.historicizedGroup()
+                                    .withParameter("period")
                                     .mappingTo(BasicGroup.group()
                                             .withParameter("discount"))
                     ).build("petshop.sales-discount");

@@ -23,7 +23,7 @@ public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBacken
 
     Logger LOG = LoggerFactory.getLogger(BasicRawWireFormat.class);
 
-    public String getType(){
+    public String getType() {
         return "raw";
     }
 
@@ -43,7 +43,7 @@ public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBacken
     }
 
     @Override
-    public Object externalizeRangedQuery(RangedQuery<?, ?, ?> query, ClientWireFormatterContext context) {
+    public Object externalizeRangedQuery(RangedQuery<?, ?, ?, ?> query, ClientWireFormatterContext context) {
         return query;
     }
 
@@ -56,7 +56,7 @@ public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBacken
         } else if (query instanceof EntryQuery) {
             return Optional.of(internalizeEntryQuery(group, context));
         } else if (query instanceof RangedQuery) {
-            RangedQuery<?, ?, ?> rangedQuery = (RangedQuery<?, ?, ?>) query;
+            RangedQuery<?, ?, ?, ?> rangedQuery = (RangedQuery<?, ?, ?, ?>) query;
             return Optional.of(internalizeRangedQuery(rangedQuery.getValueString(), rangedQuery.getSubQuery(), group, context));
         } else if (query instanceof MappedQuery) {
             MappedQuery<?, ?, ?> mappedQuery = (MappedQuery<?, ?, ?>) query;

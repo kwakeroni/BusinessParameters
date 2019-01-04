@@ -15,7 +15,8 @@ public class Catalog implements ParameterGroupDefinitionCatalog {
         return Stream.of(
                 ContactDetails.DEFINITION,
                 AnimalPrice.DEFINITION,
-                BulkDiscount.DEFINITION
+                BulkDiscount.DEFINITION,
+                SalesDiscount.DEFINITION
         );
     }
 

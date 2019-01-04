@@ -4,6 +4,8 @@ import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.types.api.ParameterType;
 import be.kwakeroni.parameters.types.support.ParameterTypes;
 
+import java.time.LocalDate;
+
 public class ParameterSupport<T> implements Parameter<T> {
 
     private final String name;
@@ -48,5 +50,7 @@ public class ParameterSupport<T> implements Parameter<T> {
     public static Parameter<Character> ofChar(String name) {
         return new ParameterSupport<>(name, ParameterTypes.CHAR);
     }
+
+    public static Parameter<LocalDate> ofLocalDate(String name) { return new ParameterSupport<>(name, ParameterTypes.LOCAL_DATE); }
 
 }

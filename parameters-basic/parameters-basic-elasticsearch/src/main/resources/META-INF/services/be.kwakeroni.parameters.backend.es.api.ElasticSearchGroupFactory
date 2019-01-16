@@ -1,3 +1,4 @@
 be.kwakeroni.parameters.basic.definition.es.ElasticSearchSimpleGroupFactory
 be.kwakeroni.parameters.basic.definition.es.ElasticSearchMappedGroupFactory
 be.kwakeroni.parameters.basic.definition.es.ElasticSearchRangedGroupFactory
+be.kwakeroni.parameters.basic.definition.es.ElasticSearchHistoricizedGroupFactory

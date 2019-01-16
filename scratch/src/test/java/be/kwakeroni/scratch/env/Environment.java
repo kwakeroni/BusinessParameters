@@ -43,7 +43,7 @@ public class Environment implements TestRule, AutoCloseable {
     }
 
     private final TestData testData;
-    protected final WritableBusinessParameters parameters;
+    protected WritableBusinessParameters parameters;
 
     public Environment() {
         this(TransientInMemoryTestData::new);
@@ -51,10 +51,14 @@ public class Environment implements TestRule, AutoCloseable {
 
     public Environment(Supplier<TestData> testDataSupplier) {
         this.testData = testDataSupplier.get();
+        this.parameters = createBusinessParameters();
+    }
+
+    private WritableBusinessParameters createBusinessParameters() {
         BusinessParametersFactory factory = Services.loadService(BusinessParametersFactory.class);
         ((DirectBusinessParametersServiceFactory) factory).setBackendType(this.testData::acceptBackend);
         WritableBusinessParameters local = factory.getWritableInstance(Collections.emptyMap());
-        this.parameters = new WritableBusinessParameters() {
+        return new WritableBusinessParameters() {
             @Override
             public <ET extends EntryType, T> void set(ParameterGroup<ET> group, Query<ET, T> query, T value) {
                 local.set(group, query, value);
@@ -101,6 +105,7 @@ public class Environment implements TestRule, AutoCloseable {
             @Override
             public void evaluate() throws Throwable {
                 Environment.this.testData.reset();
+                Environment.this.parameters = createBusinessParameters();
                 base.evaluate();
             }
         };

@@ -9,12 +9,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-class DefaultElasticSearchCriteria implements ElasticSearchCriteria{
+class DefaultElasticSearchCriteria implements ElasticSearchCriteria {
 
     private String group;
     private List<Criterion> parameterMatches = Collections.emptyList();
@@ -32,7 +31,7 @@ class DefaultElasticSearchCriteria implements ElasticSearchCriteria{
 
     @Override
     public void addParameterMatch(String parameter, String value) {
-        if (this.parameterMatches.isEmpty()){
+        if (this.parameterMatches.isEmpty()) {
             this.parameterMatches = new ArrayList<>(1);
         }
         this.parameterMatches.add(new Match(parameter, value));
@@ -40,23 +39,23 @@ class DefaultElasticSearchCriteria implements ElasticSearchCriteria{
 
     @Override
     public void addParameterNotMatch(String parameter, String value) {
-        if (this.parameterNotMatches.isEmpty()){
+        if (this.parameterNotMatches.isEmpty()) {
             this.parameterNotMatches = new ArrayList<>(1);
         }
         this.parameterNotMatches.add(new Match(parameter, value));
     }
 
     @Override
-    public void addParameterComparison(String parameter, String operator, Object value) {
-        if (this.parameterFilters.isEmpty()){
+    public <T> void addParameterComparison(String parameter, ElasticSearchDataType<T> dataType, String operator, T value) {
+        if (this.parameterFilters.isEmpty()) {
             this.parameterFilters = new ArrayList<>(1);
         }
-        this.parameterFilters.add(new Comparison(parameter, operator, value));
+        this.parameterFilters.add(new Comparison(parameter, dataType, operator, value));
     }
 
     @Override
     public void addComplexFilter(JSONObject filter) {
-        if (this.parameterFilters.isEmpty()){
+        if (this.parameterFilters.isEmpty()) {
             this.parameterFilters = new ArrayList<>(1);
         }
         this.parameterFilters.add(() -> filter);
@@ -68,7 +67,7 @@ class DefaultElasticSearchCriteria implements ElasticSearchCriteria{
 
         JSONObject filter;
         if ((parameterMatches == null || parameterMatches.isEmpty())
-            && (parameterFilters == null || parameterFilters.isEmpty())
+                && (parameterFilters == null || parameterFilters.isEmpty())
                 && (parameterNotMatches == null || parameterNotMatches.isEmpty())) {
             filter = Match.match("_type", group);
         } else {
@@ -81,12 +80,12 @@ class DefaultElasticSearchCriteria implements ElasticSearchCriteria{
                 q.put("must", matches);
             }
 
-            if (isNotEmpty(this.parameterNotMatches)){
+            if (isNotEmpty(this.parameterNotMatches)) {
                 JSONArray notMatches = new JSONArray();
                 this.parameterNotMatches.forEach(notMatch -> notMatches.put(notMatch.toJSONObject()));
                 q.put("must_not", notMatches);
             }
-            if (isNotEmpty(this.parameterFilters)){
+            if (isNotEmpty(this.parameterFilters)) {
                 JSONArray filters = new JSONArray();
                 this.parameterFilters.forEach(f -> filters.put(f.toJSONObject()));
                 q.put("filter", filters);
@@ -95,10 +94,10 @@ class DefaultElasticSearchCriteria implements ElasticSearchCriteria{
             filter = new JSONObject().put("bool", q);
         }
 
-            return
-                    new JSONObject().put("constant_score",
-                            new JSONObject().put("filter", filter
-                                ));
+        return
+                new JSONObject().put("constant_score",
+                        new JSONObject().put("filter", filter
+                        ));
 
 
 //            "query" : {
@@ -134,8 +133,8 @@ class DefaultElasticSearchCriteria implements ElasticSearchCriteria{
 //            }
     }
 
-    private boolean isNotEmpty(Collection<?> coll){
-        return coll != null && ! coll.isEmpty();
+    private boolean isNotEmpty(Collection<?> coll) {
+        return coll != null && !coll.isEmpty();
     }
 
     private static interface Criterion {
@@ -161,19 +160,21 @@ class DefaultElasticSearchCriteria implements ElasticSearchCriteria{
         }
     }
 
-    private static final class Comparison implements Criterion {
+    private static final class Comparison<T> implements Criterion {
         public final String parameter;
-        public final Object value;
+        public final ElasticSearchDataType<T> dataType;
+        public final T value;
         public final String op;
 
-        public Comparison(String parameter, String op, Object value) {
+        public Comparison(String parameter, ElasticSearchDataType<T> dataType, String op, T value) {
             this.parameter = parameter;
+            this.dataType = dataType;
             this.op = op;
             this.value = value;
         }
 
         public JSONObject toJSONObject() {
-            return range(this.parameter, this.op, this.value);
+            return range(this.parameter, this.op, this.dataType.toJSONRepresentation(this.value));
         }
 
         public static JSONObject range(String parameter, String op, Object value) {

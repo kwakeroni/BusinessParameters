@@ -1,6 +1,12 @@
 package be.kwakeroni.parameters.basic.backend.es;
 
-import be.kwakeroni.parameters.backend.es.api.*;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchCriteria;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchData;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchDataType;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchEntry;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
+import be.kwakeroni.parameters.backend.es.api.ElasticSearchQuery;
+import be.kwakeroni.parameters.backend.es.api.EntryModification;
 import be.kwakeroni.parameters.basic.backend.query.RangedBackendGroup;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediaryBackendGroupSupport;
 import be.kwakeroni.parameters.basic.backend.query.support.IntermediateBackendQuerySupport;
@@ -83,13 +89,18 @@ public class ElasticSearchQueryBasedRangedGroup
         return getToParameter(this.rangeParameterName);
     }
 
-    private Consumer<ElasticSearchCriteria> rangeContaining(Object comparedValue) {
+    private <T> Consumer<ElasticSearchCriteria> rangeContaining(String valueString) {
+        T value = (T) converter.apply(valueString);
+        return rangeContaining((ElasticSearchDataType<T>) dataType, value);
+    }
+
+    private <T> Consumer<ElasticSearchCriteria> rangeContaining(ElasticSearchDataType<T> type, T comparedValue) {
         String fromParameter = getFromParameter();
         String toParameter = getToParameter();
 
         return criteria -> {
-            criteria.addParameterComparison(fromParameter, "lte", comparedValue);
-            criteria.addParameterComparison(toParameter, "gt", comparedValue);
+            criteria.addParameterComparison(fromParameter, type, "lte", comparedValue);
+            criteria.addParameterComparison(toParameter, type, "gt", comparedValue);
         };
     }
 
@@ -154,13 +165,11 @@ public class ElasticSearchQueryBasedRangedGroup
             extends IntermediateBackendQuerySupport<ElasticSearchQuery<T>, T>
             implements ElasticSearchQuery<T> {
 
-        //        private final String value;
-        private final Object comparedValue;
+        private final String value;
 
         public ElasticSearchRangedQuery(String value, ElasticSearchQuery<T> subQuery) {
             super(subQuery);
-//            this.value = value;
-            this.comparedValue = converter.apply(value);
+            this.value = value;
 
         }
 
@@ -179,12 +188,12 @@ public class ElasticSearchQueryBasedRangedGroup
                     }
             ).peek(ElasticSearchQueryBasedRangedGroup.this::clearMetaParams));
 
-            return getSubQuery().apply(verifyingData.with(rangeContaining(comparedValue)));
+            return getSubQuery().apply(verifyingData.with(rangeContaining(value)));
         }
 
         @Override
         public EntryModification getEntryModification(T value, ElasticSearchData data) {
-            return getSubQuery().getEntryModification(value, data.with(rangeContaining(this.comparedValue)));
+            return getSubQuery().getEntryModification(value, data.with(rangeContaining(this.value)));
         }
     }
 

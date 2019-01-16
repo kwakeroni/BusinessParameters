@@ -41,8 +41,6 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryBackendServiceFactory.class);
 
-    static BusinessParametersBackend<InMemoryQuery<?>> INSTANCE = null;
-
     static Supplier<GroupDataStore> DATA_STORE_SUPPLIER = InMemoryBackendServiceFactory::getDefaultDataStoreSupplier;
 
     public static synchronized void setDataStoreSupplier(Supplier<GroupDataStore> supplier) {
@@ -51,12 +49,7 @@ public class InMemoryBackendServiceFactory implements BusinessParametersBackendF
 
     @Override
     public BusinessParametersBackend<InMemoryQuery<?>> getInstance() {
-        synchronized (InMemoryBackendServiceFactory.class) {
-            if (INSTANCE == null) {
-                INSTANCE = getInstance(DATA_STORE_SUPPLIER.get());
-            }
-        }
-        return INSTANCE;
+        return getInstance(DATA_STORE_SUPPLIER.get());
     }
 
     @SuppressWarnings("WeakerAccess")

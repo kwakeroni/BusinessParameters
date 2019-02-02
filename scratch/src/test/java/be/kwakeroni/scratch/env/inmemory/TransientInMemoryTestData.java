@@ -93,7 +93,7 @@ public class TransientInMemoryTestData implements TestData {
 
         setGroupData(HistoricizedTVGroup.instance().getName(),
                 HistoricizedTVGroup.entryData("20181215", "20190315", "Winter Wonderland"),
-                HistoricizedTVGroup.entryData("20190315", "20190615", "Soppy Spring Soap"),
+                // Don't include for testing purposes: HistoricizedTVGroup.entryData("20190315", "20190615", "Soppy Spring Soap"),
                 HistoricizedTVGroup.entryData("20190615", "20190915", "Summer Standup Show"),
                 HistoricizedTVGroup.entryData("20190915", "20191215", "Authentic Autumn Awards")
         );

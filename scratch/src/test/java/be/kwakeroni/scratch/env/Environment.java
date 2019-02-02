@@ -100,15 +100,19 @@ public class Environment implements TestRule, AutoCloseable {
     }
 
 
-    public TestRule reset() {
+    public TestRule resetRule() {
         return (base, description) -> new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                Environment.this.testData.reset();
-                Environment.this.parameters = createBusinessParameters();
+                Environment.this.reset();
                 base.evaluate();
             }
         };
+    }
+
+    public void reset() {
+        this.testData.reset();
+        this.parameters = createBusinessParameters();
     }
 
 }

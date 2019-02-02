@@ -93,7 +93,7 @@ public class ElasticSearchTestData implements TestData {
 
         addInsert(uuids, HistoricizedTVGroup.instance().getName(),
                 HistoricizedTVGroup.enrichedEntryData("20181215", "20190315", "Winter Wonderland"),
-                HistoricizedTVGroup.enrichedEntryData("20190315", "20190615", "Soppy Spring Soap"),
+                // Don't include for testing purposes: HistoricizedTVGroup.enrichedEntryData("20190315", "20190615", "Soppy Spring Soap"),
                 HistoricizedTVGroup.enrichedEntryData("20190615", "20190915", "Summer Standup Show"),
                 HistoricizedTVGroup.enrichedEntryData("20190915", "20191215", "Authentic Autumn Awards")
         );

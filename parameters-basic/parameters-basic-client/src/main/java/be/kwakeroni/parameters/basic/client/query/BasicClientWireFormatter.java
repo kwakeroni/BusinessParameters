@@ -13,7 +13,7 @@ public interface BasicClientWireFormatter extends ClientWireFormatter {
 
     Object externalizeEntryQuery(EntryQuery query, ClientWireFormatterContext context);
 
-    Object externalizeMappedQuery(MappedQuery<?, ?, ?> query, ClientWireFormatterContext context);
+    Object externalizeMappedQuery(MappedQuery<?, ?, ?, ?> query, ClientWireFormatterContext context);
 
     Object externalizeRangedQuery(RangedQuery<?, ?, ?, ?> query, ClientWireFormatterContext context);
 

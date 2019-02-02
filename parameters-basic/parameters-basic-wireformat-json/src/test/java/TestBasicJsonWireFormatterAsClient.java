@@ -46,7 +46,7 @@ public class TestBasicJsonWireFormatterAsClient {
     @Mock
     private EntryQuery entryQuery;
     @Mock
-    private MappedQuery<TestValue, ?, TestValue> mappedQuery;
+    private MappedQuery<TestValue, ?, ?, TestValue> mappedQuery;
     @Mock
     private RangedQuery<TestValue, ?, ?, TestValue> rangedQuery;
     @Mock

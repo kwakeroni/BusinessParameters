@@ -79,10 +79,6 @@ public class RangedQuery<V, ET extends EntryType, RangedType extends Ranged<V, E
         public <T> Query<RangedType, T> andThen(Query<ET, T> subQuery) {
             return new RangedQuery<>(value, type, subQuery);
         }
-
-        public <T> Query<RangedType, T> _andThen(Query<ET, T> subQuery) {
-            return new RangedQuery<>(value, type, subQuery);
-        }
     }
 
 }

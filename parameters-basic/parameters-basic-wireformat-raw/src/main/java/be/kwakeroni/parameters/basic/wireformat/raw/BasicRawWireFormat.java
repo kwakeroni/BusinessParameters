@@ -38,7 +38,7 @@ public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBacken
     }
 
     @Override
-    public Object externalizeMappedQuery(MappedQuery<?, ?, ?> query, ClientWireFormatterContext context) {
+    public Object externalizeMappedQuery(MappedQuery<?, ?, ?, ?> query, ClientWireFormatterContext context) {
         return query;
     }
 
@@ -59,7 +59,7 @@ public class BasicRawWireFormat implements BasicClientWireFormatter, BasicBacken
             RangedQuery<?, ?, ?, ?> rangedQuery = (RangedQuery<?, ?, ?, ?>) query;
             return Optional.of(internalizeRangedQuery(rangedQuery.getValueString(), rangedQuery.getSubQuery(), group, context));
         } else if (query instanceof MappedQuery) {
-            MappedQuery<?, ?, ?> mappedQuery = (MappedQuery<?, ?, ?>) query;
+            MappedQuery<?, ?, ?, ?> mappedQuery = (MappedQuery<?, ?, ?, ?>) query;
             return Optional.of(internalizeMappedQuery(mappedQuery.getKeyString(), mappedQuery.getSubQuery(), group, context));
         }
 

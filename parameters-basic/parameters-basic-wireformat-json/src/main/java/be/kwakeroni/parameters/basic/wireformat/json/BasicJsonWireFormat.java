@@ -72,7 +72,7 @@ public class BasicJsonWireFormat implements BasicClientWireFormatter, BasicBacke
     }
 
     @Override
-    public JSONObject externalizeMappedQuery(MappedQuery<?, ?, ?> query, ClientWireFormatterContext context) {
+    public JSONObject externalizeMappedQuery(MappedQuery<?, ?, ?, ?> query, ClientWireFormatterContext context) {
         return new JSONObject()
                 .put(TYPE, TYPE_MAPPED)
                 .put(KEY, query.getKeyString())

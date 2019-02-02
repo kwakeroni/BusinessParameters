@@ -14,7 +14,7 @@ import java.util.function.Function;
 /**
  * (C) 2016 Maarten Van Puymbroeck
  */
-public class MappedQuery<K, ET extends EntryType, T> implements Query<Mapped<K, ET>, T> {
+public class MappedQuery<K, ET extends EntryType, MappedType extends Mapped<K, ET>, T> implements Query<MappedType, T> {
 
     private final K key;
     private final Function<? super K, String> keyStringConverter;
@@ -62,7 +62,7 @@ public class MappedQuery<K, ET extends EntryType, T> implements Query<Mapped<K, 
         return "forKey(" + key + ")." + subQuery;
     }
 
-    public static class Partial<K, ET extends EntryType> implements PartialQuery<Mapped<K, ET>, ET> {
+    public static class Partial<K, ET extends EntryType, MappedType extends Mapped<K, ET>> implements PartialQuery<MappedType, ET> {
 
         private final K key;
         private final Function<? super K, String> keyStringConverter;
@@ -77,7 +77,7 @@ public class MappedQuery<K, ET extends EntryType, T> implements Query<Mapped<K, 
         }
 
         @Override
-        public <T> Query<Mapped<K, ET>, T> andThen(Query<ET, T> subQuery) {
+        public <T> Query<MappedType, T> andThen(Query<ET, T> subQuery) {
             return new MappedQuery<>(key, keyStringConverter, subQuery);
         }
     }

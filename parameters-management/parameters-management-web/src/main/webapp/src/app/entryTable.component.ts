@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { GroupController } from './groupController';
-import { ParametersService } from './parameters.service';
 
 @Component({
   selector: 'entry-table',

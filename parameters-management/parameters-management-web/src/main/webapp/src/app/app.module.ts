@@ -5,11 +5,13 @@ import { HttpModule }    from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { EntryTableComponent} from './entryTable.component';
+import { EntryFormComponent} from './entryForm.component';
 import { ParametersService } from './parameters.service';
 
 @NgModule({
   declarations: [
     AppComponent,
+    EntryFormComponent,
     EntryTableComponent
   ],
   imports: [

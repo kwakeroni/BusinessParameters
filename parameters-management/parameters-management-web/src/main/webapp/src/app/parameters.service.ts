@@ -38,13 +38,10 @@ export class ParametersService {
      return str;
    }
 
-   getGroup(name: string): Promise<Group> {
-        return this.http.get(baseUrl + '/groups')
+   getGroup(groupName: string): Promise<Group> {
+        return this.http.get(baseUrl + '/groups/'+groupName)
                            .toPromise()
-                           .then(response => {
-                                let groupData = response.json().groups.filter(obj => obj.name==name);
-                                return (groupData.length > 0)? new Group(groupData[0]) : null;
-                              })
+                           .then(response => new Group(response.json()))
                            .catch(this.handleError);
    }
 

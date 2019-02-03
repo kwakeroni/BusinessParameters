@@ -2,7 +2,9 @@ package be.kwakeroni.parameters.management.rest;
 
 import be.kwakeroni.parameters.backend.api.BackendEntry;
 import be.kwakeroni.parameters.backend.api.BusinessParametersBackend;
+import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
+import be.kwakeroni.parameters.definition.api.descriptor.DefinitionDescriptor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -32,10 +34,12 @@ public class RestParameterManagement {
     Logger LOG = LoggerFactory.getLogger(RestParameterManagement.class);
 
     private final BusinessParametersBackend<?> backend;
+    private final DefinitionVisitorContext<DefinitionDescriptor> descriptorContext;
     private final ExceptionMapper mapper = new ExceptionMapper();
 
-    public RestParameterManagement(BusinessParametersBackend<?> backend) {
+    public RestParameterManagement(BusinessParametersBackend<?> backend, DefinitionVisitorContext<DefinitionDescriptor> descriptorContext) {
         this.backend = backend;
+        this.descriptorContext = descriptorContext;
     }
 
     @GET
@@ -65,6 +69,17 @@ public class RestParameterManagement {
                 .put("name", definition.getName())
                 .put("type", definition.getType())
                 .put("parameters", definition.getParameters());
+    }
+
+    @Path("/groups/{group}")
+    @GET
+    @Produces(APPLICATION_JSON)
+    public Response getGroup(@PathParam("group") String groupName) {
+        ParameterGroupDefinition<?> definition = backend.getDefinition(groupName);
+        DefinitionDescriptor descriptor = definition.apply(this.descriptorContext);
+        JSONObject group = toJSONGroup(definition);
+        group.put("definition", descriptor.toBasicMap());
+        return Response.ok(group.toString(), APPLICATION_JSON).build();
     }
 
     @Path("/groups/{group}/entries")

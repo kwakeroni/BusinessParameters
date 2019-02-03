@@ -36,15 +36,18 @@ export class AppComponent implements OnInit, GroupController {
   goto(groupName : string): void {
     this.resetActiveEntry();
 
-    this.parametersService.getGroup(groupName).then(group => {
-        if (group){
-          this.group = group;
-          this.loadEntries();
-        } else {
-          this.gotoRoot();
-        }
-    });
-
+    if (groupName == null){
+      this.gotoRoot();
+    } else {
+      this.parametersService.getGroup(groupName).then(group => {
+          if (group){
+            this.group = group;
+            this.loadEntries();
+          } else {
+            this.gotoRoot();
+          }
+      });
+    }
   }
 
   resetActiveEntry(){

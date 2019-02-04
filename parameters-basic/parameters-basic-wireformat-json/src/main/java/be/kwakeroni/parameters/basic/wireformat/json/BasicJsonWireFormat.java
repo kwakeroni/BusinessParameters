@@ -3,7 +3,11 @@ package be.kwakeroni.parameters.basic.wireformat.json;
 import be.kwakeroni.parameters.backend.api.BackendGroup;
 import be.kwakeroni.parameters.backend.api.query.BackendWireFormatterContext;
 import be.kwakeroni.parameters.basic.backend.query.BasicBackendWireFormatter;
-import be.kwakeroni.parameters.basic.client.query.*;
+import be.kwakeroni.parameters.basic.client.query.BasicClientWireFormatter;
+import be.kwakeroni.parameters.basic.client.query.EntryQuery;
+import be.kwakeroni.parameters.basic.client.query.MappedQuery;
+import be.kwakeroni.parameters.basic.client.query.RangedQuery;
+import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.client.api.model.Entry;
 import be.kwakeroni.parameters.client.api.query.ClientWireFormatterContext;
 import org.json.JSONObject;
@@ -68,7 +72,7 @@ public class BasicJsonWireFormat implements BasicClientWireFormatter, BasicBacke
     }
 
     @Override
-    public JSONObject externalizeMappedQuery(MappedQuery<?, ?, ?> query, ClientWireFormatterContext context) {
+    public JSONObject externalizeMappedQuery(MappedQuery<?, ?, ?, ?> query, ClientWireFormatterContext context) {
         return new JSONObject()
                 .put(TYPE, TYPE_MAPPED)
                 .put(KEY, query.getKeyString())
@@ -76,7 +80,7 @@ public class BasicJsonWireFormat implements BasicClientWireFormatter, BasicBacke
     }
 
     @Override
-    public JSONObject externalizeRangedQuery(RangedQuery<?, ?, ?> query, ClientWireFormatterContext context) {
+    public JSONObject externalizeRangedQuery(RangedQuery<?, ?, ?, ?> query, ClientWireFormatterContext context) {
         return new JSONObject()
                 .put(TYPE, TYPE_RANGED)
                 .put(VALUE, query.getValueString())

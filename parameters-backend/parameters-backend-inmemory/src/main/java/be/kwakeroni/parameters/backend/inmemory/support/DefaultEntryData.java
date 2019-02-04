@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * (C) 2016 Maarten Van Puymbroeck
@@ -42,6 +43,10 @@ public class DefaultEntryData implements EntryData {
         } else {
             throw new IllegalArgumentException("Unknown parameter: " + parameterName);
         }
+    }
+
+    public String toString() {
+        return map.entrySet().stream().map(Object::toString).collect(Collectors.joining(System.lineSeparator(), "[" + System.lineSeparator(), "]"));
     }
 
     @Override

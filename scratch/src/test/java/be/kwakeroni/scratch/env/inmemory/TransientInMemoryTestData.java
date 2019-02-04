@@ -5,9 +5,11 @@ import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendServiceFactory;
 import be.kwakeroni.parameters.backend.inmemory.fallback.TransientGroupDataStore;
+import be.kwakeroni.parameters.basic.definition.factory.HistoricizedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
+import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryHistoricizedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryMappedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.inmemory.InMemoryRangedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.inmemory.InMemorySimpleGroupFactory;
@@ -17,6 +19,7 @@ import be.kwakeroni.scratch.env.TestData;
 import be.kwakeroni.scratch.tv.AbstractMappedRangedTVGroup;
 import be.kwakeroni.scratch.tv.AbstractRangedTVGroup;
 import be.kwakeroni.scratch.tv.Dag;
+import be.kwakeroni.scratch.tv.HistoricizedTVGroup;
 import be.kwakeroni.scratch.tv.MappedRangedFilterTVGroup;
 import be.kwakeroni.scratch.tv.MappedRangedQueryTVGroup;
 import be.kwakeroni.scratch.tv.MappedTVGroup;
@@ -88,6 +91,13 @@ public class TransientInMemoryTestData implements TestData {
                 MappedTVGroup.entryData(Dag.ZATERDAG, "Samson"),
                 MappedTVGroup.entryData(Dag.ZONDAG, "Morgen Maandag"));
 
+        setGroupData(HistoricizedTVGroup.instance().getName(),
+                HistoricizedTVGroup.entryData("20181215", "20190315", "Winter Wonderland"),
+                // Don't include for testing purposes: HistoricizedTVGroup.entryData("20190315", "20190615", "Soppy Spring Soap"),
+                HistoricizedTVGroup.entryData("20190615", "20190915", "Summer Standup Show"),
+                HistoricizedTVGroup.entryData("20190915", "20191215", "Authentic Autumn Awards")
+        );
+
         setGroupData(RangedFilterTVGroup.instance().getName(), RangedQueryTVGroup.instance().getName(),
                 AbstractRangedTVGroup.entryData(Slot.atHour(8), Slot.atHour(12), "Samson"),
                 AbstractRangedTVGroup.entryData(Slot.atHalfPast(20), Slot.atHour(22), "Morgen Maandag"));
@@ -103,7 +113,8 @@ public class TransientInMemoryTestData implements TestData {
     public static DefinitionVisitorContext<InMemoryGroup> FACTORY_CONTEXT = Contexts.of(
             SimpleDefinitionVisitor.class, new InMemorySimpleGroupFactory(),
             MappedDefinitionVisitor.class, new InMemoryMappedGroupFactory(),
-            RangedDefinitionVisitor.class, new InMemoryRangedGroupFactory()
+            RangedDefinitionVisitor.class, new InMemoryRangedGroupFactory(),
+            HistoricizedDefinitionVisitor.class, new InMemoryHistoricizedGroupFactory()
     );
 
 }

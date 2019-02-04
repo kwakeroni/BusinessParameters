@@ -72,7 +72,6 @@ class InMemoryBackendServiceFactoryTest {
         URLClassLoader classLoader = new URLClassLoader(new URL[]{url}, Thread.currentThread().getContextClassLoader());
         Thread.currentThread().setContextClassLoader(classLoader);
 
-        InMemoryBackendServiceFactory.INSTANCE = null;
         TestConfigurationProvider.setConfiguration(this.configuration);
         when(this.configuration.get(any())).thenCallRealMethod();
     }
@@ -82,8 +81,6 @@ class InMemoryBackendServiceFactoryTest {
         Thread.currentThread().setContextClassLoader(previousClassLoader.get());
         previousClassLoader.remove();
         folder.delete();
-
-        InMemoryBackendServiceFactory.INSTANCE = null;
         TestConfigurationProvider.clear();
     }
 
@@ -125,17 +122,6 @@ class InMemoryBackendServiceFactoryTest {
 
         assertThat(backend).isInstanceOf(InMemoryBackend.class);
     }
-
-    @Test
-    @DisplayName("Creates only one InMemoryBackend (singleton)")
-    void testGetInstanceIsSingleton() {
-
-        BusinessParametersBackend<?> backend = factory.getInstance();
-        BusinessParametersBackend<?> backend2 = factory.getInstance();
-
-        assertThat(backend).isSameAs(backend2);
-    }
-
 
     @Test
     @DisplayName("Supplies definitions from ServiceLoader")

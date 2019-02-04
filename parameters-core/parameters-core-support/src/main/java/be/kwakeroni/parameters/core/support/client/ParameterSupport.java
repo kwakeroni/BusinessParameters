@@ -2,7 +2,9 @@ package be.kwakeroni.parameters.core.support.client;
 
 import be.kwakeroni.parameters.client.api.model.Parameter;
 import be.kwakeroni.parameters.types.api.ParameterType;
-import be.kwakeroni.parameters.types.support.JavaLangType;
+import be.kwakeroni.parameters.types.support.ParameterTypes;
+
+import java.time.LocalDate;
 
 public class ParameterSupport<T> implements Parameter<T> {
 
@@ -30,23 +32,25 @@ public class ParameterSupport<T> implements Parameter<T> {
     }
 
     public static Parameter<String> ofString(String name) {
-        return new ParameterSupport<>(name, JavaLangType.STRING);
+        return new ParameterSupport<>(name, ParameterTypes.STRING);
     }
 
     public static Parameter<Integer> ofInt(String name) {
-        return new ParameterSupport<>(name, JavaLangType.INT);
+        return new ParameterSupport<>(name, ParameterTypes.INT);
     }
 
     public static Parameter<Long> ofLong(String name) {
-        return new ParameterSupport<>(name, JavaLangType.LONG);
+        return new ParameterSupport<>(name, ParameterTypes.LONG);
     }
 
     public static Parameter<Boolean> ofBoolean(String name) {
-        return new ParameterSupport<>(name, JavaLangType.BOOLEAN);
+        return new ParameterSupport<>(name, ParameterTypes.BOOLEAN);
     }
 
     public static Parameter<Character> ofChar(String name) {
-        return new ParameterSupport<>(name, JavaLangType.CHAR);
+        return new ParameterSupport<>(name, ParameterTypes.CHAR);
     }
+
+    public static Parameter<LocalDate> ofLocalDate(String name) { return new ParameterSupport<>(name, ParameterTypes.LOCAL_DATE); }
 
 }

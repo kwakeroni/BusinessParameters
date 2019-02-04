@@ -1,10 +1,13 @@
 package be.kwakeroni.parameters.types.support;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public enum JavaLangType implements BasicType {
-    STRING {
+enum JavaLangType implements BasicType {
+    STRING(String.class) {
         @Override
         public Object fromString(String value) {
             return value;
@@ -15,7 +18,7 @@ public enum JavaLangType implements BasicType {
             return (String) value;
         }
     },
-    INT {
+    INT(Integer.class) {
         @Override
         public Object fromString(String value) {
             return Integer.parseInt(value);
@@ -26,7 +29,7 @@ public enum JavaLangType implements BasicType {
             return Integer.toString((int) value);
         }
     },
-    LONG {
+    LONG(Long.class) {
         @Override
         public Object fromString(String value) {
             return Long.parseLong(value);
@@ -37,7 +40,7 @@ public enum JavaLangType implements BasicType {
             return Long.toString((long) value);
         }
     },
-    BOOLEAN {
+    BOOLEAN(Boolean.class) {
         @Override
         public Object fromString(String value) {
             return Boolean.parseBoolean(value);
@@ -48,7 +51,7 @@ public enum JavaLangType implements BasicType {
             return Boolean.toString((boolean) value);
         }
     },
-    CHAR {
+    CHAR(Character.class) {
         @Override
         public Object fromString(String value) {
             return value.charAt(0);
@@ -58,12 +61,30 @@ public enum JavaLangType implements BasicType {
         public String toString(Object value) {
             return Character.toString((char) value);
         }
+    },
+    LOCAL_DATE(LocalDate.class) {
+        private final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("uuuuMMdd");
+
+        @Override
+        public Object fromString(String value) {
+            return LocalDate.parse(value, FORMAT);
+        }
+
+        @Override
+        public String toString(Object value) {
+            return ((LocalDate) value).format(FORMAT);
+        }
     };
 
+    private final Class<? extends Comparable<?>> backingType;
+
+    private JavaLangType(Class<? extends Comparable<?>> backingType) {
+        this.backingType = backingType;
+    }
 
     @Override
-    public JavaLangType asBasicType() {
-        return this;
+    public Class getBasicJavaClass() {
+        return this.backingType;
     }
 
     @Override

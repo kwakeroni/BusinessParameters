@@ -17,6 +17,7 @@ import be.kwakeroni.scratch.env.TestData;
 import be.kwakeroni.scratch.tv.AbstractMappedRangedTVGroup;
 import be.kwakeroni.scratch.tv.AbstractRangedTVGroup;
 import be.kwakeroni.scratch.tv.Dag;
+import be.kwakeroni.scratch.tv.HistoricizedTVGroup;
 import be.kwakeroni.scratch.tv.MappedRangedFilterTVGroup;
 import be.kwakeroni.scratch.tv.MappedRangedQueryTVGroup;
 import be.kwakeroni.scratch.tv.MappedTVGroup;
@@ -43,13 +44,13 @@ public class PersistedInMemoryTestData implements TestData {
     private StorageProvider fileStorage;
 
     public PersistedInMemoryTestData() {
-        this.dataStore = new PersistedGroupDataStore(storageProvider());
-        InMemoryBackendServiceFactory.setDataStoreSupplier(() -> this.dataStore);
         try {
             this.folder.create();
         } catch (IOException exc) {
             throw new UncheckedIOException(exc);
         }
+        this.dataStore = new PersistedGroupDataStore(storageProvider());
+        InMemoryBackendServiceFactory.setDataStoreSupplier(() -> this.dataStore);
         reset();
     }
 
@@ -108,6 +109,13 @@ public class PersistedInMemoryTestData implements TestData {
         addGroupData(MappedTVGroup.instance().getName(),
                 MappedTVGroup.entryData(Dag.ZATERDAG, "Samson"),
                 MappedTVGroup.entryData(Dag.ZONDAG, "Morgen Maandag"));
+
+        addGroupData(HistoricizedTVGroup.instance().getName(),
+                HistoricizedTVGroup.entryData("20181215", "20190315", "Winter Wonderland"),
+                // Don't include for testing purposes: HistoricizedTVGroup.entryData("20190315", "20190615", "Soppy Spring Soap"),
+                HistoricizedTVGroup.entryData("20190615", "20190915", "Summer Standup Show"),
+                HistoricizedTVGroup.entryData("20190915", "20191215", "Authentic Autumn Awards")
+        );
 
         addGroupData(RangedFilterTVGroup.instance().getName(), RangedQueryTVGroup.instance().getName(),
                 AbstractRangedTVGroup.entryData(Slot.atHour(8), Slot.atHour(12), "Samson"),

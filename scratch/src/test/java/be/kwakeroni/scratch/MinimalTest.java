@@ -6,14 +6,28 @@ import be.kwakeroni.parameters.basic.client.query.RangedQuery;
 import be.kwakeroni.parameters.basic.client.query.ValueQuery;
 import be.kwakeroni.parameters.basic.type.Range;
 import be.kwakeroni.parameters.client.api.model.Entry;
+import be.kwakeroni.parameters.types.support.ParameterTypes;
 import be.kwakeroni.scratch.env.Environment;
 import be.kwakeroni.scratch.env.TestData;
-import be.kwakeroni.scratch.tv.*;
+import be.kwakeroni.scratch.tv.AbstractMappedRangedTVGroup;
+import be.kwakeroni.scratch.tv.AbstractRangedTVGroup;
+import be.kwakeroni.scratch.tv.Dag;
+import be.kwakeroni.scratch.tv.HistoricizedTVGroup;
+import be.kwakeroni.scratch.tv.MappedRangedFilterTVGroup;
+import be.kwakeroni.scratch.tv.MappedRangedQueryTVGroup;
+import be.kwakeroni.scratch.tv.MappedTVGroup;
+import be.kwakeroni.scratch.tv.RangedFilterTVGroup;
+import be.kwakeroni.scratch.tv.RangedQueryTVGroup;
+import be.kwakeroni.scratch.tv.SimpleTVGroup;
+import be.kwakeroni.scratch.tv.Slot;
+import be.kwakeroni.test.logging.SLF4JTestLog;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.slf4j.event.Level;
 
+import java.time.LocalDate;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
@@ -23,6 +37,9 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(Parameterized.class)
 public class MinimalTest {
+    static {
+        SLF4JTestLog.setDisplayLevel(Level.DEBUG);
+    }
 
     @Rule
     public Environment environment;
@@ -69,6 +86,26 @@ public class MinimalTest {
                         new EntryQuery())).get();
         assertEquals(Dag.ZONDAG, entry.getValue(MappedTVGroup.DAY));
         assertEquals("Morgen Maandag", entry.getValue(MappedTVGroup.PROGRAM));
+    }
+
+    @Test
+    public void testHistoricizedValueQuery() {
+        environment.runTestForGroup(HistoricizedTVGroup.instance());
+        String program = environment.getBusinessParameters().get(HistoricizedTVGroup.instance(),
+                new RangedQuery<>(LocalDate.of(2019, 8, 29), ParameterTypes.LOCAL_DATE, new ValueQuery<>(HistoricizedTVGroup.PROGRAM))).get();
+        assertEquals("Summer Standup Show", program);
+    }
+
+    @Test
+    public void testHistoricizedEntryQuery() {
+        environment.runTestForGroup(HistoricizedTVGroup.instance());
+        Entry entry = environment.getBusinessParameters().get(HistoricizedTVGroup.instance(),
+                new RangedQuery<>(LocalDate.of(2019, 2, 28), ParameterTypes.LOCAL_DATE, new EntryQuery())
+        ).get();
+
+        assertEquals(LocalDate.of(2018, 12, 15), entry.getValue(HistoricizedTVGroup.PERIOD).getFrom());
+        assertEquals(LocalDate.of(2019, 3, 15), entry.getValue(HistoricizedTVGroup.PERIOD).getTo());
+        assertEquals("Winter Wonderland", entry.getValue(HistoricizedTVGroup.PROGRAM));
     }
 
     @Test

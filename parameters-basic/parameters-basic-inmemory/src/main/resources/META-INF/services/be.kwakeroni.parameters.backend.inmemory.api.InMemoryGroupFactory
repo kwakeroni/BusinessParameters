@@ -1,3 +1,4 @@
 be.kwakeroni.parameters.basic.definition.inmemory.InMemorySimpleGroupFactory
 be.kwakeroni.parameters.basic.definition.inmemory.InMemoryMappedGroupFactory
 be.kwakeroni.parameters.basic.definition.inmemory.InMemoryRangedGroupFactory
+be.kwakeroni.parameters.basic.definition.inmemory.InMemoryHistoricizedGroupFactory

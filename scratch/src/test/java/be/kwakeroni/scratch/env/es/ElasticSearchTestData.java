@@ -4,9 +4,11 @@ import be.kwakeroni.parameters.backend.api.factory.BusinessParametersBackendFact
 import be.kwakeroni.parameters.backend.es.api.ElasticSearchGroup;
 import be.kwakeroni.parameters.backend.es.factory.ElasticSearchBackendServiceFactory;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
+import be.kwakeroni.parameters.basic.definition.es.ElasticSearchHistoricizedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.es.ElasticSearchMappedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.es.ElasticSearchRangedGroupFactory;
 import be.kwakeroni.parameters.basic.definition.es.ElasticSearchSimpleGroupFactory;
+import be.kwakeroni.parameters.basic.definition.factory.HistoricizedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.factory.MappedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.factory.RangedDefinitionVisitor;
 import be.kwakeroni.parameters.basic.definition.factory.SimpleDefinitionVisitor;
@@ -14,7 +16,17 @@ import be.kwakeroni.parameters.definition.api.DefinitionVisitorContext;
 import be.kwakeroni.scratch.Contexts;
 import be.kwakeroni.scratch.env.Services;
 import be.kwakeroni.scratch.env.TestData;
-import be.kwakeroni.scratch.tv.*;
+import be.kwakeroni.scratch.tv.AbstractMappedRangedTVGroup;
+import be.kwakeroni.scratch.tv.AbstractRangedTVGroup;
+import be.kwakeroni.scratch.tv.Dag;
+import be.kwakeroni.scratch.tv.HistoricizedTVGroup;
+import be.kwakeroni.scratch.tv.MappedRangedFilterTVGroup;
+import be.kwakeroni.scratch.tv.MappedRangedQueryTVGroup;
+import be.kwakeroni.scratch.tv.MappedTVGroup;
+import be.kwakeroni.scratch.tv.RangedFilterTVGroup;
+import be.kwakeroni.scratch.tv.RangedQueryTVGroup;
+import be.kwakeroni.scratch.tv.SimpleTVGroup;
+import be.kwakeroni.scratch.tv.Slot;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -22,7 +34,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -73,6 +91,12 @@ public class ElasticSearchTestData implements TestData {
         addInsert(uuids, MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZATERDAG, "Samson"));
         addInsert(uuids, MappedTVGroup.instance().getName(), MappedTVGroup.entryData(Dag.ZONDAG, "Morgen Maandag"));
 
+        addInsert(uuids, HistoricizedTVGroup.instance().getName(),
+                HistoricizedTVGroup.enrichedEntryData("20181215", "20190315", "Winter Wonderland"),
+                // Don't include for testing purposes: HistoricizedTVGroup.enrichedEntryData("20190315", "20190615", "Soppy Spring Soap"),
+                HistoricizedTVGroup.enrichedEntryData("20190615", "20190915", "Summer Standup Show"),
+                HistoricizedTVGroup.enrichedEntryData("20190915", "20191215", "Authentic Autumn Awards")
+        );
 
         addInsert(uuids, withLimits -> (withLimits) ? RangedQueryTVGroup.instance().getName() : RangedFilterTVGroup.instance().getName(),
                 withLimits -> AbstractRangedTVGroup.entryData(Slot.atHour(8), Slot.atHour(12), "Samson", withLimits),
@@ -92,6 +116,12 @@ public class ElasticSearchTestData implements TestData {
             this.elasticSearch.waitUntil(() -> this.isEmpty(uuids), 5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+
+        if (LOG.isInfoEnabled()) {
+            this.groups.stream()
+                    .map(this::getInfo)
+                    .forEach(info -> LOG.info("Defined index: " + info));
         }
 
     }
@@ -145,8 +175,15 @@ public class ElasticSearchTestData implements TestData {
         this.groups.add(group.getName());
     }
 
+    private String getInfo(String group) {
+        return get(String.format("/parameters/_mapping/%s", group));
+    }
+
     private String get(String group, String uuid) {
-        String url = String.format("/parameters/%s/%s", group, uuid);
+        return get(String.format("/parameters/%s/%s", group, uuid));
+    }
+
+    private String get(String url) {
         ClientResponse response = null;
         try {
             response = callES(url, WebResource::get);
@@ -167,6 +204,10 @@ public class ElasticSearchTestData implements TestData {
     private String findAll(String group) {
         String url = "/parameters/_search";
         String body = "{\"size\":20,\"query\":{\"bool\":{\"must\":[{\"match\":{\"_type\":\"" + group + "\"}}]}},\"from\":0}";
+        return post(url, body);
+    }
+
+    private String post(String url, String body) {
         ClientResponse response = callES(url, body, WebResource::post);
         int status = response.getStatus();
         if (status == 204 || status == 404) {
@@ -256,10 +297,6 @@ public class ElasticSearchTestData implements TestData {
         return new JSONObject(entry).toString(4);
     }
 
-    private ClientResponse get(String url) {
-        return client.resource(resolve("http://127.0.0.1:9200", url)).get(ClientResponse.class);
-    }
-
     private static interface CallWithoutBody {
         <T> T call(WebResource resource, Class<T> type);
 
@@ -293,7 +330,8 @@ public class ElasticSearchTestData implements TestData {
     public static DefinitionVisitorContext<ElasticSearchGroup> FACTORY_CONTEXT = Contexts.of(
             SimpleDefinitionVisitor.class, new ElasticSearchSimpleGroupFactory(),
             MappedDefinitionVisitor.class, new ElasticSearchMappedGroupFactory(),
-            RangedDefinitionVisitor.class, new ElasticSearchRangedGroupFactory()
+            RangedDefinitionVisitor.class, new ElasticSearchRangedGroupFactory(),
+            HistoricizedDefinitionVisitor.class, new ElasticSearchHistoricizedGroupFactory()
     );
 
 }

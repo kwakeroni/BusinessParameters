@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 /**
  * (C) 2017 Maarten Van Puymbroeck
  */
-public class TransientGroupData implements GroupData {
+class TransientGroupData implements GroupData {
 
     private final InMemoryGroup group;
     private final List<EntryData> data;

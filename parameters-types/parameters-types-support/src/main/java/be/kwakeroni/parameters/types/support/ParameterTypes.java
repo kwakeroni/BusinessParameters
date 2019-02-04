@@ -2,6 +2,8 @@ package be.kwakeroni.parameters.types.support;
 
 import be.kwakeroni.parameters.types.api.ParameterType;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.function.Function;
 
 /**
@@ -9,11 +11,12 @@ import java.util.function.Function;
  */
 public interface ParameterTypes {
 
-    public static BasicType<String, String> STRING = JavaLangType.STRING;
-    public static BasicType<Integer, Integer> INT = JavaLangType.INT;
-    public static BasicType<Long, Long> LONG = JavaLangType.LONG;
-    public static BasicType<Boolean, Boolean> BOOLEAN = JavaLangType.BOOLEAN;
-    public static BasicType<Character, Character> CHAR = JavaLangType.CHAR;
+    public static final BasicType<String, String> STRING = JavaLangType.STRING;
+    public static final BasicType<Integer, Integer> INT = JavaLangType.INT;
+    public static final BasicType<Long, Long> LONG = JavaLangType.LONG;
+    public static final BasicType<Boolean, Boolean> BOOLEAN = JavaLangType.BOOLEAN;
+    public static final BasicType<Character, Character> CHAR = JavaLangType.CHAR;
+    public static final BasicType<LocalDate, LocalDate> LOCAL_DATE = JavaLangType.LOCAL_DATE;
 
     public static <E extends Enum<E>> ParameterType<E> ofEnum(Class<E> type) {
         return new EnumType<>(type);
@@ -29,12 +32,22 @@ public interface ParameterTypes {
 
     public static <T> BasicType<T, Integer> ofIntegerType(Class<T> type, Function<? super String, ? extends T> fromString, Function<? super T, String> toString,
                                                           Function<? super Integer, ? extends T> fromBasic, Function<? super T, Integer> toBasic) {
-        return new AdhocBasicType<>(type, fromString, toString, JavaLangType.INT, fromBasic, toBasic);
+        return new AdhocBasicType<>(type, fromString, toString, Integer.class, fromBasic, toBasic);
     }
 
     public static <T> BasicType<T, Integer> ofIntegerType(Function<? super String, ? extends T> fromString, Function<? super T, String> toString,
                                                           Function<? super Integer, ? extends T> fromBasic, Function<? super T, Integer> toBasic) {
-        return new AdhocBasicType<>(fromString, toString, JavaLangType.INT, fromBasic, toBasic);
+        return new AdhocBasicType<>(fromString, toString, Integer.class, fromBasic, toBasic);
+    }
+
+    public static <T> BasicType<T, Long> ofLongType(Class<T> type, Function<? super String, ? extends T> fromString, Function<? super T, String> toString,
+                                                          Function<? super Long, ? extends T> fromBasic, Function<? super T, Long> toBasic) {
+        return new AdhocBasicType<>(type, fromString, toString, Long.class, fromBasic, toBasic);
+    }
+
+    public static <T> BasicType<T, Long> ofLongType(Function<? super String, ? extends T> fromString, Function<? super T, String> toString,
+                                                          Function<? super Long, ? extends T> fromBasic, Function<? super T, Long> toBasic) {
+        return new AdhocBasicType<>(fromString, toString, Long.class, fromBasic, toBasic);
     }
 
 }

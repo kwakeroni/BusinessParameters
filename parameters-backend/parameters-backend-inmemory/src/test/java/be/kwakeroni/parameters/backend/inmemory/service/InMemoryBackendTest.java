@@ -3,10 +3,10 @@ package be.kwakeroni.parameters.backend.inmemory.service;
 import be.kwakeroni.parameters.backend.api.query.BackendQuery;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryData;
 import be.kwakeroni.parameters.backend.inmemory.api.EntryModification;
+import be.kwakeroni.parameters.backend.inmemory.api.GroupData;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryGroup;
 import be.kwakeroni.parameters.backend.inmemory.api.InMemoryQuery;
 import be.kwakeroni.parameters.backend.inmemory.factory.InMemoryBackendGroupFactoryContext;
-import be.kwakeroni.parameters.backend.inmemory.fallback.TransientGroupData;
 import be.kwakeroni.parameters.definition.api.ParameterGroupDefinition;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -48,12 +48,16 @@ public class InMemoryBackendTest {
     private InMemoryGroup group1;
     private String group1Name = "group1";
     @Mock
+    private GroupData group1Data;
+    @Mock
     private ParameterGroupDefinition<?> group2Definition;
     @Mock
     private EntryData entry2Data;
     @Mock
     private InMemoryGroup group2;
     private String group2Name = "group2";
+    @Mock
+    private GroupData group2Data;
     @Mock
     private BackendQuery<InMemoryQuery<?>, Object> backendQuery;
     @Mock
@@ -74,8 +78,12 @@ public class InMemoryBackendTest {
         when(group1Definition.apply(factoryContext)).thenReturn(group1);
         when(group2Definition.apply(factoryContext)).thenReturn(group2);
         when(definitions.get()).thenAnswer((i) -> Stream.of(group1Definition, group2Definition));
-        when(dataStore.getGroupData(group1)).thenReturn(new TransientGroupData(group1, Collections.singleton(entry1Data)));
-        when(dataStore.getGroupData(group2)).thenReturn(new TransientGroupData(group2, Collections.singleton(entry2Data)));
+        when(group1Data.getGroup()).thenReturn(group1);
+        when(group1Data.getEntries()).thenAnswer(__ -> Stream.of(entry1Data));
+        when(group2Data.getGroup()).thenReturn(group2);
+        when(group2Data.getEntries()).thenAnswer(__ -> Stream.of(entry2Data));
+        when(dataStore.getGroupData(group1)).thenReturn(group1Data);
+        when(dataStore.getGroupData(group2)).thenReturn(group2Data);
 
         backend = new InMemoryBackend(factoryContext, definitions, dataStore);
 

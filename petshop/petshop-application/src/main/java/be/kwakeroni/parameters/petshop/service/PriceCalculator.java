@@ -1,13 +1,16 @@
 package be.kwakeroni.parameters.petshop.service;
 
+import be.kwakeroni.parameters.basic.client.model.Historicized;
 import be.kwakeroni.parameters.basic.client.model.Mapped;
 import be.kwakeroni.parameters.basic.client.model.Ranged;
 import be.kwakeroni.parameters.basic.client.model.Simple;
 import be.kwakeroni.parameters.client.api.BusinessParameters;
 import be.kwakeroni.parameters.petshop.definitions.BulkDiscount;
+import be.kwakeroni.parameters.petshop.definitions.SalesDiscount;
 import be.kwakeroni.parameters.petshop.model.Animal;
 import be.kwakeroni.parameters.petshop.model.AnimalQuote;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 /**
@@ -16,13 +19,19 @@ import java.util.Optional;
 public class PriceCalculator {
 
     private final Mapped<String, Ranged<Integer, Simple>> bulkDiscount;
+    private final Mapped<String, Historicized<Simple>> salesDiscount;
 
     public PriceCalculator(BusinessParameters parameters) {
         this.bulkDiscount = BulkDiscount.DEFINITION.createGroup(parameters);
+        this.salesDiscount = SalesDiscount.DEFINITION.createGroup(parameters);
     }
 
     private Optional<Integer> getDiscountPercentage(String animal, int quantity) {
-        return bulkDiscount.forKey(animal).at(quantity).getValue(BulkDiscount.DISCOUNT);
+        Optional<Integer> bulk = bulkDiscount.forKey(animal).at(quantity).getValue(BulkDiscount.DISCOUNT);
+        Optional<Integer> sales = salesDiscount.forKey(animal).at(LocalDate.now()).getValue(SalesDiscount.DISCOUNT);
+
+        int totalDiscount = bulk.orElse(0) + sales.orElse(0);
+        return (totalDiscount > 0) ? Optional.of(totalDiscount) : Optional.empty();
     }
 
     public AnimalQuote getQuote(Animal animal, int quantity) {

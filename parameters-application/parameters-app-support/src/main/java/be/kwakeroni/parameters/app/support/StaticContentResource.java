@@ -3,6 +3,7 @@ package be.kwakeroni.parameters.app.support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -16,6 +17,7 @@ import java.util.Optional;
 public abstract class StaticContentResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentResource.class);
+    private static final MimetypesFileTypeMap MIME_TYPES = new MimetypesFileTypeMap();
 
     private final java.nio.file.Path contentDirectory;
     private final String indexPage;
@@ -67,14 +69,32 @@ public abstract class StaticContentResource {
         try {
             return getContents0(resource);
         } catch (Exception exc) {
-            LOG.error("Unable to fetch content of file {}", exc);
+            LOG.error("Unable to fetch content of file {}", resource, exc);
             return Response.serverError();
         }
     }
 
     Response.ResponseBuilder getContents0(java.nio.file.Path resource) throws Exception {
         return Response.ok()
-                .type(Files.probeContentType(resource))
+                .type(mimeType(resource))
                 .entity(Files.newInputStream(resource));
+    }
+
+    String mimeType(java.nio.file.Path resource) throws Exception {
+        String type = probeContentType(resource);
+        if (type == null) {
+            // fallback because probeContentType is not supported on Mac
+            // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=7133484
+            type = probeContentTypeByExtension(resource);
+        }
+        return type;
+    }
+
+    String probeContentType(java.nio.file.Path resource) throws Exception {
+        return Files.probeContentType(resource);
+    }
+
+    String probeContentTypeByExtension(java.nio.file.Path resource) throws Exception {
+        return MIME_TYPES.getContentType(resource.toFile());
     }
 }

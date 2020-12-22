@@ -1,0 +1,10 @@
+application/json            json JSON
+image/gif		            gif GIF
+image/ief		            ief
+image/jpeg		            jpeg jpg jpe JPG
+image/tiff		            tiff tif
+image/png		            png PNG
+image/vnd.microsoft.icon    ico ICO
+text/html		            html htm HTML HTM
+text/css                    css CSS
+text/plain		            txt text TXT TEXT

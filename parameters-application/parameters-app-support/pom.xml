@@ -95,6 +95,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
             <groupId>be.kwakeroni.parameters.core</groupId>
             <artifactId>parameters-test-support</artifactId>
             <scope>test</scope>
@@ -102,6 +107,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
